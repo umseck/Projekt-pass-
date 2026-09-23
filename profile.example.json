@@ -1,0 +1,30 @@
+{
+  "name": "Meisterwerk",
+  "contact": "Daniel Graupner",
+  "phone": "+49 170 8921927",
+  "email": "daniel@meisterwerk-graupner.de",
+  "website": "https://meisterwerk-muenchen.de/",
+  "logo_file": "assets/meisterwerk-logo.png",
+  "logo": "",
+  "care_notes": {
+    "tile": "Fliesen regelmäßig mit klarem Wasser und einem milden, für den jeweiligen Belag geeigneten Reiniger säubern. Keine scheuernden Reiniger, kratzenden Schwämme oder harten Werkzeuge verwenden. Reinigungsmittelreste anschließend mit klarem Wasser entfernen. Bei Naturstein oder empfindlichen Oberflächen zuerst die Pflegehinweise des Fliesenherstellers beachten und das Mittel an einer unauffälligen Stelle testen.",
+    "grout": "Fugen regelmäßig mit klarem Wasser und einem milden Reiniger säubern. Keine Scheuermittel, Stahlwolle oder harten Werkzeuge verwenden. Saure oder stark alkalische Reiniger nur einsetzen, wenn sie für den tatsächlich verwendeten Fugenmörtel ausdrücklich freigegeben sind. Nach der Reinigung mit klarem Wasser nachspülen und den Raum gut lüften.",
+    "silicone": ""
+  },
+  "favorites": {
+    "tile": [],
+    "grout": [
+      {"manufacturer":"Sopro", "name":"DF 10 DesignFuge Flex", "color":"Hellgrau", "format":""},
+      {"manufacturer":"Sopro", "name":"DF 10 DesignFuge Flex", "color":"Lichtgrau", "format":""},
+      {"manufacturer":"Sopro", "name":"DF 10 DesignFuge Flex", "color":"Sandgrau", "format":""},
+      {"manufacturer":"PCI", "name":"Durapox Premium", "color":"Hellgrau", "format":""},
+      {"manufacturer":"PCI", "name":"Durapox Premium", "color":"Lichtgrau", "format":""},
+      {"manufacturer":"PCI", "name":"Durapox Premium", "color":"Sandgrau", "format":""}
+    ],
+    "silicone": [
+      {"manufacturer":"PCI", "name":"Silcofug E", "color":"Hellgrau", "format":""},
+      {"manufacturer":"PCI", "name":"Silcofug E", "color":"Lichtgrau", "format":""},
+      {"manufacturer":"PCI", "name":"Silcofug E", "color":"Sandgrau", "format":""}
+    ]
+  }
+}

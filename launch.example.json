@@ -1,0 +1,14 @@
+{
+  "origin": "",
+  "region": "eu-central-1",
+  "dedicatedSupabaseProject": false,
+  "schemaApplied": false,
+  "authSignupDisabled": false,
+  "businessProvisioned": false,
+  "rateLimitsConfigured": false,
+  "legalTextsReviewed": false,
+  "providerAgreementsReviewed": false,
+  "backupRestoreTested": false,
+  "twoDeviceTested": false,
+  "mobile390Tested": false
+}
