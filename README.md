@@ -1,4 +1,12 @@
-# PROJEKTPASS – Vorbereitung des echten Pilotbetriebs
+# PROJEKTPASS – Pilotbetrieb
+
+## Erweiterung: Bauphase → Kundenmappe
+
+Regel 1: So einfach wie möglich für alle. Aktueller Funktionsumfang, Rechte und
+Installationsfolge stehen in [COLLABORATION.md](COLLABORATION.md). Diese Erweiterung
+ersetzt die frühere Annahme, dass vor der Übergabe überhaupt keine Scanansicht existiert.
+Die Türansicht zeigt nur Baustellenhinweise.
+
 
 Separater Pilot für einen Fliesenbetrieb, 20 Pässe und zunächst drei reale Bäder.
 Die bestehende lokale Demo in `../dist` bleibt unverändert. Keine Verbindung zu
@@ -9,7 +17,7 @@ Steckerl, keine Übernahme seiner Daten oder Zugänge.
 - Geschützter Betriebszugang über Supabase Auth; geschlossene Einrichtung ohne Registrierung.
 - Dashboard, 20 Pässe, Titel als einziges Projektpflichtfeld, Favoriten für alle drei Materialarten.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
-- Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
+- Öffentliche Türansicht während der Bauphase; Kundenmappe nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
 - Betriebsangaben unveränderbar für Kunden. Separater 256-Bit-Schlüssel für Eigentümerergänzungen,
   nur als SHA-256 gespeichert, im Betrieb ersetzbar. Kein Kontozwang zum Lesen oder Ergänzen.
 - Schlüsselrotation, Linksperre, Löschung, Versionsprüfung gegen Überschreiben durch parallele Geräte.
@@ -46,7 +54,7 @@ kann weiterhin einen Pass zu Testzwecken freigeben.
 
 1. Eigenes Supabase-Projekt in **Frankfurt / eu-central-1** anlegen. Projekt-ID schriftlich prüfen.
    Bestehende Projekte nicht verwenden. Öffentliche Registrierung und anonyme Auth abschalten.
-2. `database/schema.sql` im neuen Projekt anwenden, DB-Advisors und Rechte prüfen. Diese Datei ist
+2. `database/schema.sql` und anschließend `database/collaboration.sql` im neuen Projekt anwenden, DB-Advisors und Rechte prüfen. Diese Datei ist
    ein lokal getesteter Schemaentwurf, keine bereits angewandte Migration. Danach mit Supabase CLI
    eine saubere Migration aus dem echten Zielstand erzeugen und committen.
 3. Auth-Benutzer für den Fliesenbetrieb einrichten. Zugang sicher direkt an den Betrieb übergeben.

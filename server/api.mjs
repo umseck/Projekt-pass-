@@ -1,8 +1,8 @@
 import {HttpError,validate,text,fail} from './validation.mjs';
 
 const COOKIE='__Host-pp_session';
-const publicOps=new Set(['scan','owner_save']);
-const operations=new Set(['bootstrap','company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...publicOps]);
+const publicOps=new Set(['scan','owner_save','trade_open','trade_save','trade_note','trade_resolve','owner_manage','owner_invite','owner_revoke']);
+const operations=new Set(['bootstrap','company_save','activate','project','preview','save','handover','owner_key','visibility','delete','site_note','site_resolve','site_invite','site_revoke',...publicOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export const securityHeaders={
@@ -60,10 +60,12 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        actor=(await r.json()).id;
        if(!actor)throw new HttpError(401,'Bitte erneut anmelden.');
      }
-     let ownerKey;
-     if(op==='owner_save'){args.key_hash=await hash(args.key);delete args.key;}
+     let ownerKey,inviteKey;
+     if(['site_invite','owner_invite'].includes(op)){inviteKey=randomToken();args.invite_hash=await hash(inviteKey);}
+     if(['owner_save','trade_open','trade_save','trade_note','trade_resolve','owner_manage','owner_invite','owner_revoke'].includes(op)){args.key_hash=await hash(args.key);delete args.key;}
      if(op==='owner_key'){ownerKey=randomToken();args.key_hash=await hash(ownerKey);}
      result=await rpc(op,actor,args);
+     if(inviteKey)result={...result,invite_key:inviteKey};
      if(ownerKey)result={...result,owner_key:ownerKey};
    }
    return new Response(JSON.stringify(result),{headers:{...securityHeaders,...extra}});
@@ -74,6 +76,7 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      const data=await r.json();
      if(!r.ok){
        const code=String(data.message||'');
+       if(code.includes('PP_LIMIT'))throw new HttpError(400,'Für diesen Pilot sind höchstens 20 Firmen und 100 offene Hinweise pro Projekt vorgesehen. Bitte vorhandene Einträge prüfen.');
        if(code.includes('PP_CONFLICT'))throw new HttpError(409,'Es gibt einen neueren Stand. Ihre Eingaben sind noch hier. Kopieren Sie Änderungen und laden Sie das Projekt neu.');
        if(code.includes('PP_NOT_FOUND'))throw new HttpError(404,'Dieser Projektpass ist noch nicht übergeben oder derzeit nicht freigegeben.');
        if(code.includes('PP_FORBIDDEN'))throw new HttpError(403,'Für diesen Bereich fehlt die Berechtigung.');
