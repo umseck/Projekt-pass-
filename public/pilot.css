@@ -4,3 +4,12 @@
 
 .eyebrow,.source,.pill{font-size:12px}.hint,.subtle,.small{font-size:14px}.field label{font-size:14px}
 .welcome-copy span{display:block}
+
+/* Construction phase: readable on a phone, no dense dashboard. */
+#construction-tools .row { flex-wrap: wrap; }
+#site-notes .care { margin-top: 18px; overflow-wrap: anywhere; }
+#site-notes .preline, .owner-entry .preline { white-space: pre-wrap; }
+.expired-note { border-left: 3px solid #967147; }
+#share-link { min-height: 130px; width: 100%; overflow-wrap: anywhere; }
+#trade-entry details, #site-note details { margin: 18px 0; }
+@media print { #refresh-board, #construction-tools button, [data-resolve] { display: none; } }

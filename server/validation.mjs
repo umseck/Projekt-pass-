@@ -52,12 +52,26 @@ export function additions(value){return list(value,30,v=>{
 });}
 export function validate(op,b){
   obj(b);
+  if(['trade_open','trade_save','trade_note','trade_resolve','owner_manage','owner_invite','owner_revoke'].includes(op)){
+    const a={token:token(b.token),key:token(b.key)};
+    if(op.startsWith('trade_'))a.participant_id=uuid(b.participant_id);
+    if(op==='trade_save'){a.version=version(b.version);a.entry=tradeEntry(b.entry);}
+    if(op==='trade_resolve')a.note_id=uuid(b.note_id);
+    if(op==='trade_note')a.note=siteNote(b.note);
+    if(op==='owner_invite'){a.label=text(b.label,100);if(!a.label)fail('Bitte Gewerk oder Firma angeben.');if(b.participant_id)a.participant_id=uuid(b.participant_id);}
+    if(op==='owner_revoke')a.participant_id=uuid(b.participant_id);
+    return a;
+  }
   if(op==='scan')return {token:token(b.token)};
   if(op==='owner_save')return {token:token(b.token),key:token(b.key),version:version(b.version),additions:additions(b.additions)};
   if(op==='bootstrap')return {};
   if(op==='company_save')return {profile:company(b.profile),version:version(b.version)};
   if(op==='activate'){const title=text(b.title,150);if(!title)fail('Wie heißt das Projekt?');return {pass_id:uuid(b.pass_id),title};}
   const args={id:uuid(b.id)};
+  if(op==='site_resolve'){args.note_id=uuid(b.note_id);return args;}
+  if(op==='site_note'){args.note=siteNote(b.note);return args;}
+  if(op==='site_invite'){args.label=text(b.label,100);if(!args.label)fail('Bitte Gewerk oder Firma angeben.');return args;}
+  if(op==='site_revoke'){args.participant_id=uuid(b.participant_id);return args;}
   if(['project','preview'].includes(op))return args;
   args.version=version(b.version);
   if(op==='save'){
@@ -67,4 +81,13 @@ export function validate(op,b){
     if(typeof b.disabled!=='boolean')fail();args.disabled=b.disabled;
   }else if(!['handover','owner_key','delete'].includes(op))fail();
   return args;
+}
+
+export function siteNote(v){
+ obj(v);const body=text(v.text,2000);if(!body)fail('Bitte einen Hinweis schreiben.');
+ const until=text(v.until,40);if(until&&!Number.isFinite(Date.parse(until)))fail('Bitte ein gültiges Datum wählen.');
+ return {text:body,until,photo:photo(v.photo)};
+}
+export function tradeEntry(v){
+ obj(v);return {note:text(v.note,3000),product:text(v.product,1000),url:url(v.url),photo:photo(v.photo)};
 }

@@ -9,7 +9,7 @@ const pa='33333333-3333-4333-8333-333333333333',pb='44444444-4444-4444-8444-4444
 async function rpc(op,args={},actor=a){return (await db.query('select public.pp_api($1,$2::uuid,$3::jsonb) as result',[op,actor,JSON.stringify(args)])).rows[0].result;}
 before(async()=>{
  db=new PGlite();await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
- await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));await db.exec(await readFile(new URL('../database/collaboration.sql',import.meta.url),'utf8'));
  for(const [cid,uid,pid,t] of [[ca,a,pa,token],[cb,b,pb,'b'.repeat(64)]]){
   await db.query('insert into pp_private.companies(id,profile) values ($1,$2)',[cid,JSON.stringify({name:'Betrieb',care_notes:{tile:'Vom Betrieb'},favorites:{tile:[]}})]);
   await db.query('insert into pp_private.members(user_id,company_id) values($1,$2)',[uid,cid]);
@@ -23,7 +23,7 @@ test('anonymous and authenticated roles cannot access tables or RPC; all tables 
   await assert.rejects(()=>db.query('select * from pp_private.projects'),/permission denied/);await db.exec('reset role');
  }
  const {rows}=await db.query("select relname,relrowsecurity from pg_class join pg_namespace n on n.oid=relnamespace where n.nspname='pp_private' and relkind='r'");
- assert.equal(rows.length,4);assert.ok(rows.every(r=>r.relrowsecurity));
+ assert.equal(rows.length,6);assert.ok(rows.every(r=>r.relrowsecurity));
 });
 test('business flow, privacy, owner control, stale writes and pass retirement',async()=>{
  await db.exec('set role service_role');
@@ -33,7 +33,7 @@ test('business flow, privacy, owner control, stale writes and pass retirement',a
  let p=await rpc('activate',{pass_id:pa,title:'Bad Maier'});const id=p.id;
  assert.equal(p.content.care_notes.tile,'Vom Betrieb');assert.ok(p.activated_at);assert.equal(p.owner_key_hash,undefined);
  assert.equal((await rpc('activate',{pass_id:pa,title:'Doppelklick'})).id,id);
- await assert.rejects(()=>rpc('scan',{token},null),/PP_NOT_FOUND/);
+ assert.equal((await rpc('scan',{token},null)).phase,'construction');
  await assert.rejects(()=>rpc('project',{id},b),/PP_NOT_FOUND/);
  p=await rpc('save',{id,version:p.version,title:'Bad Maier',content:{tile:{name:'Limestone'},grout:{color:'Basalt'}},internal:{customer_name:'Geheim',address:'Privatstraße 17'}});
  await assert.rejects(()=>rpc('save',{id,version:1,title:'Alt',content:{},internal:{}}),/PP_CONFLICT/);
@@ -47,12 +47,9 @@ test('business flow, privacy, owner control, stale writes and pass retirement',a
  pub=await rpc('owner_save',{token,key_hash:'c'.repeat(64),version:1,additions:[{type:'Sanitär',products:[{name:'Grohe Armatur'}]}],content:{tile:{name:'Manipuliert'}}},null);
  assert.equal(pub.content.tile.name,'Limestone');assert.equal(pub.owner_additions[0].products[0].name,'Grohe Armatur');
  await assert.rejects(()=>rpc('owner_save',{token,key_hash:'c'.repeat(64),version:1,additions:[]},null),/PP_CONFLICT/);
- p=await rpc('owner_key',{id,version:p.version,key_hash:'e'.repeat(64)});
- await assert.rejects(()=>rpc('owner_save',{token,key_hash:'c'.repeat(64),version:2,additions:[]},null),/PP_FORBIDDEN/);
- p=await rpc('visibility',{id,version:p.version,disabled:true});await assert.rejects(()=>rpc('scan',{token},null),/PP_NOT_FOUND/);
- p=await rpc('visibility',{id,version:p.version,disabled:false});assert.ok(await rpc('scan',{token},null));
- await assert.rejects(()=>rpc('delete',{id,version:p.version},b),/PP_NOT_FOUND/);
- await rpc('delete',{id,version:p.version});await assert.rejects(()=>rpc('scan',{token},null),/PP_NOT_FOUND/);
- await assert.rejects(()=>rpc('activate',{pass_id:pa,title:'Nächstes Bad'}),/PP_NOT_FOUND/);
- const d=await rpc('bootstrap');assert.equal(d.projects.length,0);assert.equal(d.passes[0].disabled,true);await db.exec('reset role');
+ await assert.rejects(()=>rpc('owner_key',{id,version:p.version,key_hash:'e'.repeat(64)}),/PP_FORBIDDEN/);
+ await assert.rejects(()=>rpc('visibility',{id,version:p.version,disabled:true}),/PP_FORBIDDEN/);
+ await assert.rejects(()=>rpc('delete',{id,version:p.version}),/PP_FORBIDDEN/);
+ const business=await rpc('project',{id});assert.equal(business.owner_additions,undefined);
+ await db.exec('reset role');
 });

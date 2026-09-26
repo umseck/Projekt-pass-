@@ -32,3 +32,12 @@
 - [ ] Datenschutzhinweise, Impressum, Provider-Vereinbarungen und Zuständigkeiten geklärt.
 - [ ] Zugänge/Quellcode im Konto des Nutzers, Wiederherstellung getestet, Verlust einer Karte bedacht.
 - [ ] Ansprechpartner für Pilotfeedback; erst drei Bäder, danach gemeinsam nachschärfen.
+
+## Bauphase und weitere Gewerke
+- [ ] Karte an der Tür: Scan zeigt nur aktuelle Hinweise, keine internen Kundenfelder.
+- [ ] Gewerk über persönlichen Link einladen; Hinweis diktieren, Foto und Beitrag speichern.
+- [ ] Hinweis als erledigt markieren; fremden Hinweis nicht verändern können.
+- [ ] Übergabe bestätigen: alte Gewerklinks gesperrt, Hinweise weg, Beiträge erhalten.
+- [ ] Kundenzugang auf zweitem Gerät übernehmen, neue Firma einladen.
+- [ ] Kunde kann Firmenzugänge beenden und erneuern; alte Schlüssel funktionieren nicht mehr.
+- [ ] Fliesenleger sieht im Dashboard weiter seine Dokumentation, keine späteren Kundenergänzungen.

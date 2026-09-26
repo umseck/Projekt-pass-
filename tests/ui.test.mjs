@@ -7,7 +7,7 @@ import {createHandler} from '../server/api.mjs';
 const actor='11111111-1111-4111-8111-111111111111',cid='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',pid='33333333-3333-4333-8333-333333333333',token='a'.repeat(64);
 const wait=async check=>{for(let i=0;i<100;i++){if(check())return;await new Promise(r=>setTimeout(r,20));}throw Error('UI did not reach expected state');};
 test('real UI → API → SQL: login, favorites, save, handover, customer, owner and reload',async()=>{
- const db=new PGlite();await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));
+ const db=new PGlite();await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));await db.exec(await readFile(new URL('../database/collaboration.sql',import.meta.url),'utf8'));
  const profile={name:'Fliesenbetrieb',email:'test@example.test',care_notes:{tile:'Pflege vom Betrieb'},favorites:{tile:[{manufacturer:'Marazzi',name:'Mystone',color:'Beige',format:'60 × 120'}],grout:[{name:'PCI Nanofug Premium',color:'Basalt'}],silicone:[{name:'OTTOSEAL S100',color:'Anthrazit'}]}};
  await db.query('insert into pp_private.companies(id,profile) values($1,$2)',[cid,JSON.stringify(profile)]);await db.query('insert into pp_private.members(user_id,company_id) values($1,$2)',[actor,cid]);await db.query('insert into pp_private.passes(id,company_id,number,token) values($1,$2,7,$3)',[pid,cid,token]);
  const origin='https://projektpass.example',env={APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'secret',SUPABASE_PUBLISHABLE_KEY:'public'};
@@ -27,6 +27,15 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   $('[data-favorite="tile:0"]').click();$('[data-favorite="grout:0"]').click();$('[data-favorite="silicone:0"]').click();
   assert.equal($('#tile-name').value,'Mystone');assert.equal($('#grout-color').value,'Basalt');
   input('#customer_name','PRIVATE CUSTOMER');input('#address','PRIVATE ADDRESS');
+  $('#save').click();await wait(()=>$('#edit .form-message').textContent.includes('Auf dem Server'));
+  const editRoute=win.location.hash;
+  $('#invite-trade').click();await wait(()=>$('#invite-form'));input('#label','Huber Sanitär');submit('#invite-form');await wait(()=>$('#share-link'));
+  const tradeRoute=new URL($('#share-link').value).hash;
+  win.location.hash=tradeRoute;await wait(()=>$('#trade-entry'));
+  input('#note-text','Bitte Rosette noch offen lassen');submit('#site-note');await wait(()=>$('#site-notes').textContent.includes('Bitte Rosette'));
+  input('#product','Armatur aus Bauphase');submit('#trade-entry');await wait(()=>$('#trade-entry .form-message').textContent.includes('gespeichert'));
+  win.location.hash='p/'+token;await wait(()=>$('#site-notes'));assert.ok($('#site-notes').textContent.includes('Bitte Rosette'));assert.equal($('#owner-edit'),null);
+  win.location.hash=editRoute;await wait(()=>$('#edit'));
   $('#preview').click();await wait(()=>$('#handover'));assert.ok(!$('#app').textContent.includes('PRIVATE ADDRESS'));assert.ok(!$('#app').textContent.includes('Keine Bilder'));
   $('[data-panel="joints"]').click();assert.equal($('#panel-joints').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));
   $('#handover').click();await wait(()=>$('#copy-link'));assert.ok($('#app').textContent.includes('Bereit für'));
@@ -38,6 +47,12 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   assert.ok($('#app').textContent.includes('Grohe Armatur'));assert.ok($('#app').textContent.includes('Von Ihnen ergänzt'));
   assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.tile.name,'Mystone');
   win.location.hash='login';await wait(()=>$('#login'));win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));assert.ok($('#app').textContent.includes('Grohe Armatur'));
+  assert.ok($('#app').textContent.includes('Armatur aus Bauphase'));assert.ok(!$('#app').textContent.includes('Bitte Rosette'));
+  win.location.hash='owner/'+token+'/'+key;await wait(()=>$('#owner-invite'));assert.equal($('#site-note'),null);
+  $('#owner-invite').click();input('#label','Elektro Neu');submit('#invite-form');await wait(()=>$('#share-link'));
+  win.location.hash=new URL($('#share-link').value).hash;await wait(()=>$('#trade-entry'));assert.equal($('#site-note'),null);
+  input('#product','Späterer Spiegelschrank');submit('#trade-entry');await wait(()=>$('#trade-entry .form-message').textContent.includes('gespeichert'));
+  win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));assert.ok($('#app').textContent.includes('Späterer Spiegelschrank'));
   $('#help').click();assert.ok($('#modal').textContent.includes('E-Mail-Programm'));assert.ok(!$('#modal').textContent.includes('erfolgreich versendet'));
  }finally{await win.happyDOM.abort();await db.close();win.close();}
 });
