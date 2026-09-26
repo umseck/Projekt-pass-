@@ -11,3 +11,5 @@
 .top{height:auto;min-height:94px;padding-block:16px}@media(max-width:600px){.top{flex-direction:column;align-items:flex-start}.top-right{justify-content:flex-start;width:100%}}
 
 .project-steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:18px 0;color:#777;font-size:13px}.project-steps li{padding:8px 10px;border-radius:8px;background:#f3f2ec}.project-steps [aria-current]{background:#435229;color:white}.material-summary{font-size:18px;margin:6px 0 14px}.material-edit summary{cursor:pointer;font-weight:600}.standard-save{padding:16px 0}.material-card h2{margin-bottom:4px}
+
+.journal-entry{border-left:3px solid #d6dacb;padding:12px 18px;margin:18px 0;overflow-wrap:anywhere}.recipient{display:block;padding:9px 0}fieldset{border:1px solid #deded5;border-radius:10px;padding:14px;margin:16px 0}fieldset:disabled{opacity:.5}.preline{white-space:pre-line}

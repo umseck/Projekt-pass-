@@ -1,9 +1,11 @@
+import {dispatchMail,mailReady} from './mail.mjs';
 import {HttpError,validate,text,email,fail} from './validation.mjs';
 
 const COOKIE='__Host-pp_session';
-const publicOps=new Set(['scan','owner_save','access_info','access_activate']);
+const publicOps=new Set(['flow_portal','flow_reply','flow_owner_entry','scan','owner_save','access_info','access_activate']);
 const controlOps=new Set(['bootstrap','passes_add','operator_list','operator_company','operator_create','operator_save','operator_invite','access_info','access_begin','access_redeem']);
-const operations=new Set(['company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...controlOps,...publicOps]);
+const flowOps=new Set(['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_post','flow_entry','flow_owner_entry','flow_dispatch']);
+const operations=new Set([...flowOps,'company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...controlOps,...publicOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export const securityHeaders={
@@ -22,7 +24,7 @@ async function readBody(request){
  const bytes=new Uint8Array(total);let offset=0;for(const p of parts){bytes.set(p,offset);offset+=p.length;}
  try{return JSON.parse(new TextDecoder().decode(bytes));}catch{fail();}
 }
-export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fetcher(url,{...options,signal:AbortSignal.timeout(15000)});return async function handle(request,env){
+export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fetcher(url,{...options,signal:AbortSignal.timeout(15000)});return async function handle(request,env,ctx){
  let extra={};
  try{
    const endpoint=new URL(request.url);const op=endpoint.pathname.split('/').pop();
@@ -90,20 +92,22 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        if(!actor)throw new HttpError(401,'Bitte erneut anmelden.');
      }
      let ownerKey;
-     if(op==='owner_save'){args.key_hash=await hash(args.key);delete args.key;}
+     if(op==='owner_save'||op==='flow_owner_entry'){args.key_hash=await hash(args.key);delete args.key;}
      if(op==='owner_key'){ownerKey=randomToken();args.key_hash=await hash(ownerKey);}
      if(op==='operator_create')args.tokens=Array.from({length:20},()=>randomToken());
      if(op==='passes_add')args.tokens=Array.from({length:args.quantity},()=>randomToken());
      let accessToken;
      if(op==='operator_invite'){accessToken=randomToken();args.token_hash=await hash(accessToken);}
+     if(flowOps.has(op)){args.origin=env.APP_ORIGIN;if(op==='flow_participant')args.access_token=randomToken();}
      result=await rpc(op,actor,args);
+     if(flowOps.has(op)&&actor){result={...result,mail_configured:mailReady(env)};if(['flow_participant','flow_post','flow_dispatch'].includes(op)){if(ctx?.waitUntil&&mailReady(env)){ctx.waitUntil(dispatchMail(env,rpc,actor,args.project_id,upstream).catch(()=>{}));result.delivery={configured:true,queued:true};}else result.delivery=await dispatchMail(env,rpc,actor,args.project_id,upstream);}}
      if(ownerKey)result={...result,owner_key:ownerKey};
      if(accessToken)result={...result,access_link:env.APP_ORIGIN+'/#access/'+accessToken};
    }
    return new Response(JSON.stringify(result),{headers:{...securityHeaders,...extra}});
 
    async function rpc(operation,actor,args){
-     const r=await upstream(base+'/rest/v1/rpc/'+(controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
+     const r=await upstream(base+'/rest/v1/rpc/'+(operation.startsWith('flow_')?'pp_flow':controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
        'Content-Type':'application/json'},body:JSON.stringify({op:operation,actor,args})});
      const data=await r.json();
      if(!r.ok){
@@ -112,6 +116,10 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        if(code.includes('PP_RATE_LIMIT'))throw new HttpError(429,'Zu viele Versuche. Bitte in 15 Minuten erneut versuchen.');
        if(code.includes('PP_ACCOUNT_IN_USE'))throw new HttpError(409,'Dieser Zugang gehört bereits zu einem anderen Betrieb. Bitte eine andere E-Mail-Adresse verwenden.');
        if(code.includes('PP_ALREADY_ACTIVE'))throw new HttpError(409,'Für diesen Betrieb ist bereits ein Zugang eingerichtet.');
+       if(code.includes('PP_HANDOVER_LOCKED'))throw new HttpError(409,'Die Übergabe ist abgeschlossen. Bitte eine Ergänzung oder Korrektur im Scheckheft eintragen.');
+       if(code.includes('PP_PARTICIPANT_EXISTS'))throw new HttpError(409,'Diese E-Mail-Adresse ist bereits beteiligt.');
+       if(code.includes('PP_LIMIT'))throw new HttpError(400,'Das Limit für diesen Projektbereich ist erreicht.');
+       if(code.includes('PP_NOT_HANDED_OVER'))throw new HttpError(400,'Das Scheckheft öffnet sich nach der Übergabe.');
        if(code.includes('PP_CONFLICT'))throw new HttpError(409,'Es gibt einen neueren Stand. Ihre Eingaben sind noch hier. Kopieren Sie Änderungen und laden Sie das Projekt neu.');
        if(code.includes('PP_NOT_FOUND'))throw new HttpError(404,controlOps.has(operation)?'Dieser Betrieb wurde nicht gefunden.':'Dieser Projektpass ist noch nicht übergeben oder derzeit nicht freigegeben.');
        if(code.includes('PP_FORBIDDEN'))throw new HttpError(403,'Für diesen Bereich fehlt die Berechtigung.');

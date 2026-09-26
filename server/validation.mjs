@@ -63,6 +63,28 @@ export function additions(value){return list(value,30,v=>{
 });}
 export function validate(op,b){
   obj(b);
+  if(op.startsWith('flow_')){
+    const publicFlow=['flow_portal','flow_reply','flow_owner_entry'].includes(op);
+    const out=publicFlow?{token:token(b.token)}:{project_id:uuid(b.project_id)};
+    if(op==='flow_owner_entry')out.key=token(b.key);
+    if(['flow_link','flow_participant','flow_revoke','flow_post','flow_reply','flow_entry','flow_owner_entry'].includes(op))out.id=uuid(b.id);
+    if(op==='flow_participant'){
+      out.name=text(b.name,100);if(!out.name)fail('Bitte einen Namen eingeben.');out.email=email(b.email);
+      if(!['customer','trade'].includes(b.role))fail();out.role=b.role;
+    }
+    if(['flow_post','flow_reply','flow_entry','flow_owner_entry'].includes(op)){
+      out.body=text(b.body,4000);out.photos=list(b.photos,3,photo);out.documents=list(b.documents,3,d=>({...fields(d,['name','type']),url:url(d.url)}));
+      if(['flow_post','flow_reply'].includes(op)&&!out.body)fail('Bitte eine Mitteilung eingeben.');
+    }
+    if(op==='flow_post'){out.recipients=[...new Set(list(b.recipients,20,uuid))];out.internal=b.internal===true;out.notify=b.notify===true;}
+    if(['flow_entry','flow_owner_entry'].includes(op)){
+      if(!['Wartung','Reparatur','Ergänzung','Korrektur'].includes(b.kind))fail();out.kind=b.kind;
+      out.title=text(b.title,150);if(!out.title)fail('Bitte einen Titel eingeben.');
+      for(const k of ['performed_on','next_due']){const d=text(b[k],10);if((k==='performed_on'||d)&&(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d))||new Date(d).toISOString().slice(0,10)!==d))fail('Bitte ein gültiges Datum eingeben.');out[k]=d;}
+    }
+    if(!['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_post','flow_entry','flow_owner_entry','flow_dispatch'].includes(op))fail();
+    return out;
+  }
   if(op==='access_info')return {token:token(b.token)};
   if(op==='access_activate')return {token:token(b.token),email:b.email?email(b.email):'',password:newPassword(b.password)};
   if(op==='operator_list')return {};

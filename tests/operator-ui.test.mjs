@@ -11,6 +11,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
  const db=new PGlite();await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
  await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../database/operator.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../database/workflow.sql',import.meta.url),'utf8'));
  await db.query('insert into pp_private.operators(user_id) values($1)',[operator]);
  let authCreates=0;
  const json=(value,status=200)=>new Response(JSON.stringify(value),{status});
@@ -20,7 +21,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    if(url.includes('/token')){const id=b.email==='owner@example.test'?operator:member;return json({access_token:id,expires_in:3600,user:{id,email:b.email}});}
    if(url.endsWith('/user'))return json({id:opts.headers.Authorization.slice(7)});
    if(url.endsWith('/logout'))return json({ok:true});
-   const functionName=url.endsWith('/pp_control')?'pp_control':'pp_api';
+   const functionName=url.endsWith('/pp_flow')?'pp_flow':url.endsWith('/pp_control')?'pp_control':'pp_api';
    try{return json((await db.query(`select public.${functionName}($1,$2::uuid,$3::jsonb) result`,[b.op,b.actor,JSON.stringify(b.args)])).rows[0].result);}
    catch(e){return json({message:e.message},400);}
  });
@@ -89,6 +90,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal(project.content.trade,'seamless');assert.equal(project.content.surface.manufacturer,'Testanbieter');
    const forged=await globalThis.fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:project.id,version:project.version,title:'Fugenloses Testbad',content:{...project.content,trade:'tile'},internal:{}})});
    assert.equal(forged.status,200);assert.equal((await forged.json()).content.trade,'seamless');
+   assert.equal((await db.query('select handover_snapshot from pp_private.projects')).rows[0].handover_snapshot.content.trade,'seamless');
    win.location.hash='admin';await wait(()=>$('[role=alert]'));
    assert.ok($('[role=alert]').textContent.includes('nur für den Betreiber'));
    win.location.hash='login';await wait(()=>$('#login'));input('#email','owner@example.test');input('#password','Owner password 123');submit('#login');await wait(()=>$('#businesses'));
