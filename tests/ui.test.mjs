@@ -24,10 +24,17 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   await import('../public/app.mjs?integration');await wait(()=>$('#login'));
   input('#email','installer@example.test');input('#password','pass');submit('#login');await wait(()=>$('#search'));
   win.location.hash='activate/'+pid;await wait(()=>$('#activate'));input('#title','Bad Maier');submit('#activate');await wait(()=>$('#edit'));
+  const initial=(await db.query('select id from pp_private.projects')).rows[0];
+  await db.query('update pp_private.projects set content=content || $1::jsonb where id=$2',[JSON.stringify({tile:{name:'Altes Material',article_number:'ALT-123',batch:'ALT-CHARGE',label_photo:'data:image/jpeg;base64,/9j/AA=='},spare_materials:[{material:'Fliesen',quantity:'2',location:'Keller',photo:''},{material:'Reservefuge',quantity:'1 kg',location:'Garage',photo:''}]}),initial.id]);
+  win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+initial.id;await wait(()=>$('#edit'));
+  assert.ok($('#label-preview img'));assert.equal($('#tile-batch').value,'ALT-CHARGE');
   $('[data-favorite="tile:0"]').click();$('[data-favorite="grout:0"]').click();$('[data-favorite="silicone:0"]').click();
   assert.equal($('#tile-name').value,'Mystone');assert.equal($('#grout-color').value,'Basalt');
+  assert.equal($('#tile-batch').value,'');assert.equal($('#tile-article_number').value,'');assert.equal($('#label-preview img'),null);
   input('#customer_name','PRIVATE CUSTOMER');input('#address','PRIVATE ADDRESS');
   $('#preview').click();await wait(()=>$('#handover'));assert.ok(!$('#app').textContent.includes('PRIVATE ADDRESS'));assert.ok(!$('#app').textContent.includes('Keine Bilder'));
+  const savedContent=(await db.query('select content from pp_private.projects')).rows[0].content;
+  assert.equal(savedContent.tile.label_photo,'');assert.equal(savedContent.spare_materials.length,2);assert.equal(savedContent.spare_materials[1].location,'Garage');
   $('[data-panel="joints"]').click();assert.equal($('#panel-joints').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));
   $('#handover').click();await wait(()=>$('#copy-link'));assert.ok($('#app').textContent.includes('Bereit für'));
   win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));
