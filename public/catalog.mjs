@@ -28,7 +28,7 @@ function bindCatalog(root,c,{kind='',onPick}={}){
   $('#catalog-results').innerHTML=found.map(p=>{
    const m=c.manufacturers.find(m=>m.id===p.manufacturer_id);
    return `<article class="catalog-card"><span class="eyebrow">${esc(m.name)}</span><h3>${esc(p.name)}</h3><p class="small muted">${p.kinds.map(k=>esc(categories[k])).join(' · ')}</p>${p.note?`<p class="hint">${esc(p.note)}</p>`:''}<p>${link(p.source_url,'Herstellerquelle')}</p><ul class="catalog-docs">${p.documents.map(d=>`<li>${link(d.url,d.name)} <span class="small muted">${esc(d.language?.toUpperCase()||'')} · ${esc(d.type)}${d.verification==='source_link'?' · Abruf nicht bestätigt; keine automatische Übernahme':''}</span></li>`).join('')}</ul>${p.documents.length?'':'<p class="hint">Kein eindeutig zugeordnetes öffentliches Datenblatt hinterlegt.</p>'}${onPick?`<button class="btn olive" type="button" data-catalog-pick="${esc(p.id)}">Produkt übernehmen</button>`:''}</article>`;
-  }).join('')||'<p class="empty">Kein passendes Produkt gefunden. Sie können Ihre Produktangaben weiterhin frei eintragen.</p>';
+  }).join('')||'<p class="empty">Der Produktkatalog ist noch leer oder enthält keine passende Auswahl. Bitte tragen Sie Ihre tatsächlich verwendeten Produkte im Projekt ein.</p>';
   root.querySelectorAll('[data-catalog-pick]').forEach(button=>button.onclick=()=>{
    try{const p=c.products.find(p=>p.id===button.dataset.catalogPick),m=c.manufacturers.find(m=>m.id===p.manufacturer_id);onPick(p,m,$('#catalog-include-docs').checked);}
    catch(e){$('#catalog-message').textContent=e.message;}
@@ -43,6 +43,6 @@ export async function openCatalogPicker(kind,{modal,onPick,isCurrent=()=>true}){
 }
 export async function catalogPage({shell,isCurrent=()=>true}){
  const c=await loadCatalog();if(!isCurrent())return;
- shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Im Projekt können Sie Produkte auswählen und die zugeordneten Herstellerunterlagen übernehmen.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
+ shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Wir bauen diesen Katalog Schritt für Schritt anhand realer Projekte auf. Ihre Produkte können Sie bereits frei im Projekt eintragen.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
  bindCatalog(document.querySelector('#catalog-browser'),c);
 }
