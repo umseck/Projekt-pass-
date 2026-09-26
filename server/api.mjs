@@ -1,8 +1,9 @@
-import {HttpError,validate,text,fail} from './validation.mjs';
+import {HttpError,validate,text,email,fail} from './validation.mjs';
 
 const COOKIE='__Host-pp_session';
-const publicOps=new Set(['scan','owner_save']);
-const operations=new Set(['bootstrap','company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...publicOps]);
+const publicOps=new Set(['scan','owner_save','access_info','access_activate']);
+const controlOps=new Set(['bootstrap','passes_add','operator_list','operator_company','operator_create','operator_save','operator_invite','access_info','access_begin','access_redeem']);
+const operations=new Set(['company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...controlOps,...publicOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export const securityHeaders={
@@ -41,17 +42,45 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      const r=await upstream(base+'/auth/v1/token?grant_type=password',{method:'POST',headers:authHeaders,body:JSON.stringify({email,password})});
      const data=await r.json();
      if(!r.ok||!data.access_token)throw new HttpError(401,'Anmeldung nicht möglich. Bitte E-Mail und Passwort prüfen.');
-     // A business membership is checked immediately, before any session is issued.
+     // Check the database-backed business membership or operator role before issuing a session.
      const check=await rpc('bootstrap',data.user.id,{});
      extra['Set-Cookie']=cookie(data.access_token,Math.min(data.expires_in||3600,3600));
      result=check;
+   }else if(op==='access_info'){
+     const args=validate(op,b);
+     result=await rpc('access_info',null,{token_hash:await hash(args.token)});
+   }else if(op==='access_activate'){
+     const args=validate(op,b),token_hash=await hash(args.token);
+     // Validate and rate-limit the invitation before touching Supabase Auth.
+     const invite=await rpc('access_begin',null,{token_hash});
+     const address=email(invite.email||args.email);
+     const created=await upstream(base+'/auth/v1/admin/users',{method:'POST',
+       headers:{apikey:env.SUPABASE_SECRET_KEY,'Content-Type':'application/json'},
+       body:JSON.stringify({email:address,password:args.password,email_confirm:true})});
+     const createdData=await created.json();
+     const alreadyExists=['email_exists','user_already_exists'].includes(createdData.code||createdData.error_code);
+     if(!created.ok&&!alreadyExists){
+       if(created.status===429)throw new HttpError(429,'Zu viele Versuche. Bitte in einigen Minuten erneut versuchen.');
+       if(createdData.code==='weak_password'||createdData.error_code==='weak_password')
+         throw new HttpError(400,'Bitte ein stärkeres Passwort wählen.');
+       throw new HttpError(503,'Der Zugang konnte noch nicht eingerichtet werden. Bitte erneut versuchen.');
+     }
+     // Existing users must prove ownership with their password. Never reset it here.
+     const signed=await upstream(base+'/auth/v1/token?grant_type=password',{method:'POST',headers:authHeaders,
+       body:JSON.stringify({email:address,password:args.password})});
+     const auth=await signed.json();
+     if(!signed.ok||!auth.access_token||!auth.user?.id||String(auth.user.email||'').toLowerCase()!==address)
+       throw new HttpError(401,'Anmeldung nicht möglich. Falls diese E-Mail bereits einen Zugang hat, verwenden Sie dessen Passwort.');
+     await rpc('access_redeem',auth.user.id,{token_hash,email:address});
+     result=await rpc('bootstrap',auth.user.id,{});
+     extra['Set-Cookie']=cookie(auth.access_token,Math.min(auth.expires_in||3600,3600));
    }else if(op==='logout'){
      const access=session(request);
      extra['Set-Cookie']=cookie('',0);
      if(access)try{await upstream(base+'/auth/v1/logout',{method:'POST',headers:{...authHeaders,Authorization:'Bearer '+access}});}catch{}
      result={ok:true};
    }else{
-     if(!operations.has(op))throw new HttpError(404,'Nicht gefunden.');
+     if(!operations.has(op)||['access_begin','access_redeem'].includes(op))throw new HttpError(404,'Nicht gefunden.');
      const args=validate(op,b);let actor=null;
      if(!publicOps.has(op)){
        const access=session(request);if(!access)throw new HttpError(401,'Bitte melden Sie sich beim Betrieb an.');
@@ -63,19 +92,28 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      let ownerKey;
      if(op==='owner_save'){args.key_hash=await hash(args.key);delete args.key;}
      if(op==='owner_key'){ownerKey=randomToken();args.key_hash=await hash(ownerKey);}
+     if(op==='operator_create')args.tokens=Array.from({length:20},()=>randomToken());
+     if(op==='passes_add')args.tokens=Array.from({length:args.quantity},()=>randomToken());
+     let accessToken;
+     if(op==='operator_invite'){accessToken=randomToken();args.token_hash=await hash(accessToken);}
      result=await rpc(op,actor,args);
      if(ownerKey)result={...result,owner_key:ownerKey};
+     if(accessToken)result={...result,access_link:env.APP_ORIGIN+'/#access/'+accessToken};
    }
    return new Response(JSON.stringify(result),{headers:{...securityHeaders,...extra}});
 
    async function rpc(operation,actor,args){
-     const r=await upstream(base+'/rest/v1/rpc/pp_api',{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
+     const r=await upstream(base+'/rest/v1/rpc/'+(controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
        'Content-Type':'application/json'},body:JSON.stringify({op:operation,actor,args})});
      const data=await r.json();
      if(!r.ok){
        const code=String(data.message||'');
+       if(code.includes('PP_INVITE_INVALID')||code.includes('PP_SETUP_COMPLETE'))throw new HttpError(410,'Dieser Einrichtungslink ist abgelaufen oder bereits verwendet. Bitte melden Sie sich an oder lassen Sie einen neuen Link erstellen.');
+       if(code.includes('PP_RATE_LIMIT'))throw new HttpError(429,'Zu viele Versuche. Bitte in 15 Minuten erneut versuchen.');
+       if(code.includes('PP_ACCOUNT_IN_USE'))throw new HttpError(409,'Dieser Zugang gehört bereits zu einem anderen Betrieb. Bitte eine andere E-Mail-Adresse verwenden.');
+       if(code.includes('PP_ALREADY_ACTIVE'))throw new HttpError(409,'Für diesen Betrieb ist bereits ein Zugang eingerichtet.');
        if(code.includes('PP_CONFLICT'))throw new HttpError(409,'Es gibt einen neueren Stand. Ihre Eingaben sind noch hier. Kopieren Sie Änderungen und laden Sie das Projekt neu.');
-       if(code.includes('PP_NOT_FOUND'))throw new HttpError(404,'Dieser Projektpass ist noch nicht übergeben oder derzeit nicht freigegeben.');
+       if(code.includes('PP_NOT_FOUND'))throw new HttpError(404,controlOps.has(operation)?'Dieser Betrieb wurde nicht gefunden.':'Dieser Projektpass ist noch nicht übergeben oder derzeit nicht freigegeben.');
        if(code.includes('PP_FORBIDDEN'))throw new HttpError(403,'Für diesen Bereich fehlt die Berechtigung.');
        if(code.includes('PP_UNAUTHORIZED'))throw new HttpError(401,'Bitte erneut anmelden.');
        throw new HttpError(502,'Speichern derzeit nicht möglich. Ihre Eingaben bleiben hier. Bitte erneut versuchen.');

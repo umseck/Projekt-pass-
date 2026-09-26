@@ -1,3 +1,5 @@
 .dev.vars
 generated/
 launch.local.json
+node_modules/
+supabase/.temp/

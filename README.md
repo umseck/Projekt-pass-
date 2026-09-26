@@ -1,13 +1,14 @@
 # PROJEKTPASS – Vorbereitung des echten Pilotbetriebs
 
-Separater Pilot für einen Fliesenbetrieb, 20 Pässe und zunächst drei reale Bäder.
-Die bestehende lokale Demo in `../dist` bleibt unverändert. Keine Verbindung zu
-Steckerl, keine Übernahme seiner Daten oder Zugänge.
+Separater Pilot mit Betreiberverwaltung und getrennten Betriebszugängen.
+Neue Betriebe starten mit 20 Pässen; weitere Pässe lassen sich jederzeit hinzufügen.
+Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 
 ## Was implementiert ist
 
-- Geschützter Betriebszugang über Supabase Auth; geschlossene Einrichtung ohne Registrierung.
-- Dashboard, 20 Pässe, Titel als einziges Projektpflichtfeld, Favoriten für alle drei Materialarten.
+- Geschützter Zugang über Supabase Auth; Einrichtung über einmalige persönliche Links.
+- Betreiberverwaltung: Betriebe anlegen, Profil bearbeiten und Einrichtungslinks erstellen.
+- Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
 - Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
 - Betriebsangaben unveränderbar für Kunden. Separater 256-Bit-Schlüssel für Eigentümerergänzungen,
@@ -44,6 +45,42 @@ kann weiterhin einen Pass zu Testzwecken freigeben.
 
 ## Einrichtung, sobald die neuen Konten verbunden sind
 
+### Betreiberverwaltung und zusätzliche Pässe
+
+Die additive Migration `operator_management_and_pass_batches` setzt `database/schema.sql`
+voraus. `database/operator.sql` enthält denselben SQL-Stand für lokale Integrationstests.
+Die private Tabelle `operators` bestimmt Betreiberrechte; Browserangaben und Auth-
+`user_metadata` werden dafür niemals ausgewertet. Alle Verwaltungsfunktionen prüfen
+diese Berechtigung erneut auf dem Server beziehungsweise in der service-only RPC.
+
+Der erste Betreiberzugang benötigt einen privat erzeugten 256-Bit-Einrichtungslink.
+Nur sein SHA-256-Prüfwert wird in `pp_private.access_invites` mit `kind='operator'`
+und begrenzter Laufzeit hinterlegt. Sobald ein Betreiber existiert, können solche
+Startlinks keinen weiteren Betreiber anlegen. Die Oberfläche erzeugt ausschließlich
+Betriebseinladungen, niemals Betreiberrechte.
+
+Nach der Einrichtung: **Betriebe → Betrieb anlegen → Einrichtungslink erstellen**.
+Betriebslinks sind an eine E-Mail gebunden, sieben Tage gültig und einmal verwendbar.
+Ein neuer Link ersetzt den bisherigen. Der Betreiber gibt den Link gezielt weiter;
+die App verschickt keine E-Mails. Das Passwort wird vom Empfänger direkt festgelegt.
+Bestehende Benutzer müssen ihr vorhandenes Passwort bestätigen; es wird nicht ersetzt.
+Fünf Einrichtungsversuche innerhalb von 15 Minuten begrenzen weitere Versuche vorübergehend.
+Ungültige Links erreichen die Auth-Benutzeranlage nicht.
+
+Jeder Betriebszugang ist genau einem Betrieb zugeordnet. Ein Betreiber kann zusätzlich
+einen eigenen Betriebszugang besitzen und zwischen Verwaltung und eigenen Projekten
+wechseln. Die Verwaltung zeigt Betriebsprofile und Projektanzahlen, keine fremden
+Projektinhalte. Kunden lesen weiterhin ohne Konto über ihren Passlink.
+
+Unter **Projektpässe → Pässe hinzufügen** werden je Vorgang 1 bis 100 weitere Pässe
+angelegt. Es gibt keine feste Gesamtgrenze von 20 Pässen. Die Nummern werden pro
+Betrieb unter einer Datenbanksperre fortlaufend vergeben. Wiederholte Anfragen mit
+derselben Vorgangs-ID erzeugen keine doppelten Pässe. Stillgelegte Nummern und Links
+werden nicht wiederverwendet. **NFC-Links herunterladen** exportiert die Links, die
+anschließend auf NFC-Tags geschrieben oder als QR-Code gedruckt werden.
+
+### Infrastruktur und Freigabe
+
 1. Eigenes Supabase-Projekt in **Frankfurt / eu-central-1** anlegen. Projekt-ID schriftlich prüfen.
    Bestehende Projekte nicht verwenden. Öffentliche Registrierung und anonyme Auth abschalten.
 2. `database/schema.sql` im neuen Projekt anwenden, DB-Advisors und Rechte prüfen. Diese Datei ist
@@ -55,7 +92,7 @@ kann weiterhin einen Pass zu Testzwecken freigeben.
 4. `node scripts/prepare-business.mjs AUTH_USER_UUID https://FESTE-DOMAIN profil.json` erzeugt
    prüfbare Einrichtungs-SQL und 20 NFC-Links. Ausgabe liegt unter dem Git-ignorierten `generated/`.
    Nach Prüfung SQL anwenden. NFC/QR erst mit endgültiger Domain produzieren; 01 bis 20 abgleichen.
-5. Cloudflare Pages auf **diesen Unterordner `pilot`** ausrichten: Root `pilot`, Ausgabe `public`,
+5. Cloudflare Pages auf **das Repository-Hauptverzeichnis** ausrichten: Root leer, Ausgabe `public`,
    kein Build erforderlich. Pages Functions müssen mit veröffentlicht werden, nicht nur HTML per
    Drag & Drop hochladen. Eigene Domain mit HTTPS verbinden.
 6. Runtime-Variablen: `APP_ORIGIN` (exakte HTTPS-Origin), `SUPABASE_URL`,
@@ -80,11 +117,13 @@ Rollen, Transaktionen und Rechte. API-Tests prüfen die Servergrenze mit simulie
 DOM-Tests prüfen die Oberfläche. Sie ersetzen keine Supabase-Cloud-, Cloudflare- oder Smartphoneprüfung.
 
 Abhängigkeiten sind nur für Tests, fest versioniert und mit Lockfile. Runtime nutzt Web APIs.
-Keine automatischen Änderungen an bestehenden Konten. Keine echte Bereitstellung bisher.
+Infrastruktur: Cloudflare Pages unter `https://projekt-pass.pages.dev`, separates
+Supabase-Projekt in Frankfurt. Live-Verbindung geprüft; Tests mit echten Zugangsdaten
+und zwei Geräten erfolgen bei der Einrichtung des ersten Betreiber-/Betriebszugangs.
 
 ## Noch offene produktive Prüfungen
 
-- Getrennte Zielkonten, endgültige Domain und echte Betriebsdaten fehlen.
+- Ersten persönlichen Betreiberzugang abschließen und anschließend Testbetriebe anlegen.
 - Live Auth/Cookie-Verhalten, Ratelimits, Advisors, Backup-Restore und Zwei-Geräte-Fluss noch offen.
 - Reale Darstellung und Fotoauswahl auf iPhone/Android, insbesondere HEIC, noch offen.
 - Bestehende Demo-Daten werden absichtlich nicht automatisch veröffentlicht. Ein Import braucht

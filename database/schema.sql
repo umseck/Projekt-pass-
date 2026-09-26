@@ -18,7 +18,7 @@ create index on pp_private.members(company_id);
 create table pp_private.passes (
  id uuid primary key default gen_random_uuid(),
  company_id uuid not null references pp_private.companies(id),
- number integer not null check(number between 1 and 20),
+ number integer not null check(number>=1),
  token text not null unique check(token ~ '^[a-f0-9]{64}$'),
  disabled boolean not null default false,
  unique(company_id,number)

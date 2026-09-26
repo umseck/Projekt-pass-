@@ -1,4 +1,5 @@
 import {esc,num,date,safeLink,hasProduct,labelPhoto,field,area,fields,compress,download} from './ui.mjs';
+import {operatorPage,accessPage} from './operator.mjs';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 let dashboard=null,dirty=false,routeVersion=0,ownerKey='';
 const blankProduct=()=>({manufacturer:'',name:'',color:'',format:'',article_number:'',batch:'',label_photo:''});
@@ -12,7 +13,9 @@ async function api(op,body={}){
 }
 function errorHTML(message){return `<p class="error" role="alert">${esc(message)}</p>`;}
 function shell(body,{customer=false,company={}}={}){
- $('#app').innerHTML=`<div class="wrap ${customer?'':'narrow'}"><header class="top"><a class="wordmark" href="${customer?location.hash:'#home'}">PROJEKTPASS</a><div class="top-right">${customer?(labelPhoto(company.logo)?`<img class="small-logo" alt="${esc(company.name)}" src="${company.logo}">`:`<span class="subtle">${esc(company.name)}</span>`):`<a class="btn text" href="#settings">Betrieb</a><button class="btn text" id="logout">Abmelden</button>`}</div></header><main>${body}</main><footer class="footer"><div><strong>PROJEKTPASS</strong>Ein Scan. Alles zum Bad.</div><div class="row"><a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><a href="/impressum.html" target="_blank" rel="noopener">Impressum</a></div></footer></div>`;
+ const operator=dashboard?.role==='operator';
+ const navigation=operator?`<a class="btn text" href="#admin">Betriebe</a>${dashboard.company?'<a class="btn text" href="#home">Meine Projekte</a><a class="btn text" href="#settings">Mein Betrieb</a>':''}`:'<a class="btn text" href="#settings">Betrieb</a>';
+ $('#app').innerHTML=`<div class="wrap ${customer?'':'narrow'}"><header class="top"><a class="wordmark" href="${customer?esc(location.hash):operator?'#admin':'#home'}">PROJEKTPASS</a><div class="top-right">${customer?(labelPhoto(company.logo)?`<img class="small-logo" alt="${esc(company.name)}" src="${company.logo}">`:`<span class="subtle">${esc(company.name)}</span>`):`${navigation}<button class="btn text" id="logout">Abmelden</button>`}</div></header><main>${body}</main><footer class="footer"><div><strong>PROJEKTPASS</strong>Ein Scan. Alles zum Bad.</div><div class="row"><a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><a href="/impressum.html" target="_blank" rel="noopener">Impressum</a></div></footer></div>`;
  if($('#logout'))$('#logout').onclick=()=>run($('#logout'),async()=>{await api('logout');dashboard=null;dirty=false;go('login');});
 }
 function modal(title,body){const d=$('#modal');d.innerHTML=`<div class="dialog-head"><h2>${esc(title)}</h2><button class="close" aria-label="Schließen">×</button></div>${body}`;$('.close',d).onclick=()=>d.close();if(!d.open)d.showModal();}
@@ -30,12 +33,20 @@ function login(returnTo='home'){
 async function loadDashboard(){dashboard=await api('bootstrap');return dashboard;}
 function home(){
  const d=dashboard,free=d.passes.filter(p=>!p.project_id&&!p.disabled).length,activated=d.passes.length-free;
- shell(`<section class="admin-title"><span class="eyebrow">${esc(d.company.name)}</span><h1>Die Übergabe.<br>Einfach gut gemacht.</h1><a class="btn olive" href="#passes">NFC-Pass aktivieren →</a><div class="stats"><div><strong>${free}</strong><span>Freie Pässe</span></div><div><strong>${activated}</strong><span>Aktivierte Pässe</span></div><div><strong>${d.projects.length}</strong><span>Projekte</span></div></div><div class="row between"><h2>Meine Projekte</h2><span class="small muted">Ihre 20er-Box</span></div><div class="search"><label class="sr-only" for="search">Projekte suchen</label><input id="search" type="search" placeholder="Projekt, Passnummer, Material oder Kunde"></div><div id="projects"></div></section>`);
+ shell(`<section class="admin-title"><span class="eyebrow">${esc(d.company.name)}</span><h1>Die Übergabe.<br>Einfach gut gemacht.</h1><a class="btn olive" href="#passes">NFC-Pass aktivieren →</a><div class="stats"><div><strong>${free}</strong><span>Freie Pässe</span></div><div><strong>${activated}</strong><span>Aktivierte Pässe</span></div><div><strong>${d.projects.length}</strong><span>Projekte</span></div></div><div class="row between"><h2>Meine Projekte</h2><span class="small muted">${d.passes.length} Projektpässe</span></div><div class="search"><label class="sr-only" for="search">Projekte suchen</label><input id="search" type="search" placeholder="Projekt, Passnummer, Material oder Kunde"></div><div id="projects"></div></section>`);
  const render=q=>{$('#projects').innerHTML=d.projects.filter(p=>JSON.stringify([p.title,p.internal,p.content,num(d.passes.find(s=>s.id===p.pass_id)?.number)]).toLowerCase().includes(q.toLowerCase())).map(p=>{
   const pass=d.passes.find(s=>s.id===p.pass_id);return `<article class="list-item"><div class="pass-number">${num(pass.number)}</div><div class="content"><h3>${esc(p.title)}</h3><span class="small muted">${date(p.activated_at)} · ${pass.disabled?'Link gesperrt':p.status==='handed_over'?'Übergeben':'In Vorbereitung'}</span></div><div class="buttons"><a href="#edit/${p.id}">Öffnen →</a></div></article>`;
  }).join('')||'<p class="empty">Hier erscheinen Ihre Projekte. Beginnen Sie mit einem freien Pass.</p>';};render('');$('#search').oninput=e=>render(e.target.value);
 }
-function passes(){shell(`<section class="admin-title"><a href="#home" class="btn text">← Meine Projekte</a><h1>Welcher Pass liegt<br>vor Ihnen?</h1><p class="muted">Wählen Sie die Nummer auf Ihrer Karte.</p><div class="pass-grid">${dashboard.passes.map(p=>p.disabled?`<span class="pass-card used" aria-disabled="true"><strong>${num(p.number)}</strong><small>Stillgelegt</small></span>`:`<a class="pass-card ${p.project_id?'used':''}" href="${p.project_id?'#edit/'+p.project_id:'#activate/'+p.id}"><strong>${num(p.number)}</strong><small>${p.project_id?'Aktiviert':'Frei'}</small></a>`).join('')}</div></section>`);}
+function passes(){
+ shell(`<section class="admin-title"><a href="#home" class="btn text">← Meine Projekte</a><h1>Ihre Projektpässe.</h1><p class="muted">Wählen Sie einen Pass zum Aktivieren oder Verwalten. Weitere Pässe können Sie jederzeit hinzufügen.</p><button class="btn olive spaced" id="add-passes">+ Pässe hinzufügen</button><div class="pass-grid spaced">${dashboard.passes.map(p=>p.disabled?`<span class="pass-card used" aria-disabled="true"><strong>${num(p.number)}</strong><small>Stillgelegt</small></span>`:`<a class="pass-card ${p.project_id?'used':''}" href="${p.project_id?'#edit/'+p.project_id:'#activate/'+p.id}"><strong>${num(p.number)}</strong><small>${p.project_id?'Aktiviert':'Frei'}</small></a>`).join('')}</div><section class="section"><button class="btn light" id="export-pass-links">NFC-Links herunterladen</button><p class="hint">Schreiben Sie den jeweiligen Link auf den passenden NFC-Tag oder verwenden Sie ihn für Ihren QR-Code. Der Kundenlink zeigt Projektdaten erst nach der Übergabe.</p></section></section>`);
+ $('#export-pass-links').onclick=()=>download('Projektpass-NFC-Links.json',dashboard.passes.filter(p=>!p.disabled).map(p=>({nummer:p.number,link:location.origin+'/#p/'+p.token})));
+ $('#add-passes').onclick=()=>{
+  const requestId=crypto.randomUUID();
+  modal('Weitere Projektpässe',`<p>Wie viele neue Pässe möchten Sie hinzufügen? Sie können diesen Schritt jederzeit wiederholen.</p><form id="add-passes-form">${field('Anzahl','quantity','20','number','required min="1" max="100" step="1"')}${message}<button class="btn olive wide spaced" type="submit">Pässe hinzufügen</button></form>`);
+  bindForm('#add-passes-form',async form=>{const result=await api('passes_add',{id:requestId,quantity:Number(fields(form).quantity)});$('#modal').close();await loadDashboard();passes();notify(result.added+' neue Pässe hinzugefügt.');});
+ };
+}
 function activate(id){
  const pass=dashboard.passes.find(p=>p.id===id||p.token===id);if(!pass)throw Error('Dieser Pass gehört nicht zu Ihrem Betrieb.');
  if(pass.project_id){go('edit/'+pass.project_id);return;}if(pass.disabled)throw Error('Dieser Pass wurde stillgelegt. Bitte einen freien Pass wählen.');
@@ -140,10 +151,15 @@ function settings(){
 let previousHash=location.hash,allowNavigation=false;
 async function render(){
  const runId=++routeVersion;const [route,arg]=location.hash.slice(1).split('/');if($('#modal').open)$('#modal').close();
+ const operatorContext=()=>({api,shell,bindForm,run,notify,go,dashboard,isCurrent:()=>runId===routeVersion,
+   setDirty:value=>{dirty=value;},completeAccess:data=>{dashboard=data;dirty=false;history.replaceState(null,'',location.pathname+location.search+'#home');previousHash=location.hash;render();}});
  try{
   if(route==='p'){await customer(arg);return;}
+  if(route==='access'){await accessPage(arg,operatorContext());return;}
   if(route==='login'||!route){login();return;}
   await loadDashboard();if(runId!==routeVersion)return;
+  if(['admin','business-new','business'].includes(route)){await operatorPage(route,arg,operatorContext());return;}
+  if(dashboard.role==='operator'&&!dashboard.company){if(route==='home'){await operatorPage('admin',null,operatorContext());return;}go('admin');return;}
   if(route==='home')home();else if(route==='passes')passes();else if(route==='activate')activate(arg);else if(route==='edit')await edit(arg);else if(route==='preview')await customer(arg,true);else if(route==='settings')settings();else if(route==='ready'){const p=await api('project',{id:arg});if(p.status!=='handed_over')throw Error('Bitte das Projekt zuerst übergeben.');handoverReady(p);}else throw Error('Diese Seite wurde nicht gefunden.');
   window.scrollTo(0,0);
  }catch(e){

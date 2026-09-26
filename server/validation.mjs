@@ -9,6 +9,8 @@ export function text(value,max=1000){
 }
 export function uuid(value){if(!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(value||''))fail();return value;}
 export function token(value){if(!/^[a-f0-9]{64}$/.test(value||''))fail('Dieser Schlüssel ist nicht gültig.');return value;}
+export function email(value){value=text(value,254).toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))fail('Bitte eine gültige E-Mail-Adresse eingeben.');return value;}
+export function newPassword(value){if(typeof value!=='string'||value.length<12||new TextEncoder().encode(value).length>72)fail('Bitte ein Passwort mit mindestens 12 Zeichen wählen. Sehr lange Passwörter bitte kürzen.');return value;}
 export function version(value){if(!Number.isInteger(value)||value<1)fail();return value;}
 export function url(value){value=text(value,1500);if(!value)return '';try{const u=new URL(value);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)fail();return u.href;}catch{fail('Bitte einen vollständigen http- oder https-Link eingeben.');}}
 function obj(value){if(!value||typeof value!=='object'||Array.isArray(value))fail();return value;}
@@ -52,6 +54,17 @@ export function additions(value){return list(value,30,v=>{
 });}
 export function validate(op,b){
   obj(b);
+  if(op==='access_info')return {token:token(b.token)};
+  if(op==='access_activate')return {token:token(b.token),email:b.email?email(b.email):'',password:newPassword(b.password)};
+  if(op==='operator_list')return {};
+  if(op==='operator_create')return {id:uuid(b.id),profile:company(b.profile)};
+  if(op==='operator_company')return {id:uuid(b.id)};
+  if(op==='operator_save')return {id:uuid(b.id),version:version(b.version),profile:company(b.profile)};
+  if(op==='operator_invite')return {id:uuid(b.id),email:email(b.email)};
+  if(op==='passes_add'){
+    if(!Number.isInteger(b.quantity)||b.quantity<1||b.quantity>100)fail('Bitte eine Anzahl zwischen 1 und 100 wählen.');
+    return {id:uuid(b.id),quantity:b.quantity};
+  }
   if(op==='scan')return {token:token(b.token)};
   if(op==='owner_save')return {token:token(b.token),key:token(b.key),version:version(b.version),additions:additions(b.additions)};
   if(op==='bootstrap')return {};
