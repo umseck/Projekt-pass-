@@ -1,66 +1,6 @@
--- Reviewed setup draft for a NEW, dedicated Supabase project only.
--- This is not an applied migration. All writes are atomic RPC transactions.
+-- Update existing installations; no project data is rewritten.
 begin;
-create schema if not exists pp_private;
-revoke all on schema pp_private from public, anon, authenticated;
-grant usage on schema pp_private to service_role;
-
-create table pp_private.companies (
- id uuid primary key default gen_random_uuid(),
- profile jsonb not null default '{}',
- version integer not null default 1
-);
-create table pp_private.members (
- user_id uuid primary key,
- company_id uuid not null references pp_private.companies(id) on delete cascade
-);
-create index on pp_private.members(company_id);
-create table pp_private.passes (
- id uuid primary key default gen_random_uuid(),
- company_id uuid not null references pp_private.companies(id),
- number integer not null check(number>=1),
- token text not null unique check(token ~ '^[a-f0-9]{64}$'),
- disabled boolean not null default false,
- unique(company_id,number)
-);
-create table pp_private.projects (
- id uuid primary key default gen_random_uuid(),
- pass_id uuid not null unique references pp_private.passes(id),
- company_id uuid not null references pp_private.companies(id),
- title text not null check(length(trim(title)) between 1 and 150),
- status text not null default 'draft' check(status in ('draft','handed_over')),
- content jsonb not null default '{}',
- internal jsonb not null default '{}',
- company_snapshot jsonb not null,
- version integer not null default 1,
- activated_at timestamptz not null default now(),
- handed_over_at timestamptz,
- updated_at timestamptz not null default now(),
- owner_key_hash text,
- owner_additions jsonb not null default '[]',
- owner_version integer not null default 1
-);
-create index on pp_private.projects(company_id);
-alter table pp_private.companies enable row level security;
-alter table pp_private.members enable row level security;
-alter table pp_private.passes enable row level security;
-alter table pp_private.projects enable row level security;
--- Explicit deny-all policies document the intended boundary and keep the
--- private schema closed even if table grants are changed accidentally later.
-create policy companies_no_direct_access on pp_private.companies
-  for all to anon, authenticated using (false) with check (false);
-create policy members_no_direct_access on pp_private.members
-  for all to anon, authenticated using (false) with check (false);
-create policy passes_no_direct_access on pp_private.passes
-  for all to anon, authenticated using (false) with check (false);
-create policy projects_no_direct_access on pp_private.projects
-  for all to anon, authenticated using (false) with check (false);
-revoke all on all tables in schema pp_private from public, anon, authenticated;
-grant select,insert,update,delete on all tables in schema pp_private to service_role;
-
--- Read projection: internal data and editing secrets never enter this object.
--- Invoker function, callable only by the trusted Pages server with service_role.
-create function pp_private.customer_view(p pp_private.projects, n integer) returns jsonb
+create or replace function pp_private.customer_view(p pp_private.projects, n integer) returns jsonb
 language sql stable security invoker set search_path = '' as $$
  select jsonb_build_object('id',p.id,'title',p.title,'pass_number',n,
  'activated_at',p.activated_at,'company',coalesce(
@@ -73,7 +13,7 @@ grant execute on function pp_private.customer_view(pp_private.projects,integer) 
 
 -- The browser has NO execute permission. actor comes from /auth/v1/user,
 -- never from a request body. No SECURITY DEFINER and no user metadata roles.
-create function public.pp_api(op text, actor uuid, args jsonb default '{}') returns jsonb
+create or replace function public.pp_api(op text, actor uuid, args jsonb default '{}') returns jsonb
 language plpgsql security invoker set search_path = '' as $$
 declare
  cid uuid; pass pp_private.passes; project pp_private.projects;

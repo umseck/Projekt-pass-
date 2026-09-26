@@ -360,6 +360,20 @@
           "sha256": "1d35122cdde4f1a907bf6f5a8b17dc9c701feac13beec75f925745235d062e2d"
         }
       ]
+    },
+    {
+      "id": "pci",
+      "name": "PCI",
+      "url": "https://www.pci-augsburg.eu/de",
+      "note": "Auswahl: Silcofug E, Silcoferm S, Carraferm und Seccoral 1K. Keine vollständige PCI-Produktliste.",
+      "documents": []
+    },
+    {
+      "id": "otto",
+      "name": "OTTO",
+      "url": "https://www.otto-chemie.de",
+      "note": "Auswahl: OTTOSEAL S 100, S 70, S 110, S 125 und S 80. Keine vollständige OTTO-Produktliste.",
+      "documents": []
     }
   ],
   "products": [
@@ -2116,6 +2130,223 @@
         }
       ],
       "note": "Lavasteinboden / Systemlinie. Genaue Artikelbezeichnungen, Aufbau und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "pci-silcofug-e",
+      "manufacturer_id": "pci",
+      "name": "Silcofug E",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
+      "note": "Der technische Download liefert beim Prüfen eine Webseite statt einer PDF. Die offizielle Produktseite bleibt abrufbar.",
+      "documents": [
+        {
+          "name": "Silcofug E – Produktinformation",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Silcofug E – Technisches Merkblatt",
+          "url": "https://www.pci-augsburg.eu/de/services/downloads/technische-merkblaetter",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "id": "pci-silcoferm-s",
+      "manufacturer_id": "pci",
+      "name": "Silcoferm S",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.pci-augsburg.eu/de/produkte/pci-silcoferm-s",
+      "note": "Der technische Download liefert beim Prüfen eine Webseite statt einer PDF. Die offizielle Produktseite bleibt abrufbar.",
+      "documents": [
+        {
+          "name": "Silcoferm S – Produktinformation",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-silcoferm-s",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Silcoferm S – Technisches Merkblatt",
+          "url": "https://www.pci-augsburg.eu/de/services/downloads/technische-merkblaetter",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "id": "pci-carraferm",
+      "manufacturer_id": "pci",
+      "name": "Carraferm",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.pci-augsburg.eu/de/produkte/pci-carraferm",
+      "note": "Der technische Download liefert beim Prüfen eine Webseite statt einer PDF. Die offizielle Produktseite bleibt abrufbar.",
+      "documents": [
+        {
+          "name": "Carraferm – Produktinformation",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-carraferm",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Carraferm – Technisches Merkblatt",
+          "url": "https://www.pci-augsburg.eu/de/services/downloads/technische-merkblaetter",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "id": "pci-seccoral-1k",
+      "manufacturer_id": "pci",
+      "name": "Seccoral 1K",
+      "kinds": [
+        "waterproofing"
+      ],
+      "source_url": "https://www.pci-augsburg.eu/de/produkte/pci-seccoral-1k",
+      "note": "Der technische Download liefert beim Prüfen eine Webseite statt einer PDF. Die offizielle Produktseite bleibt abrufbar.",
+      "documents": [
+        {
+          "name": "Seccoral 1K – Produktinformation",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-seccoral-1k",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Seccoral 1K – Technisches Merkblatt",
+          "url": "https://www.pci-augsburg.eu/de/services/downloads/technische-merkblaetter",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "id": "otto-s-100",
+      "manufacturer_id": "otto",
+      "name": "OTTOSEAL S 100",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.otto-chemie.de/bau/ottoseal-s-100",
+      "note": "Produktvariante, Untergrund und Eignung anhand des technischen Merkblatts prüfen.",
+      "documents": [
+        {
+          "name": "OTTOSEAL S 100 – Technisches Merkblatt",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-100.pdf?new=1",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "661a07acbe7dcddbc3d49b1c5ef994085812ec872d327f411f1960602d18f592"
+        }
+      ]
+    },
+    {
+      "id": "otto-s-70",
+      "manufacturer_id": "otto",
+      "name": "OTTOSEAL S 70",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.otto-chemie.de/bau/ottoseal-s-70",
+      "note": "Produktvariante, Untergrund und Eignung anhand des technischen Merkblatts prüfen.",
+      "documents": [
+        {
+          "name": "OTTOSEAL S 70 – Technisches Merkblatt",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-70.pdf?new=1",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "6adc126bb7ad96e23dc13390b314c6c740fc059337f2be52d9085280014edccf"
+        }
+      ]
+    },
+    {
+      "id": "otto-s-110",
+      "manufacturer_id": "otto",
+      "name": "OTTOSEAL S 110",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.otto-chemie.de/bau/ottoseal-s-110",
+      "note": "Produktvariante, Untergrund und Eignung anhand des technischen Merkblatts prüfen.",
+      "documents": [
+        {
+          "name": "OTTOSEAL S 110 – Technisches Merkblatt",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-110.pdf?new=1",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "549b15729e0ab6697a5c6b604d41b65c0b6fc1a7910260f7b27c99e2f2f57ea6"
+        }
+      ]
+    },
+    {
+      "id": "otto-s-125",
+      "manufacturer_id": "otto",
+      "name": "OTTOSEAL S 125",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.otto-chemie.de/bau/ottoseal-s-125",
+      "note": "Produktvariante, Untergrund und Eignung anhand des technischen Merkblatts prüfen.",
+      "documents": [
+        {
+          "name": "OTTOSEAL S 125 – Technisches Merkblatt",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-125.pdf?new=1",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "56e693b804222d46bea672fc487b53f868d1546116377efa44b018d666eab789"
+        }
+      ]
+    },
+    {
+      "id": "otto-s-80",
+      "manufacturer_id": "otto",
+      "name": "OTTOSEAL S 80",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://www.otto-chemie.de/bau/ottoseal-s-80",
+      "note": "Produktvariante, Untergrund und Eignung anhand des technischen Merkblatts prüfen.",
+      "documents": [
+        {
+          "name": "OTTOSEAL S 80 – Technisches Merkblatt",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-80.pdf?new=1",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "cd8202994c1625676f545dda73a140021d112b2726065dd281f43a907e6c5af0"
+        }
+      ]
     }
   ]
 }

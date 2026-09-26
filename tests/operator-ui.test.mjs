@@ -69,9 +69,14 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    const firstDocs=$('#documents').value;
    $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="lamurista-hardrock-pro"]').click();assert.equal($('#documents').value,firstDocs);
    $('[data-open-catalog="primer"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="murface-mf-primer-lf"]').click();assert.equal($('#primer-name').value,'MF Primer LF');assert.ok(!$('#documents').value.includes('sharepoint.com'));
+   assert.equal($('.project-steps [aria-current]').textContent,'2. Bauphase');
    input('#surface-system_type','MicroTec');input('#application_area','Wand und Boden');input('#substrate','Vorbereiteter Estrich');
    input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
+   $('#remember-standard').click();await wait(()=>$('#notice').textContent.startsWith('Standard gespeichert'));
+   const savedStandard=(await db.query('select profile from pp_private.companies')).rows[0].profile.standards.seamless;
+   assert.equal(savedStandard.surface.name,'HardRock Pro');assert.equal(savedStandard.surface.color,'');assert.equal(savedStandard.surface.batch,'');assert.equal(savedStandard.photos,undefined);assert.ok(savedStandard.documents.length>0);
    $('#preview').click();await wait(()=>$('#handover'));
+   assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
    $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));
    $('#handover').click();await wait(()=>$('#copy-link'));

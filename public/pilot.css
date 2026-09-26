@@ -9,3 +9,5 @@
 .catalog-card{border:1px solid var(--line,#deded4);border-radius:16px;padding:20px;margin:16px 0;overflow-wrap:anywhere}.catalog-card h3{margin:8px 0}.catalog-docs{padding-left:20px}.catalog-docs li{margin:10px 0}.catalog-docs .small{display:block}.catalog-source{margin:10px 0}.catalog-source summary{cursor:pointer}.top-right{flex-wrap:wrap}#catalog-picker{max-height:70vh;overflow:auto;padding:2px}#catalog-message{color:#8b3028}
 
 .top{height:auto;min-height:94px;padding-block:16px}@media(max-width:600px){.top{flex-direction:column;align-items:flex-start}.top-right{justify-content:flex-start;width:100%}}
+
+.project-steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:18px 0;color:#777;font-size:13px}.project-steps li{padding:8px 10px;border-radius:8px;background:#f3f2ec}.project-steps [aria-current]{background:#435229;color:white}.material-summary{font-size:18px;margin:6px 0 14px}.material-edit summary{cursor:pointer;font-weight:600}.standard-save{padding:16px 0}.material-card h2{margin-bottom:4px}

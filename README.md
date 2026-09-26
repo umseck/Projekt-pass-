@@ -148,3 +148,7 @@ Aktuelle Primärquellen für die Umsetzung:
 - https://github.com/supabase/auth/blob/master/openapi.yaml
 - https://developers.cloudflare.com/pages/functions/bindings/
 - https://developers.cloudflare.com/pages/configuration/headers/
+
+### Einfache Projektführung
+
+Die Oberfläche führt durch **Aktivieren → Bauphase → Übergabe**. Im Projekt kann der Betrieb die Materialauswahl für neue Projekte speichern; Farbe, Charge, Etiketten und Projektdaten bleiben individuell. Abweichungen sind über „Produkt ändern“ möglich. Bei bestehenden Installationen aktualisiert `database/standards.sql` die beiden RPC-Funktionen, ohne Projektdaten zu ändern. Neue Installationen verwenden wie bisher `database/schema.sql` und `database/operator.sql`.

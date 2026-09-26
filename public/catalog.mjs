@@ -43,6 +43,6 @@ export async function openCatalogPicker(kind,{modal,onPick,isCurrent=()=>true}){
 }
 export async function catalogPage({shell,isCurrent=()=>true}){
  const c=await loadCatalog();if(!isCurrent())return;
- shell(`<section class="admin-title"><span class="eyebrow">Fugenlose Oberflächen</span><h1>Produkte & Unterlagen.</h1><p class="intro">Im Projekt können Sie Produkte auswählen und die zugeordneten Herstellerunterlagen übernehmen.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
+ shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Im Projekt können Sie Produkte auswählen und die zugeordneten Herstellerunterlagen übernehmen.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
  bindCatalog(document.querySelector('#catalog-browser'),c);
 }

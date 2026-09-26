@@ -12,6 +12,8 @@ Verarbeitungsrezepte, Leistungsversprechen oder Freigaben für Mischsysteme.
 | Murface | 38 | https://murface.com/technische-merkblaetter/ | Produktnamen, Kategorien und deutsche Dokumentzuordnung aus der offiziellen Seite. SharePoint-Dateien hier nicht abrufbar; Dokumentinhalt und Revision nicht bestätigt. |
 | ArtStucco | 1 | https://artstucco.de/produktauswahl/boden/ | Belegte Systemlinie Lava. Der Anbieter beschreibt sich als Pava-Partner. Keine unbelegte Gleichsetzung mit anderen Art-Stucco-Marken oder dem gesamten Pava-Sortiment. Artikel und technische Blätter fehlen. |
 | EPI | 8 | https://epifloors.com/de/unsere-boden/ | Quartz R, Corestone Nature und sechs Superbase-Varianten. Öffentliche Produktinformationen und Pflegehinweise; technische Komponentenblätter noch nicht vollständig verfügbar. Industrie- und Sportbodenprogramme gehören nicht zu diesem Wohn-/Badkatalog. |
+| PCI | 4 | https://www.pci-augsburg.eu/de/produkte/dichten-und-kleben/silikon | Silcofug E, Silcoferm S, Carraferm sowie Seccoral 1K. Produktseiten geprüft; technische Downloadlinks liefern hier HTML statt PDF, deshalb als ungeprüft markiert und nicht automatisch übernommen. |
+| OTTO | 5 | https://www.otto-chemie.de/ottoseal-dichtstoffe | OTTOSEAL S 100, S 70, S 110, S 125, S 80; fünf deutsche technische PDFs abgerufen und Produktnamen im Inhalt geprüft. |
 
 Weitere offizielle Dokumentquellen:
 
@@ -49,3 +51,7 @@ Für vollständige EPI-/ArtStucco-Komponentensätze werden eindeutig bezeichnete
 Hersteller-/Partnerunterlagen benötigt. Bei Murface ist ein gesonderter Zugriffstest
 der veröffentlichten SharePoint-Links nötig. Keine Dokumentzuordnung allein anhand
 ähnlicher Produktnamen vornehmen und keine geschützten Portale umgehen.
+
+## Betriebsstandard und Phasen
+
+Aktivieren → Bauphase → Übergabe. Produkte bleiben im Projekt austauschbar. „Für weitere Projekte merken“ speichert zuerst das Projekt und danach den Betriebsstandard mit Versionsprüfung. Übernommen werden Materialidentität und nur bereits ausgewählte, passende, geprüfte Katalogunterlagen. Keine Projektfotos, Etiketten, Chargen, Farben, Kundendaten oder privaten Dokumente. Standards sind je Gewerk getrennt, in der Kundenansicht ausgeblendet und werden bei Aktivierung atomar in neue Projekte kopiert. Wiederholte Aktivierung und spätere Standardänderungen verändern vorhandene Projekte nicht.
