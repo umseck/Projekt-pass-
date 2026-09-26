@@ -6,7 +6,7 @@ export const hasProduct=p=>p&&['manufacturer','name','color','format','article_n
 export const labelPhoto=p=>/^data:image\/(?:jpeg|png);base64,[A-Za-z0-9+/]+={0,2}$/.test(p||'')?p:'';
 export function fields(form){return Object.fromEntries(new FormData(form));}
 export function field(label,name,value='',type='text',extra=''){return `<div class="field"><label for="${esc(name)}">${esc(label)}</label><input id="${esc(name)}" name="${esc(name)}" value="${esc(value)}" type="${type}" ${extra}></div>`;}
-export function area(label,name,value='',extra=''){return `<div class="field"><label for="${esc(name)}">${esc(label)}</label><textarea id="${esc(name)}" name="${esc(name)}" maxlength="1000" ${extra}>${esc(value)}</textarea></div>`;}
+export function area(label,name,value='',extra='',max=1000){return `<div class="field"><label for="${esc(name)}">${esc(label)}</label><textarea id="${esc(name)}" name="${esc(name)}" maxlength="${max}" ${extra}>${esc(value)}</textarea></div>`;}
 export function compress(file){return new Promise((resolve,reject)=>{
  if(!file?.type.startsWith('image/')||file.size>25000000)return reject(Error('Bitte ein Bild bis 25 MB wählen.'));
  const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{

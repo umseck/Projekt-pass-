@@ -26,7 +26,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
  });
  const win=new Window({url:origin+'/#login'});win.document.body.innerHTML='<div id="app"></div><dialog id="modal"></dialog><div id="notice"></div>';
  globalThis.window=win;globalThis.document=win.document;globalThis.location=win.location;globalThis.history=win.history;globalThis.FormData=win.FormData;globalThis.confirm=()=>true;
- let cookie='';globalThis.fetch=async(path,opts)=>{const r=await handle(new Request(origin+path,{...opts,headers:{...opts.headers,origin,cookie}}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'test_secret',SUPABASE_PUBLISHABLE_KEY:'test_public'});if(r.headers.has('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];return r;};
+ let cookie='';globalThis.fetch=async(path,opts)=>{if(path==='/catalog.json')return json(JSON.parse(await readFile(new URL('../public/catalog.json',import.meta.url),'utf8')));const r=await handle(new Request(origin+path,{...opts,headers:{...opts.headers,origin,cookie}}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'test_secret',SUPABASE_PUBLISHABLE_KEY:'test_public'});if(r.headers.has('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];return r;};
  const $=s=>win.document.querySelector(s),input=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new win.Event('input',{bubbles:true}));},submit=s=>$(s).dispatchEvent(new win.Event('submit',{bubbles:true,cancelable:true}));
  try{
    await import('../public/app.mjs?operator-integration');await wait(()=>$('#login'));
@@ -61,7 +61,15 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    const pass=(await db.query('select id,token from pp_private.passes where number=120')).rows[0];
    win.location.hash='activate/'+pass.id;await wait(()=>$('#activate'));input('#title','Fugenloses Testbad');submit('#activate');await wait(()=>$('#edit'));
    assert.equal($('#tile-name'),null);assert.ok($('#surface-name'));assert.equal($('#care-surface').value,'Nur freigegebene Pflegemittel verwenden.');
-   $('[data-favorite="surface:0"]').click();input('#surface-system_type','Mikrozement');input('#application_area','Wand und Boden');input('#substrate','Vorbereiteter Estrich');
+   $('[data-favorite="surface:0"]').click();
+   $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));
+   input('#catalog-manufacturer','lamurista');$('#catalog-manufacturer').dispatchEvent(new win.Event('change'));input('#catalog-query','HardRock');
+   assert.equal(win.document.querySelectorAll('[data-catalog-pick]').length,2);
+   $('[data-catalog-pick="lamurista-hardrock-pro"]').click();assert.equal($('#modal').open,false);assert.equal($('#surface-manufacturer').value,'Lamurista');assert.equal($('#surface-name').value,'HardRock Pro');assert.ok($('#documents').value.includes('HardrockPRO_TM.pdf'));
+   const firstDocs=$('#documents').value;
+   $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="lamurista-hardrock-pro"]').click();assert.equal($('#documents').value,firstDocs);
+   $('[data-open-catalog="primer"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="murface-mf-primer-lf"]').click();assert.equal($('#primer-name').value,'MF Primer LF');assert.ok(!$('#documents').value.includes('sharepoint.com'));
+   input('#surface-system_type','MicroTec');input('#application_area','Wand und Boden');input('#substrate','Vorbereiteter Estrich');
    input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
    $('#preview').click();await wait(()=>$('#handover'));
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
@@ -69,11 +77,11 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('#handover').click();await wait(()=>$('#copy-link'));
    // Changing the business default only affects future projects.
    win.location.hash='settings';await wait(()=>$('#settings'));input('#trade','tile');submit('#settings');await wait(()=>$('#search'));
-   input('#search','Mikrozement');assert.ok($('#projects').textContent.includes('Fugenloses Testbad'));
+   input('#search','HardRock');assert.ok($('#projects').textContent.includes('Fugenloses Testbad'));
    win.location.hash='p/'+pass.token;await wait(()=>$('#owner-edit'));
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok($('#panel-tiles').textContent.includes('Vorbereiteter Estrich'));
    const project=(await db.query('select id,version,content from pp_private.projects')).rows[0];
-   assert.equal(project.content.trade,'seamless');assert.equal(project.content.surface.manufacturer,'Testhersteller');
+   assert.equal(project.content.trade,'seamless');assert.equal(project.content.surface.manufacturer,'Lamurista');
    const forged=await globalThis.fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:project.id,version:project.version,title:'Fugenloses Testbad',content:{...project.content,trade:'tile'},internal:{}})});
    assert.equal(forged.status,200);assert.equal((await forged.json()).content.trade,'seamless');
    win.location.hash='admin';await wait(()=>$('[role=alert]'));

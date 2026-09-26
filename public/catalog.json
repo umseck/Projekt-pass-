@@ -1,0 +1,2121 @@
+{
+  "version": 1,
+  "checked_at": "2026-09-26",
+  "scope": "Öffentlich belegte Fugenlos-Produkte und Systemlinien; Lücken je Anbieter gekennzeichnet. Herstellerdokumente werden verlinkt, nicht als eigene Kopie gehostet.",
+  "manufacturers": [
+    {
+      "id": "lamurista",
+      "name": "Lamurista",
+      "url": "https://lamurista.de/",
+      "note": "Öffentlich gelistete technische Merkblätter erfasst. Produktvariante und Dokumentstand vor Verwendung prüfen. Keine automatische Freigabe für einen Systemaufbau.",
+      "documents": [
+        {
+          "name": "Technische Merkblätter & Medien",
+          "url": "https://lamurista.de/medien-bereich/",
+          "type": "Downloadbereich",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Aufbausystem HardRock PRO und ULTRA",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Aufbausystem-HardRock-PRO-und-ULTRA.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "1ed307332d68333e3a4ec8a64a2494f96d224e212ae082b10ae35f8d4c3fc8f0"
+        },
+        {
+          "name": "Reinigungsanleitung Clean & Care",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Clean-Clear-01-25_WEB.pdf",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "9d2274ec219597bf333fe1723bc9329f76eecc558ade0dc8abf8ea98d8797521"
+        },
+        {
+          "name": "Lamurista Handbuch HardRock PRO",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-Handbuch-HardRock-PRO.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "985bd58630120dcb4d76738486475fb26e5471b65d02ec0f5063de3030835490"
+        },
+        {
+          "name": "Lamurista HardRock Book",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-HardRock-Book.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "354de837929126e309e3cba2ec72cc984a7d085b648b1f29095710afb146bd65"
+        },
+        {
+          "name": "Lamurista Handbuch HardRock ULTRA",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-Handbuch-HardRock-ULTRA.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "ba6c49a16e3fa5990917c8b0ac5ec346980999f6cde6906fb4d891d690ade825"
+        },
+        {
+          "name": "Lamurista Oberflächen-Kollektion",
+          "url": "https://lamurista.de/wp-content/uploads/2026/06/Lamurista-Oberflaechen-Kollektion_WEB.pdf.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "80445a30636b477913f97b041445fbf038a3c5f0909f02b4b70470098ecc976e"
+        },
+        {
+          "name": "HardRock Infoflyer WEB",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/HardRock_Infoflyer_WEB.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "a7d572be5013f987cbb32a78791f697933a2f7de788f3e9db67cc214e387e13e"
+        },
+        {
+          "name": "Lamurista Hardrock PRO StepbyStep Flyer",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-Hardrock-PRO-StepbyStepFlyer.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "659a54e28a80c851d10950613377d63a5755440535f37ecf8fd959a71d46a14b"
+        },
+        {
+          "name": "AN HardRockPro Bodenfläche",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/AN_HardRockPro_Bodenflaeche.pdf",
+          "type": "Angebotsvorlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "76cd5a56689fad044ab7e401e7236a98cf0b3a51870e729762a6ea140b41d1b2"
+        },
+        {
+          "name": "AN HardRockPro Wandflächen",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/AN_HardRockPro_Wandflaechen.pdf",
+          "type": "Angebotsvorlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "c13395fdb0779610c671f5071b01fbef691d52aa36bb8287c117ceeb0c66d8ec"
+        },
+        {
+          "name": "Lamurista HardRock Ultra Infokarte",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-HardRock-Ultra-Infokarte.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "55786d8690b4432ce91579b242d84a56ceb06a6ea48d921340f06e07eed16859"
+        },
+        {
+          "name": "Lamurista Hardrock Ultra StepbyStepFlyer",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-Hardrock-Ultra-StepbyStepFlyer.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "1862e10e0bc2c7404cc82ae4f7d14e3e684dc90aaf94ab3fdee4c6e8b9dbf7ca"
+        },
+        {
+          "name": "HardRock Infoflyer WEB",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/HardRock_Infoflyer_WEB-1.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "a7d572be5013f987cbb32a78791f697933a2f7de788f3e9db67cc214e387e13e"
+        },
+        {
+          "name": "Hardrock PRO Flyer",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Hardrock-PRO-Flyer_180324_Freigabe_WEB.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "659a54e28a80c851d10950613377d63a5755440535f37ecf8fd959a71d46a14b"
+        },
+        {
+          "name": "Hardrock Ultra StepbyStep WEB",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Hardrock-Ultra-StepbyStep-WEB.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "1862e10e0bc2c7404cc82ae4f7d14e3e684dc90aaf94ab3fdee4c6e8b9dbf7ca"
+        },
+        {
+          "name": "Hardrock Ultra StepbyStep WEB",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Hardrock-Ultra-StepbyStep-WEB-1.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "1862e10e0bc2c7404cc82ae4f7d14e3e684dc90aaf94ab3fdee4c6e8b9dbf7ca"
+        },
+        {
+          "name": "Lamurista HardRock Wasserdichtigkeit Annex A",
+          "url": "https://lamurista.de/wp-content/uploads/2026/04/Lamurista-HardRock-Ultra-Wasserdichtigkeit-Annex-A.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "b6f57e6b86382428798da37681c3b15f0705a746c78e3cb981ebfa1a9cafecca"
+        },
+        {
+          "name": "2024 Prüfzeugnis 1 HardRock Ultra Wasserdichtheit Annex F",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/2024_Pruefzeugnis_1_HardRock_Ultra_Wasserdichtheit-Annex-F.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "01224cd7315c7bfaf475a4c5e1ddd4d8ddc334b6fb6233b474d46eb8f309cba4"
+        },
+        {
+          "name": "2024 Prüfzeugnis 2 HardRock Durchstanzung",
+          "url": "https://lamurista.de/wp-content/uploads/2026/04/Lamurista-HardRock-Ultra-Durchstanzung.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "7a2f0e27bae0b68732edf7766ac8c2f4e19637006e8788109516b74710b6deb7"
+        },
+        {
+          "name": "2024 Prüfzeugnis 3 HardRock Ultra Haftzugfestigkeit",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/2024_Pruefzeugnis_3_HardRock_Ultra_Haftzugfestigkeit.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "2e1f3aef5794239e73156e7cd1d210830157b357b4b0b3e198e15abe59ead1c5"
+        },
+        {
+          "name": "Lamurista HardRock Kratzfestigkeit",
+          "url": "https://lamurista.de/wp-content/uploads/2026/04/Lamurista-HardRock-Ultra-Kratzfestigkeit.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "97afa784f5b62ff3afa2c528e4ecf210d1e127b4cee22e996b5cc448580e0ba7"
+        },
+        {
+          "name": "Lamurista HardrockPRO Rutschzertifizierung",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_HardrockPRO_Rutschzertifizierung.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "b4cebf002851942f8b48c46692dc429df9639e619346a866968279e42fdf897d"
+        },
+        {
+          "name": "Zerifikate KIWA HardRock Ultra",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Zerifikate-KIWA-HardRock-Ultra.pdf",
+          "type": "Prüfbericht / Zertifikat",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "9a398a9f2dc6f4bbb7616163f30465dda2983b3e1522c6019bea2ca2a7e494b6"
+        }
+      ]
+    },
+    {
+      "id": "murface",
+      "name": "Murface",
+      "url": "https://murface.com/de/",
+      "note": "38 Produkte aus dem offiziellen Merkblattverzeichnis. Die verlinkten SharePoint-Dateien konnten hier nicht abgerufen werden. Diese Links sind gekennzeichnet und werden nicht automatisch in Projekte übernommen.",
+      "documents": [
+        {
+          "name": "Technische Merkblätter",
+          "url": "https://murface.com/technische-merkblaetter/",
+          "type": "Downloadbereich",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Downloads & Sicherheitsdatenblätter",
+          "url": "https://murface.com/de/downloads/",
+          "type": "Downloadbereich",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Portfolio 2024",
+          "url": "https://murface.cdn.prismic.io/murface/ZmbZNJm069VX1mAc_Portfolio_Broschuere_WEB.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "bb9addfc9422d34af5a27c38cfd33de55950cab495c558e7a0fbb7caefa72e86"
+        },
+        {
+          "name": "Murface Imagebroschüre 2025",
+          "url": "https://murface.com/wp-content/uploads/2025/12/DE_WEB_Eimerweise-Freiheit_V250918.pdf",
+          "type": "Broschüre",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "59d81c214dd879261aee51452be787e817ff4e0f15f6b34a1bda7cf15a758ef4"
+        },
+        {
+          "name": "Pflegehinweise – Broschüre",
+          "url": "https://murface.cdn.prismic.io/murface/ZrIqSkaF0TcGIuSa_240806_Pflegehinweise_A4.pdf",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "f6c1e8d0f3e7aab8acb2476837d0a7f56c1588e5bd72186590b2a3bcd8c3165e"
+        }
+      ]
+    },
+    {
+      "id": "artstucco",
+      "name": "ArtStucco",
+      "url": "https://artstucco.de/",
+      "note": "ArtStucco bezeichnet sich als Anbieter von Pava-Produkten. Öffentlich ist die Linie Lava belegt; vollständige Artikel- und technische Datenblätter fehlen noch. Keine Gleichsetzung mit anderen ähnlich benannten Anbietern.",
+      "documents": [
+        {
+          "name": "Offizielle Produktauswahl",
+          "url": "https://artstucco.de/produktauswahl/",
+          "type": "Produktübersicht",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "id": "epi",
+      "name": "EPI",
+      "url": "https://epifloors.com/de/",
+      "note": "Wohn- und Designoberflächen erfasst. Produktseiten und Pflegehinweise sind öffentlich; genaue Komponenten, technische Merkblätter und Sicherheitsdatenblätter sind noch zu ergänzen. Broschüren ersetzen keine technischen Merkblätter.",
+      "documents": [
+        {
+          "name": "Öffentliche Broschüren",
+          "url": "https://zakelijk.epifloors.com/brochures/",
+          "type": "Downloadbereich",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Kundenportal – Anmeldung erforderlich",
+          "url": "https://customerportal.epigroup.nl/login",
+          "type": "Kundenportal",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "Corestone Nature – Broschüre",
+          "url": "https://zakelijk.epifloors.com/wp-content/uploads/2025/07/EPI-Corestone-Nature-EN_Web.pdf",
+          "type": "Broschüre",
+          "language": "en",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "2ef7556f70b27e995a1fa349be7e2ab1d36e20a055aaff61d314e93eedc03513"
+        },
+        {
+          "name": "Superbase – Broschüre",
+          "url": "https://zakelijk.epifloors.com/wp-content/uploads/2025/07/EPI-Superbase-A4-Weblow-res.pdf",
+          "type": "Broschüre",
+          "language": "en",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "2764beb5cb1607931303d069a32200634cfa92a8f56fd7adb73963833533da55"
+        },
+        {
+          "name": "Gusto & Rocca – Broschüre",
+          "url": "https://zakelijk.epifloors.com/wp-content/uploads/2025/07/EPI-Gusto-Rocca-EN_A4-1.pdf",
+          "type": "Broschüre",
+          "language": "en",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "e1baf677e2be1e3b0a46815e023433dca12e2d11f879c7133678c22d4410a654"
+        },
+        {
+          "name": "EPI Farbkollektion",
+          "url": "https://epifloors.com/wp-content/uploads/2022/10/EPI_Kleurenbrochure_A4.pdf",
+          "type": "Broschüre",
+          "language": "nl",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "1d35122cdde4f1a907bf6f5a8b17dc9c701feac13beec75f925745235d062e2d"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "lamurista-tiefgrund",
+      "manufacturer_id": "lamurista",
+      "name": "Tiefgrund",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/29",
+      "documents": [
+        {
+          "name": "Lamurista Tiefgrund",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Tiefgrund_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "204db160478c192867e7841f07d16aed56c220017c0b87153d1f68eb3cf033f9"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-prime",
+      "manufacturer_id": "lamurista",
+      "name": "Prime",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/22",
+      "documents": [
+        {
+          "name": "Lamurista Prime",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Prime_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "f734b1248fdf6863aec47e9ace0f5ab1a301030169e9c05f408b2add28ba44bc"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-isogrund",
+      "manufacturer_id": "lamurista",
+      "name": "Isogrund",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/75",
+      "documents": [
+        {
+          "name": "Lamurista Isogrund",
+          "url": "https://lamurista.de/wp-content/uploads/2026/08/Lamurista_Isogrund_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "164a8cb43b998fb2a48fd05ac5b5961c78e11da2e66291dbb972562367398af9"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-gewebe",
+      "manufacturer_id": "lamurista",
+      "name": "Gewebe",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/14",
+      "documents": [
+        {
+          "name": "Lamurista Gewebe",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Gewebe_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "23a839b78cbb26f8b3e0612cc3eae09623fb0ab14307f31c1a16f0f1088be5e7"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-prewall",
+      "manufacturer_id": "lamurista",
+      "name": "preWall",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/21",
+      "documents": [
+        {
+          "name": "Lamurista preWall",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_preWall_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "e97032db3f55eea1d5d82039117c5047fa9c18b8929c68a72c0f5f63b104234d"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-prefloor-ausgleichsmasse",
+      "manufacturer_id": "lamurista",
+      "name": "preFloor Ausgleichsmasse",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/20",
+      "documents": [
+        {
+          "name": "Lamurista preFloor Ausgleichsmasse",
+          "url": "https://lamurista.de/wp-content/uploads/2026/06/Lamurista_preFloor_Ausgleichsmasse_TM-Neu.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "fdfad794f59c7a7dd526063ab0cd8b0f757c2ffd56c5f13721640f54ed1fca51"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-hardrock-pro",
+      "manufacturer_id": "lamurista",
+      "name": "HardRock Pro",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/18",
+      "documents": [
+        {
+          "name": "Lamurista HardRock Pro",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/Lamurista_HardrockPRO_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "b058fc8696639d36886d432631577158a214d5b4147c75ce2f660d435277ebc6"
+        },
+        {
+          "name": "Reinigungsanleitung Clean & Care",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Clean-Clear-01-25_WEB.pdf",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "9d2274ec219597bf333fe1723bc9329f76eecc558ade0dc8abf8ea98d8797521"
+        },
+        {
+          "name": "Lamurista Handbuch HardRock PRO",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-Handbuch-HardRock-PRO.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "985bd58630120dcb4d76738486475fb26e5471b65d02ec0f5063de3030835490"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-hardrock-ultra",
+      "manufacturer_id": "lamurista",
+      "name": "HardRock Ultra",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/17",
+      "documents": [
+        {
+          "name": "Lamurista HardRock Ultra",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/Lamurista_HardrockULTRA_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "9157c0a7da74294aa3b8e4a76e70b1e81e21694bcca9a20e66079663d0a3431e"
+        },
+        {
+          "name": "Reinigungsanleitung Clean & Care",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Clean-Clear-01-25_WEB.pdf",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "9d2274ec219597bf333fe1723bc9329f76eecc558ade0dc8abf8ea98d8797521"
+        },
+        {
+          "name": "Lamurista Handbuch HardRock ULTRA",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista-Handbuch-HardRock-ULTRA.pdf",
+          "type": "System- / Verarbeitungsunterlage",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "ba6c49a16e3fa5990917c8b0ac5ec346980999f6cde6906fb4d891d690ade825"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-goodlack-wb",
+      "manufacturer_id": "lamurista",
+      "name": "GoodLack wb",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/16",
+      "documents": [
+        {
+          "name": "Lamurista GoodLack wb",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Lamurista_GoodLack_wb_TM-Neu.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "25ec700220d0dda112e7dcda1260afa959acd2754dd0f7e443c491c155db2865"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-goodlack-lmh",
+      "manufacturer_id": "lamurista",
+      "name": "GoodLack lmh",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/15",
+      "documents": [
+        {
+          "name": "Lamurista GoodLack lmh",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_GoodLack_lmh_TM-1.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "834f718267e809beb1985b883636574f769202ca5516c7f6917ab0b04fb1d8a6"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-silicon",
+      "manufacturer_id": "lamurista",
+      "name": "Silicon",
+      "kinds": [
+        "silicone"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/25",
+      "documents": [
+        {
+          "name": "Lamurista Silicon",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Silicon_TM-1.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "37b5d15aa2d86684db661096e127009d77ecc5947b9b99f9d696fff2484ed271"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-clean",
+      "manufacturer_id": "lamurista",
+      "name": "Clean",
+      "kinds": [
+        "care"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/8",
+      "documents": [
+        {
+          "name": "Lamurista Clean",
+          "url": "https://lamurista.de/wp-content/uploads/2026/03/Lamurista-Clean-Spezialreiniger-TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "bde651924307815694aca231e5755cbcbb667f71505543408ae1c5201ce629ca"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-care",
+      "manufacturer_id": "lamurista",
+      "name": "Care",
+      "kinds": [
+        "care"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/7",
+      "documents": [
+        {
+          "name": "Lamurista Care",
+          "url": "https://lamurista.de/wp-content/uploads/2026/03/Lamurista-Care-Pflegemittel-TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "fa19d3afee6b978ef91c09a209f7a4fbf02d1d8598de5ee38b73a4f266b72ca9"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-tantum",
+      "manufacturer_id": "lamurista",
+      "name": "Tantum",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/27",
+      "documents": [
+        {
+          "name": "Lamurista Tantum",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Lamurista_Tantum_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "3860b0b9873782f863ad5c14ff4e5743d4d1a9b1b1ca68864f2ee98d47eb2713"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-terra-nuovo",
+      "manufacturer_id": "lamurista",
+      "name": "Terra Nuovo",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/28",
+      "documents": [
+        {
+          "name": "Lamurista Terra Nuovo",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_TerraNuovo_TM-1.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "22a2b746331d39a813fcf570e6b2dc52b2fb6c4b6dfc192090cb385b01d17b28"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-seal",
+      "manufacturer_id": "lamurista",
+      "name": "Seal",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/24",
+      "documents": [
+        {
+          "name": "Lamurista Seal",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Seal_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "f40b9537f6204c5634e197942c076937a5cfc0b3587d436c964ae9457e32ac1b"
+        }
+      ],
+      "note": "Porenfüller / Grundierung vor der Versiegelung; keine Abdichtung."
+    },
+    {
+      "id": "lamurista-concreto",
+      "manufacturer_id": "lamurista",
+      "name": "Concreto",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/9",
+      "documents": [
+        {
+          "name": "Lamurista Concreto",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Concreto_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "fdd5dc235413654f8dde32d11e8d098425a89a387aa1b214615e47cbf7d34b12"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-concreto-hydro",
+      "manufacturer_id": "lamurista",
+      "name": "Concreto Hydro",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/81",
+      "documents": [
+        {
+          "name": "Lamurista Concreto Hydro",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/Lamurista_Hydro_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "647ea1849e7b40d5651c92c00dd2d45f03d24d77fdb54ab76062e332edbc0c8f"
+        }
+      ],
+      "note": "Oberflächenbehandlung; keine pauschale Eignung als Nassraumabdichtung."
+    },
+    {
+      "id": "lamurista-stone",
+      "manufacturer_id": "lamurista",
+      "name": "Stone",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/71",
+      "documents": [
+        {
+          "name": "Lamurista Stone",
+          "url": "https://lamurista.de/wp-content/uploads/2025/01/Lamurista_Stone_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "7a52c063b6f9683ce99733b3a99cc6839ebe63fe463e67d96ed993e7aaea0db7"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-impragnierung",
+      "manufacturer_id": "lamurista",
+      "name": "Imprägnierung",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/19",
+      "documents": [
+        {
+          "name": "Lamurista Imprägnierung",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Impraegnierung_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "ef7d6b5d9696d0e8ae297a6160920525c8ab0ca853c8b5bc68814a2dcb182048"
+        }
+      ],
+      "note": "Oberflächenbehandlung; keine pauschale Eignung als Nassraumabdichtung."
+    },
+    {
+      "id": "lamurista-sapone-di-calce",
+      "manufacturer_id": "lamurista",
+      "name": "Sapone di Calce",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/23",
+      "documents": [
+        {
+          "name": "Lamurista Sapone di Calce",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_SaponediCalce_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "873374bf879d051946b8cdce4b6a097da757b0dd0681b90c00de6854c60ecc4e"
+        }
+      ],
+      "note": "Oberflächenbehandlung; keine pauschale Eignung als Nassraumabdichtung."
+    },
+    {
+      "id": "lamurista-deko-crema",
+      "manufacturer_id": "lamurista",
+      "name": "Deko Crema",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/10",
+      "documents": [
+        {
+          "name": "Lamurista Deko Crema",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_DekoCrema_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "15f1f8df5e2be8ff4295e949c27fcec92f19ddb640b2ab95f40272c17f5165c1"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-effetto",
+      "manufacturer_id": "lamurista",
+      "name": "Effetto",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/12",
+      "documents": [
+        {
+          "name": "Lamurista Effetto",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Effetto_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "f1c3455e12fc6269565a4b20859bd9497bdd2438a6c7257815c3ec790afb497d"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-balsamo",
+      "manufacturer_id": "lamurista",
+      "name": "Balsamo",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/6",
+      "documents": [
+        {
+          "name": "Lamurista Balsamo",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Balsamo_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "f356c842bb309803749f2192b86389af6baba33adb7ca6ef8afed177a0854ad6"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-diamante",
+      "manufacturer_id": "lamurista",
+      "name": "Diamante",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/11",
+      "documents": [
+        {
+          "name": "Lamurista Diamante",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Diamante_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "a20ba8d6acc73ef44fb2f9884f5a0b083736122ecd9697771190c49417a33901"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-arugo",
+      "manufacturer_id": "lamurista",
+      "name": "Arugo",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/5",
+      "documents": [
+        {
+          "name": "Lamurista Arugo",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Arugo_TM-1.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "69711b1bcd0cbf38c6e44609df48cf5b4340ce611a7cef4fac47aa334035d10a"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-structure",
+      "manufacturer_id": "lamurista",
+      "name": "Structure",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/26",
+      "documents": [
+        {
+          "name": "Lamurista Structure",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Structure_TM-1.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "add257dce1a29835c44352505723d3cec6c4cafb9d528a6631ef754e70ee29f0"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-fisso",
+      "manufacturer_id": "lamurista",
+      "name": "Fisso",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/13",
+      "documents": [
+        {
+          "name": "Lamurista Fisso",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Fisso_TM-1.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "aeff671890ebd9c0fe8bf5bf70947322156e77df4fea05a7be214907fd980a55"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-lucido",
+      "manufacturer_id": "lamurista",
+      "name": "Lucido",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/76",
+      "documents": [
+        {
+          "name": "Lamurista Lucido",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/Lamurista_Lucido_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "a61e052f4483115cddeef072beb630d7e59b924bd93017aa33eb0717a8b6f6db"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-wax",
+      "manufacturer_id": "lamurista",
+      "name": "Wax",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/30",
+      "documents": [
+        {
+          "name": "Lamurista Wax",
+          "url": "https://lamurista.de/wp-content/uploads/2024/05/Lamurista_Wax_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "8150848919014e1c29f8e8776c32692812d8a4d37faa91462e4cd13ab3acab83"
+        }
+      ],
+      "note": "Oberflächenbehandlung; keine pauschale Eignung als Nassraumabdichtung."
+    },
+    {
+      "id": "lamurista-muravella-in",
+      "manufacturer_id": "lamurista",
+      "name": "Muravella IN",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/77",
+      "documents": [
+        {
+          "name": "Lamurista Muravella IN",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/TM_Lamurista_Muravella_IN.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "512ba2cea427b6ab822115f34f4705507be7a82cdc9df6a33026b69f9d8d1fcf"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-muravella-wet",
+      "manufacturer_id": "lamurista",
+      "name": "Muravella WET",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/78",
+      "documents": [
+        {
+          "name": "Lamurista Muravella WET",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/TM_Lamurista_Muravella_WET.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "3a88b2b00161e9f49036504813d2bf784b162d229e701906a81131143a7aafd0"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-element-one",
+      "manufacturer_id": "lamurista",
+      "name": "Element:one",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/79",
+      "documents": [
+        {
+          "name": "Lamurista Element:one",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/Element_one_TM.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "f0221f9c51f284e799f1b0997a159569b66718219e86b00324788f749f180479"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "lamurista-drain-one",
+      "manufacturer_id": "lamurista",
+      "name": "Drain:one",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://lamurista.de/ipages/flipbook/80",
+      "documents": [
+        {
+          "name": "Lamurista Drain:one",
+          "url": "https://lamurista.de/wp-content/uploads/2026/05/TM_Lamurista_Drainone.pdf",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "pdf",
+          "checked_at": "2026-09-26",
+          "sha256": "a157e0418b99f85d0e612b11b87d8088e0e46363e9c21955b5685dca5b0f7b8f"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "murface-mf-primer-lf",
+      "manufacturer_id": "murface",
+      "name": "MF Primer LF",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Primer LF",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EcVPUtghsNJNjsb-fOyaqBsBLdxL6kJvXuW7UdUXkzCRog?e=A4F28W",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-primer-q",
+      "manufacturer_id": "murface",
+      "name": "MF Primer Q",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Primer Q",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/Eflj5y5SgFdIvBjAYdrNOwQBT6atv2VaMPp2b4CvWrWV4A?e=rxphZ7",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-primer-qs",
+      "manufacturer_id": "murface",
+      "name": "MF Primer QS",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Primer QS",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/ETk-cswbOXVOnir51NEn0wgBwxwdQ7O-gEvg8GYLsRrnvg?e=7spD75",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-primer-qs-fein",
+      "manufacturer_id": "murface",
+      "name": "MF Primer QS fein",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Primer QS fein",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/Ef02AVy8I09Brzt8gfEN1-0BT_iqi5qTaE7k6DmhzdcM3g?e=xmTSM7",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-primer-epox",
+      "manufacturer_id": "murface",
+      "name": "MF Primer Epox",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Primer Epox",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/ES9QLsJbuZ9Oqfm0VNPJxDEBGpotrT_ezaq1deJlSzX2fA?e=W21kRm",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-primer-epox-wb",
+      "manufacturer_id": "murface",
+      "name": "MF Primer Epox WB",
+      "kinds": [
+        "primer"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Primer Epox WB",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/Efugx6FC_XJAuS9WO-gWADQBzhzlNP9arO79oVu4OeR1kw?e=GDOS7Q",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-sealup-1k",
+      "manufacturer_id": "murface",
+      "name": "MF SealUp 1K",
+      "kinds": [
+        "waterproofing"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF SealUp 1K",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/IQAYHU186GZMSrn_zFBpTcKNAYhm7JKkvS2uMurmdattuKA",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-sealup",
+      "manufacturer_id": "murface",
+      "name": "MF SealUp",
+      "kinds": [
+        "waterproofing"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF SealUp",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EXiaDLUR7B1NmGckdegLHiAB-226fsqIESQPJB5baUJ_ow?e=M0MYxG",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-sealflow",
+      "manufacturer_id": "murface",
+      "name": "MF SealFlow",
+      "kinds": [
+        "waterproofing"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF SealFlow",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EdXsONZwiDxEpJ1VFtiBPz8BKzRIpDnfJp0LCMCq45ROiQ?e=8JxfaU",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-basecoat",
+      "manufacturer_id": "murface",
+      "name": "MF BaseCoat",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF BaseCoat",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/Eb14wy9hoo1PsGZ_22cPqGoBUyqd2NCtv1VWVuWlzZCjaA?e=IXd7hR",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-basecoat-fein",
+      "manufacturer_id": "murface",
+      "name": "MF BaseCoat fein",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF BaseCoat fein",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EWkgNQIeoaxCoFNBM7wMOMIBg6IQcbpU1f3X_npk6hnRtw?e=39JUbj",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-basic",
+      "manufacturer_id": "murface",
+      "name": "MF Basic",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Basic",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EXQp5OJndSRJrJdsEjIRRycBQYJwDwm8oQvfwCZjkZ83mg?e=yLhcdV",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-basic-fein",
+      "manufacturer_id": "murface",
+      "name": "MF Basic fein",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Basic fein",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EVKl-uaetHxEiaI_n-qokekBJJ8bo4c6kZTJVgqVxHhJdA?e=xEhH7a",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-solidbase",
+      "manufacturer_id": "murface",
+      "name": "MF SolidBase",
+      "kinds": [
+        "preparation"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF SolidBase",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EYAsS2OPBwpIvcQ6lcRGpdkBbW138PL1_GnQbAWmHn9Lgg?e=ECClKu",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murstone-00",
+      "manufacturer_id": "murface",
+      "name": "MF MurStone 00",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurStone 00",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/Ed27lFBYhvFMnGyHasuWjI8B92tkN50hi2ZdHixQ6POpTg?e=fqhiL7",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murstone-08",
+      "manufacturer_id": "murface",
+      "name": "MF MurStone 08",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurStone 08",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EScVC1uueSVFrEQxvqytzjoB5PohWtnM1ElKECIYHNaDyA?e=0ZzFl4",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murmarble-00",
+      "manufacturer_id": "murface",
+      "name": "MF MurMarble 00",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurMarble 00",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EUN1ahk7vpJPgOPuPALVcPYBA1ct8cbpRRtLL-rsArqw6Q?e=NGF3Bu",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murmarble-08",
+      "manufacturer_id": "murface",
+      "name": "MF MurMarble 08",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurMarble 08",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EaCB78B5kUlNpYbn8a8WiM8BIqOV7-97DJB2LvuZGQX29w?e=WPIFO0",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murclay-00",
+      "manufacturer_id": "murface",
+      "name": "MF MurClay 00",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurClay 00",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EYnVtKDZTApHnpmxlL3f1eABxEu6Wp6I0ayfFG--TSu0zg?e=S9QNqN",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murlime-08",
+      "manufacturer_id": "murface",
+      "name": "MF MurLime 08",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurLime 08",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EXtZKTSwoVxBkreWs2lluVcBaAI8W0dGUeILMhLglVQfBw?e=22swen",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-concrete",
+      "manufacturer_id": "murface",
+      "name": "MF Concrete",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Concrete",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EVsS2nax_cZCpkFRrk2ySF0Bk15BCj_iw-YRfllue_EZ9w?e=WkWyd8",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-mono",
+      "manufacturer_id": "murface",
+      "name": "MF Mono",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Mono",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EejBKSXYLlVDgXg2bdUv29cBiWRto5Uhq37qoW_8mywvpw?e=KPvJUk",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-mono-classic",
+      "manufacturer_id": "murface",
+      "name": "MF Mono Classic",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Mono Classic",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EXWmeqGNteJJlOJ6mpMzxI0BcsPJQK8HzkD7eD1HgMaRQg?e=M6pkuo",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-industrial",
+      "manufacturer_id": "murface",
+      "name": "MF Industrial",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Industrial",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EXVmXzAYQAVCgeSMWKWdMiABIJi4xuqnBs7vXAYT9wrcfA?e=PLW210",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-biomur",
+      "manufacturer_id": "murface",
+      "name": "MF BioMur",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF BioMur",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/IQCqfY2HZmnUS6r_sX3um-71AYIArbcFxeU8yyw-1Lg88g8?e=XWHkxC",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-concreteflow",
+      "manufacturer_id": "murface",
+      "name": "MF ConcreteFlow",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF ConcreteFlow",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/ESElwXotk6pIkPe2rV_MpL8BzjA_C-kXSJ5q29kz35iErg?e=rWfS0e",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-archipur",
+      "manufacturer_id": "murface",
+      "name": "MF ArchiPur",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF ArchiPur",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/IQBl8E5CBSDZQbHjXdclfQxDAQnpsgFBJP1wznrAC3Jvn98?e=1BMlED",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-metaleffect",
+      "manufacturer_id": "murface",
+      "name": "MF MetalEffect",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MetalEffect",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EekHJg9yD5dItN5j8pLk0kIBXmu69hQThtudJz5mvp3ltg?e=FzxSad",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murmetal",
+      "manufacturer_id": "murface",
+      "name": "MF MurMetal",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurMetal",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EespbBugStVHoaWA0mU7ey8BAa4lUnqjuvNnvWpk8KHLVQ?e=g8yuyi",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-murprint-liquid",
+      "manufacturer_id": "murface",
+      "name": "MF MurPrint Liquid",
+      "kinds": [
+        "accessory"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF MurPrint Liquid",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EdQ4ainMJFJMsHbuq4v_xcEBfUs5fYSJr7E3jn6zBMwK3w?e=TdsVjc",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-sealer-matt",
+      "manufacturer_id": "murface",
+      "name": "MF Sealer matt",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Sealer matt",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EZq99rE95UtBpezknB3atv4BC1rAcOowNkEEjlzx2-0RHw?e=qnEpn3",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-sealer-seidenmatt",
+      "manufacturer_id": "murface",
+      "name": "MF Sealer seidenmatt",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Sealer seidenmatt",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EZIReceAmphJjUDbyLKEKoUBlRB0KUy84zC1ps1u6BarJg?e=t3Vsbv",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-sealer-glanzend",
+      "manufacturer_id": "murface",
+      "name": "MF Sealer glänzend",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Sealer glänzend",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EQMf_1ZXvhtKmkG63XSjDEsB2A8BPufGY_vqPtwTN-QxGQ?e=8loi64",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-nanotop",
+      "manufacturer_id": "murface",
+      "name": "MF NanoTop",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF NanoTop",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/ESWZfeYtSztIpWKUnYn3M94Bn-YxeyTyvrPvTR9rzFrhaw?e=QjUyZA",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-coverup",
+      "manufacturer_id": "murface",
+      "name": "MF CoverUp",
+      "kinds": [
+        "finish"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF CoverUp",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EbxFDwkfs3NGtoaJ3sejWGABM1In9JXAeouXBQJWSLr-dQ?e=9raifL",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-care-hospital",
+      "manufacturer_id": "murface",
+      "name": "MF Care Hospital",
+      "kinds": [
+        "care"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Care Hospital",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EUDTdTSyE39Eu8IEylLiZ38BpwTbqsO-mNoLKc8PFNUyHw?e=z7azfx",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-waterprotect",
+      "manufacturer_id": "murface",
+      "name": "MF WaterProtect",
+      "kinds": [
+        "care"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF WaterProtect",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/EVt5RRtPymBAvv-LKQ3xvVMBzIs3anFLWwr22-rJg2Hhng?e=2S31wa",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "murface-mf-wax",
+      "manufacturer_id": "murface",
+      "name": "MF Wax",
+      "kinds": [
+        "care"
+      ],
+      "source_url": "https://murface.com/technische-merkblaetter/",
+      "documents": [
+        {
+          "name": "MF Wax",
+          "url": "https://murface.sharepoint.com/:b:/s/Marketing/ESFFaLKbip1Jm96tKUC9xeMBTofPDwVNOJeHSordFUEyiQ?e=yADG6C",
+          "type": "Technisches Merkblatt",
+          "language": "de",
+          "verification": "source_link",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Technisches Merkblatt vom Hersteller verlinkt; Dateiabruf hier nicht bestätigt."
+    },
+    {
+      "id": "epi-quartz-r",
+      "manufacturer_id": "epi",
+      "name": "Quartz R",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/quartz-r/",
+      "documents": [
+        {
+          "name": "EPI Quartz R – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/quartz-r/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-corestone-nature",
+      "manufacturer_id": "epi",
+      "name": "Corestone Nature",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/corestone-nature/",
+      "documents": [
+        {
+          "name": "EPI Corestone Nature – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/corestone-nature/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-superbase-classic",
+      "manufacturer_id": "epi",
+      "name": "Superbase Classic",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/superbase/",
+      "documents": [
+        {
+          "name": "EPI Superbase Classic – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/superbase/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-superbase-mineral",
+      "manufacturer_id": "epi",
+      "name": "Superbase Mineral",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/superbase/",
+      "documents": [
+        {
+          "name": "EPI Superbase Mineral – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/superbase/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-superbase-cortica",
+      "manufacturer_id": "epi",
+      "name": "Superbase Cortica",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/superbase/",
+      "documents": [
+        {
+          "name": "EPI Superbase Cortica – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/superbase/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-superbase-crystal",
+      "manufacturer_id": "epi",
+      "name": "Superbase Crystal",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/superbase/",
+      "documents": [
+        {
+          "name": "EPI Superbase Crystal – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/superbase/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-superbase-gusto-fino",
+      "manufacturer_id": "epi",
+      "name": "Superbase Gusto Fino",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/superbase/",
+      "documents": [
+        {
+          "name": "EPI Superbase Gusto Fino – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/superbase/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "epi-superbase-gusto-mezzo",
+      "manufacturer_id": "epi",
+      "name": "Superbase Gusto Mezzo",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://epifloors.com/de/unsere-boden/superbase/",
+      "documents": [
+        {
+          "name": "EPI Superbase Gusto Mezzo – Produktinformation",
+          "url": "https://epifloors.com/de/unsere-boden/superbase/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        },
+        {
+          "name": "EPI Pflegehinweise",
+          "url": "https://epifloors.com/de/beratung/hinweise-zur-wartung/",
+          "type": "Pflegehinweise",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Systembezeichnung. Komponenten und technische Merkblätter noch ergänzen."
+    },
+    {
+      "id": "artstucco-lava",
+      "manufacturer_id": "artstucco",
+      "name": "Lava",
+      "kinds": [
+        "surface"
+      ],
+      "source_url": "https://artstucco.de/produktauswahl/boden/",
+      "documents": [
+        {
+          "name": "ArtStucco Lava – Produktinformation",
+          "url": "https://artstucco.de/produktauswahl/boden/",
+          "type": "Produktinformation",
+          "language": "de",
+          "verification": "page",
+          "checked_at": "2026-09-26"
+        }
+      ],
+      "note": "Lavasteinboden / Systemlinie. Genaue Artikelbezeichnungen, Aufbau und technische Merkblätter noch ergänzen."
+    }
+  ]
+}

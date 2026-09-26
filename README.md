@@ -9,6 +9,9 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 - Geschützter Zugang über Supabase Auth; Einrichtung über einmalige persönliche Links.
 - Betreiberverwaltung: Betriebe anlegen, Profil bearbeiten und Einrichtungslinks erstellen.
 - Betriebsprofil mit Gewerkeauswahl: Fliesenleger oder Fugenlose Oberflächen.
+- Gemeinsamer Fugenlos-Katalog: 81 belegte Produkte/Systemlinien von Lamurista, Murface,
+  ArtStucco und EPI. Suche, Bereichsfilter und optionale Übernahme zugeordneter Unterlagen.
+  Umfang und ausdrücklich offene Datenquellen: `CATALOG_SOURCES.md`.
 - Fugenlos-Vorlage: Fläche, Untergrund, Oberflächensystem, Grundierung, Abdichtung,
   Versiegelung, Anschlussfugen und Pflege. Keine erfundenen Material- oder Pflegevorgaben.
 - Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
