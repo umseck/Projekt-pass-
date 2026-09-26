@@ -1,3 +1,4 @@
+import {productKeys} from '../public/trades.mjs';
 export class HttpError extends Error {
   constructor(status,message){super(message);this.status=status;}
 }
@@ -30,18 +31,19 @@ export function logo(value){
     fail('Bitte ein PNG- oder JPEG-Logo wählen.');
   return value;
 }
-export function care(value){return fields(value,['tile','grout','silicone']);}
-export function product(value){return {...fields(value,['manufacturer','name','color','format','article_number','batch']),label_photo:photo(value?.label_photo)};}
+export function trade(value){if(value==null)return 'tile';if(!['tile','seamless'].includes(value))fail('Bitte Ihr Gewerk auswählen.');return value;}
+export function care(value){return fields(value,productKeys);}
+export function product(value){return {...fields(value,['manufacturer','name','color','format','article_number','batch','system_type','sheen']),label_photo:photo(value?.label_photo)};}
 export function company(value){
   const v=obj(value);const out=fields(v,['name','contact','phone','email']);
   if(!out.name)fail('Bitte den Firmennamen ergänzen.');
-  return {...out,website:url(v.website),logo:logo(v.logo),care_notes:care(v.care_notes),
-    favorites:Object.fromEntries(['tile','grout','silicone'].map(k=>[k,list(v.favorites?.[k],40,product)]))};
+  return {...out,trade:trade(v.trade),onboarding_complete:v.onboarding_complete!==false,website:url(v.website),logo:logo(v.logo),care_notes:care(v.care_notes),
+    favorites:Object.fromEntries(productKeys.map(k=>[k,list(v.favorites?.[k],40,product)]))};
 }
 export function content(value){
   const v=obj(value);const usage=text(v.usage_available_at,40);
   if(usage&&!Number.isFinite(Date.parse(usage)))fail('Bitte ein gültiges Nutzungsdatum wählen.');
-  return {tile:product(v.tile),grout:product(v.grout),silicone:product(v.silicone),
+  return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...Object.fromEntries(productKeys.map(k=>[k,product(v[k])])),
     usage_available_at:usage,care_notes:care(v.care_notes),
     photos:list(v.photos,8,photo),
     spare_materials:list(v.spare_materials,5,s=>({...fields(s,['material','quantity','location']),photo:photo(s.photo)})),
@@ -57,7 +59,7 @@ export function validate(op,b){
   if(op==='access_info')return {token:token(b.token)};
   if(op==='access_activate')return {token:token(b.token),email:b.email?email(b.email):'',password:newPassword(b.password)};
   if(op==='operator_list')return {};
-  if(op==='operator_create')return {id:uuid(b.id),profile:company(b.profile)};
+  if(op==='operator_create')return {id:uuid(b.id),profile:company(b.profile),use_for_me:b.use_for_me===true};
   if(op==='operator_company')return {id:uuid(b.id)};
   if(op==='operator_save')return {id:uuid(b.id),version:version(b.version),profile:company(b.profile)};
   if(op==='operator_invite')return {id:uuid(b.id),email:email(b.email)};

@@ -67,6 +67,17 @@ test('invites expire, rotate, rate-limit, bind email and never move an existing 
  assert.ok(!(JSON.stringify(await call('operator_list'))).includes('token_hash'));
 });
 
+test('operator can create its own workspace but cannot claim a previously existing business',async()=>{
+ const tokens=Array.from({length:20},randomToken);
+ await assert.rejects(()=>call('operator_create',{id:ca,profile:{name:'forged'},tokens,use_for_me:true}),/PP_FORBIDDEN/);
+ const id=crypto.randomUUID(),args={id,profile:{name:'Own business'},tokens,use_for_me:true};
+ assert.equal((await call('operator_create',args)).profile.onboarding_complete,false);
+ assert.equal((await call('operator_create',args)).passes,20);
+ assert.equal((await call('bootstrap')).company.name,'Own business');
+ await assert.rejects(()=>call('operator_create',{...args,id:crypto.randomUUID(),tokens:Array.from({length:20},randomToken)}),/PP_ACCOUNT_IN_USE/);
+ assert.equal((await call('operator_list')).companies.length,3);
+});
+
 test('businesses add more than 20 passes without duplicates or crossing company boundaries',async()=>{
  const id=crypto.randomUUID(),args={id,quantity:100,tokens:Array.from({length:100},randomToken)};
  assert.equal((await call('passes_add',args,user)).total,120);

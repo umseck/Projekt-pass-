@@ -8,6 +8,9 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 
 - Geschützter Zugang über Supabase Auth; Einrichtung über einmalige persönliche Links.
 - Betreiberverwaltung: Betriebe anlegen, Profil bearbeiten und Einrichtungslinks erstellen.
+- Betriebsprofil mit Gewerkeauswahl: Fliesenleger oder Fugenlose Oberflächen.
+- Fugenlos-Vorlage: Fläche, Untergrund, Oberflächensystem, Grundierung, Abdichtung,
+  Versiegelung, Anschlussfugen und Pflege. Keine erfundenen Material- oder Pflegevorgaben.
 - Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
 - Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
@@ -48,7 +51,10 @@ kann weiterhin einen Pass zu Testzwecken freigeben.
 ### Betreiberverwaltung und zusätzliche Pässe
 
 Die additive Migration `operator_management_and_pass_batches` setzt `database/schema.sql`
-voraus. `database/operator.sql` enthält denselben SQL-Stand für lokale Integrationstests.
+voraus. `database/operator.sql` enthält den aktuellen SQL-Stand für lokale Integrationstests.
+Die anschließende Migration `trade_templates` aktualisiert beide RPCs ohne Bestandsdaten
+zu ändern. Neue Projekte speichern das Gewerk bei Aktivierung; ein späterer Profilwechsel
+ändert bestehende Projektvorlagen nicht. Altdaten ohne Gewerk verwenden die Fliesenvorlage.
 Die private Tabelle `operators` bestimmt Betreiberrechte; Browserangaben und Auth-
 `user_metadata` werden dafür niemals ausgewertet. Alle Verwaltungsfunktionen prüfen
 diese Berechtigung erneut auf dem Server beziehungsweise in der service-only RPC.
@@ -59,7 +65,10 @@ und begrenzter Laufzeit hinterlegt. Sobald ein Betreiber existiert, können solc
 Startlinks keinen weiteren Betreiber anlegen. Die Oberfläche erzeugt ausschließlich
 Betriebseinladungen, niemals Betreiberrechte.
 
-Nach der Einrichtung: **Betriebe → Betrieb anlegen → Einrichtungslink erstellen**.
+Für den eigenen Betrieb: **Meinen Betrieb einrichten → Kontaktdaten → Gewerk wählen**.
+Dafür wird der vorhandene Betreiberzugang verwendet; keine zweite Registrierung nötig.
+Für weitere Betriebe: **Betriebe → Betrieb anlegen → Einrichtungslink erstellen**.
+Nach der Zugangseinrichtung wählt der Betrieb sein Gewerk und bestätigt sein Profil.
 Betriebslinks sind an eine E-Mail gebunden, sieben Tage gültig und einmal verwendbar.
 Ein neuer Link ersetzt den bisherigen. Der Betreiber gibt den Link gezielt weiter;
 die App verschickt keine E-Mails. Das Passwort wird vom Empfänger direkt festgelegt.

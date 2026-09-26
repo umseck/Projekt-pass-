@@ -2,7 +2,7 @@ export const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 export const num=n=>String(n).padStart(2,'0');
 export function date(value,time=false){if(!value)return '';const d=new Date(value);if(!Number.isFinite(+d))return '';return d.toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',...(time?{hour:'2-digit',minute:'2-digit'}:{})});}
 export function safeLink(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password?u.href:'';}catch{return '';}}
-export const hasProduct=p=>p&&['manufacturer','name','color','format','article_number','batch','label_photo'].some(k=>p[k]);
+export const hasProduct=p=>p&&['manufacturer','name','color','format','article_number','batch','label_photo','system_type','sheen'].some(k=>p[k]);
 export const labelPhoto=p=>/^data:image\/(?:jpeg|png);base64,[A-Za-z0-9+/]+={0,2}$/.test(p||'')?p:'';
 export function fields(form){return Object.fromEntries(new FormData(form));}
 export function field(label,name,value='',type='text',extra=''){return `<div class="field"><label for="${esc(name)}">${esc(label)}</label><input id="${esc(name)}" name="${esc(name)}" value="${esc(value)}" type="${type}" ${extra}></div>`;}

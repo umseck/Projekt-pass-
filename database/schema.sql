@@ -109,7 +109,8 @@ begin
       from pp_private.passes s left join pp_private.projects p on p.pass_id=s.id where s.company_id=cid),
     'projects',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'title',title,'status',status,
       'pass_id',pass_id,'activated_at',activated_at,'internal',internal,'content',jsonb_build_object(
-        'tile',(content->'tile') - 'label_photo','grout',content->'grout','silicone',content->'silicone'))
+        'trade',content->'trade','tile',(content->'tile') - 'label_photo','grout',(content->'grout') - 'label_photo','silicone',(content->'silicone') - 'label_photo',
+        'surface',(content->'surface') - 'label_photo','primer',(content->'primer') - 'label_photo','waterproofing',(content->'waterproofing') - 'label_photo','finish',(content->'finish') - 'label_photo'))
       order by activated_at desc),'[]') from pp_private.projects where company_id=cid));
  elsif op='company_save' then
    update pp_private.companies set profile=args->'profile',version=version+1
@@ -124,7 +125,7 @@ begin
    if project.id is null then
      insert into pp_private.projects(pass_id,company_id,title,company_snapshot,content)
      values(pass.id,cid,args->>'title',company.profile - 'favorites' - 'care_notes',
-       jsonb_build_object('care_notes',coalesce(company.profile->'care_notes','{}')))
+       jsonb_build_object('trade',coalesce(company.profile->>'trade','tile'),'care_notes',coalesce(company.profile->'care_notes','{}')))
      returning * into project;
    end if;
  else
@@ -135,7 +136,8 @@ begin
      raise exception 'PP_CONFLICT';
    end if;
    if op='save' then
-     update pp_private.projects set title=args->>'title',content=args->'content',internal=args->'internal',
+     update pp_private.projects set title=args->>'title',
+      content=(args->'content') || jsonb_build_object('trade',coalesce(project.content->>'trade','tile')),internal=args->'internal',
       version=version+1,updated_at=now() where id=project.id returning * into project;
    elsif op='handover' then
      update pp_private.projects set status='handed_over',handed_over_at=coalesce(handed_over_at,now()),

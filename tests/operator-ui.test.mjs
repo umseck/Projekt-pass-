@@ -7,7 +7,7 @@ import {createHandler} from '../server/api.mjs';
 const operator='11111111-1111-4111-8111-111111111111',member='22222222-2222-4222-8222-222222222222';
 const origin='https://projektpass.example';
 const wait=async check=>{for(let i=0;i<150;i++){if(check())return;await new Promise(resolve=>setTimeout(resolve,20));}throw Error('UI did not reach expected state');};
-test('operator UI creates a business, hands off a one-time link, and the business enrolls and adds passes',async()=>{
+test('operator → business onboarding → seamless handover; unlimited batches and legacy templates remain isolated',async()=>{
  const db=new PGlite();await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
  await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../database/operator.sql',import.meta.url),'utf8'));
@@ -45,14 +45,44 @@ test('operator UI creates a business, hands off a one-time link, and the busines
    assert.equal($('#setup-email').value,'member@example.test');assert.equal($('#setup-email').readOnly,true);
    input('#setup-password','Business password 123');input('#setup-repeat','different password');submit('#access-setup');
    await wait(()=>$('.form-message').textContent.includes('nicht überein'));assert.equal(authCreates,0);
-   input('#setup-repeat','Business password 123');submit('#access-setup');await wait(()=>$('#search'));
+   input('#setup-repeat','Business password 123');submit('#access-setup');await wait(()=>$('#settings'));
    assert.equal(authCreates,1);assert.ok(!win.location.href.includes('#access/'));assert.equal($('a[href="#admin"]'),null);
+   assert.equal($('#trade').value,'');
+   input('#trade','seamless');$('#trade').dispatchEvent(new win.Event('change'));
+   assert.equal($('[data-care-kind="surface"]').hidden,false);assert.equal($('[data-care-kind="tile"]').hidden,true);
+   input('#care-surface','Nur freigegebene Pflegemittel verwenden.');
+   input('#favorite-surface','Testhersteller | Mikrozement 2K | Sand |');submit('#settings');await wait(()=>$('#search'));
+   assert.equal((await db.query('select profile from pp_private.companies')).rows[0].profile.trade,'seamless');
    assert.ok($('#app').textContent.includes('Testbetrieb <A>'));
    win.location.hash='passes';await wait(()=>$('#add-passes'));
    $('#add-passes').click();input('#quantity','100');submit('#add-passes-form');
    await wait(()=>win.document.querySelectorAll('.pass-card').length===120);
    assert.ok($('#export-pass-links'));assert.equal((await db.query('select count(*)::int n from pp_private.passes')).rows[0].n,120);
+   const pass=(await db.query('select id,token from pp_private.passes where number=120')).rows[0];
+   win.location.hash='activate/'+pass.id;await wait(()=>$('#activate'));input('#title','Fugenloses Testbad');submit('#activate');await wait(()=>$('#edit'));
+   assert.equal($('#tile-name'),null);assert.ok($('#surface-name'));assert.equal($('#care-surface').value,'Nur freigegebene Pflegemittel verwenden.');
+   $('[data-favorite="surface:0"]').click();input('#surface-system_type','Mikrozement');input('#application_area','Wand und Boden');input('#substrate','Vorbereiteter Estrich');
+   input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
+   $('#preview').click();await wait(()=>$('#handover'));
+   assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
+   $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));
+   $('#handover').click();await wait(()=>$('#copy-link'));
+   // Changing the business default only affects future projects.
+   win.location.hash='settings';await wait(()=>$('#settings'));input('#trade','tile');submit('#settings');await wait(()=>$('#search'));
+   input('#search','Mikrozement');assert.ok($('#projects').textContent.includes('Fugenloses Testbad'));
+   win.location.hash='p/'+pass.token;await wait(()=>$('#owner-edit'));
+   assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok($('#panel-tiles').textContent.includes('Vorbereiteter Estrich'));
+   const project=(await db.query('select id,version,content from pp_private.projects')).rows[0];
+   assert.equal(project.content.trade,'seamless');assert.equal(project.content.surface.manufacturer,'Testhersteller');
+   const forged=await globalThis.fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:project.id,version:project.version,title:'Fugenloses Testbad',content:{...project.content,trade:'tile'},internal:{}})});
+   assert.equal(forged.status,200);assert.equal((await forged.json()).content.trade,'seamless');
    win.location.hash='admin';await wait(()=>$('[role=alert]'));
    assert.ok($('[role=alert]').textContent.includes('nur für den Betreiber'));
+   win.location.hash='login';await wait(()=>$('#login'));input('#email','owner@example.test');input('#password','Owner password 123');submit('#login');await wait(()=>$('#businesses'));
+   assert.ok($('a[href="#business-new/me"]'));
+   win.location.hash='business-new/me';await wait(()=>$('#operator-business'));input('#name','Eigener Fugenlosbetrieb');submit('#operator-business');await wait(()=>$('#settings'));
+   input('#trade','seamless');submit('#settings');await wait(()=>$('#search'));
+   assert.ok($('a[href="#admin"]'));assert.ok($('#app').textContent.includes('Eigener Fugenlosbetrieb'));
+   assert.equal((await db.query('select count(*)::int n from pp_private.members where user_id=$1',[operator])).rows[0].n,1);
  }finally{await win.happyDOM.abort();await db.close();win.close();}
 });
