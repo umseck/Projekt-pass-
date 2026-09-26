@@ -73,6 +73,13 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('.project-steps [aria-current]').textContent,'2. Bauphase');
    input('#surface-system_type','MicroTec');input('#application_area','Wand und Boden');input('#substrate','Vorbereiteter Estrich');
    input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
+   $('[data-save-library="surface"]').click();await wait(()=>$('#modal').open&&$('#library-product'));
+   input('#library-url','https://example.test/project-product.pdf');input('#library-document-name','Passendes Produktblatt');submit('#library-product');
+   await wait(()=>$('#notice').textContent.startsWith('Produkt im Betriebskatalog'));
+   const ownProducts=(await db.query('select profile from pp_private.companies')).rows[0].profile.favorites.surface;
+   assert.equal(ownProducts.length,2);assert.equal(ownProducts[1].name,'Testoberfläche Pro');assert.equal(ownProducts[1].documents[0].url,'https://example.test/project-product.pdf');assert.equal(ownProducts[1].batch,'');assert.ok($('#documents').value.includes('project-product.pdf'));
+   $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="own-surface-1"]').click();assert.equal($('#surface-name').value,'Testoberfläche Pro');
+   $('#nfc-link').click();assert.equal($('#nfc-url').value,origin+'/#p/'+pass.token);$('#modal').close();
    $('#remember-standard').click();await wait(()=>$('#notice').textContent.startsWith('Standard gespeichert'));
    const savedStandard=(await db.query('select profile from pp_private.companies')).rows[0].profile.standards.seamless;
    assert.equal(savedStandard.surface.name,'Testoberfläche Pro');assert.equal(savedStandard.surface.color,'');assert.equal(savedStandard.surface.batch,'');assert.equal(savedStandard.photos,undefined);assert.ok(savedStandard.documents.length>0);

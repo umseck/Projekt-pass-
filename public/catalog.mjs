@@ -1,9 +1,13 @@
 import {esc,safeLink} from './ui.mjs';
-export const categories={surface:'Oberflächensystem',primer:'Grundierung',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
-let cached;
+export const categories={tile:'Fliese',grout:'Fugenmörtel',surface:'Oberflächensystem',primer:'Grundierung',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
+let cached,companyProducts=[];
+export function setCompanyCatalog(company){
+ companyProducts=Object.entries(company?.favorites||{}).flatMap(([kind,items])=>(items||[]).filter(p=>p.manufacturer&&p.name).map((p,i)=>({...p,id:'own-'+kind+'-'+i,manufacturer_id:'own-'+p.manufacturer,manufacturer:p.manufacturer,kinds:[kind],source_url:'',note:'Von Ihrem Betrieb hinterlegt. Produktvariante und Unterlagen bitte vor Verwendung prüfen.',documents:(p.documents||[]).map(d=>({...d,verification:'business'}))})));
+}
+
 export async function loadCatalog(){
  if(!cached)cached=fetch('/catalog.json',{credentials:'omit'}).then(async r=>{if(!r.ok)throw Error('Der Produktkatalog ist gerade nicht erreichbar. Bitte erneut versuchen.');const c=await r.json();if(c.version!==1||!Array.isArray(c.products))throw Error('Der Produktkatalog konnte nicht geladen werden.');return c;}).catch(e=>{cached=null;throw e;});
- return cached;
+ const base=await cached;const manufacturers=[...base.manufacturers];for(const p of companyProducts)if(!manufacturers.some(m=>m.id===p.manufacturer_id))manufacturers.push({id:p.manufacturer_id,name:p.manufacturer,note:'Eigene Produkte Ihres Betriebs.',documents:[]});return {...base,manufacturers,products:[...base.products,...companyProducts]};
 }
 export function matchingProducts(c,{manufacturer='',query='',kind=''}={}){
  const q=query.trim().toLocaleLowerCase('de');
@@ -16,7 +20,7 @@ export function mergeDocuments(existing,added){
  return merged;
 }
 const link=(url,label)=>safeLink(url)?`<a href="${esc(safeLink(url))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';
-function controls(c,kind,picking){return `<p class="hint">Herstellerangaben, Stand ${esc(c.checked_at)}. Produktvariante und Eignung für Ihr Projekt bitte anhand der Unterlagen prüfen.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer"><option value="">Alle Hersteller</option>${c.manufacturers.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Primer"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Abrufbare Herstellerunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div><div id="catalog-manufacturer-info"></div><p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
+function controls(c,kind,picking){return `<p class="hint">Ihr Betriebskatalog. Gespeicherte Produkte sind nur für Ihren Betrieb sichtbar. Produktvariante und Unterlagen bitte prüfen.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer"><option value="">Alle Hersteller</option>${c.manufacturers.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Primer"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Zugeordnete Produktunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div><div id="catalog-manufacturer-info"></div><p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
 function bindCatalog(root,c,{kind='',onPick}={}){
  const $=s=>root.querySelector(s);
  function render(){
@@ -27,7 +31,7 @@ function bindCatalog(root,c,{kind='',onPick}={}){
   $('#catalog-count').textContent=found.length+' Produkte / Systeme'+(kind?' · '+categories[kind]:'');
   $('#catalog-results').innerHTML=found.map(p=>{
    const m=c.manufacturers.find(m=>m.id===p.manufacturer_id);
-   return `<article class="catalog-card"><span class="eyebrow">${esc(m.name)}</span><h3>${esc(p.name)}</h3><p class="small muted">${p.kinds.map(k=>esc(categories[k])).join(' · ')}</p>${p.note?`<p class="hint">${esc(p.note)}</p>`:''}<p>${link(p.source_url,'Herstellerquelle')}</p><ul class="catalog-docs">${p.documents.map(d=>`<li>${link(d.url,d.name)} <span class="small muted">${esc(d.language?.toUpperCase()||'')} · ${esc(d.type)}${d.verification==='source_link'?' · Abruf nicht bestätigt; keine automatische Übernahme':''}</span></li>`).join('')}</ul>${p.documents.length?'':'<p class="hint">Kein eindeutig zugeordnetes öffentliches Datenblatt hinterlegt.</p>'}${onPick?`<button class="btn olive" type="button" data-catalog-pick="${esc(p.id)}">Produkt übernehmen</button>`:''}</article>`;
+   return `<article class="catalog-card"><span class="eyebrow">${esc(m.name)}</span><h3>${esc(p.name)}</h3><p class="small muted">${p.kinds.map(k=>esc(categories[k])).join(' · ')}</p>${p.note?`<p class="hint">${esc(p.note)}</p>`:''}<p>${link(p.source_url,'Herstellerquelle')}</p><ul class="catalog-docs">${p.documents.map(d=>`<li>${link(d.url,d.name)} <span class="small muted">${esc(d.language?.toUpperCase()||'')} · ${esc(d.type)}${d.verification==='business'?' · Vom Betrieb hinterlegt':''}${d.verification==='source_link'?' · Abruf nicht bestätigt; keine automatische Übernahme':''}</span></li>`).join('')}</ul>${p.documents.length?'':'<p class="hint">Noch keine Produktunterlagen hinterlegt.</p>'}${onPick?`<button class="btn olive" type="button" data-catalog-pick="${esc(p.id)}">Produkt übernehmen</button>`:''}</article>`;
   }).join('')||'<p class="empty">Der Produktkatalog ist noch leer oder enthält keine passende Auswahl. Bitte tragen Sie Ihre tatsächlich verwendeten Produkte im Projekt ein.</p>';
   root.querySelectorAll('[data-catalog-pick]').forEach(button=>button.onclick=()=>{
    try{const p=c.products.find(p=>p.id===button.dataset.catalogPick),m=c.manufacturers.find(m=>m.id===p.manufacturer_id);onPick(p,m,$('#catalog-include-docs').checked);}
@@ -43,6 +47,6 @@ export async function openCatalogPicker(kind,{modal,onPick,isCurrent=()=>true}){
 }
 export async function catalogPage({shell,isCurrent=()=>true}){
  const c=await loadCatalog();if(!isCurrent())return;
- shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Wir bauen diesen Katalog Schritt für Schritt anhand realer Projekte auf. Ihre Produkte können Sie bereits frei im Projekt eintragen.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
+ shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Produkte im Projekt eintragen und dort „Im Betriebskatalog speichern“ wählen. So wächst Ihr Katalog mit Ihren echten Projekten.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
  bindCatalog(document.querySelector('#catalog-browser'),c);
 }

@@ -39,7 +39,7 @@ export function company(value){
   if(!out.name)fail('Bitte den Firmennamen ergänzen.');
   return {...out,trade:trade(v.trade),onboarding_complete:v.onboarding_complete!==false,website:url(v.website),logo:logo(v.logo),care_notes:care(v.care_notes),
     standards:Object.fromEntries(['tile','seamless'].filter(k=>v.standards?.[k]).map(k=>[k,standard(v.standards[k],k)])),
-    favorites:Object.fromEntries(productKeys.map(k=>[k,list(v.favorites?.[k],40,product)]))};
+    favorites:Object.fromEntries(productKeys.map(k=>[k,list(v.favorites?.[k],40,p=>({...product(p),documents:list(p?.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))}))]))};
 }
 export function standard(value,kind){
  const v=obj(value);

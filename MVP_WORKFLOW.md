@@ -34,3 +34,9 @@ Bestehende übergebene Projekte sichern den bei Einführung verfügbaren Stand u
 ## Prüfung
 
 Automatisiert: UI → API → SQL, Empfängerauswahl, fremde Projekte, interne Notizen, Idempotenz, Rückfragen, Zugangsperren, unveränderliche Übergabe, Eigentümerschlüssel, öffentliche Projektion und Mailfehler. Echte Mailzustellung, Smartphone/NFC sowie Wiederherstellung sind weiterhin reale Abnahmeschritte in ACCEPTANCE.md.
+
+## Reales Projekt und eigener Katalog
+
+Bei einem Produkt „Im Betriebskatalog speichern“ wählen. Hersteller und Produkt sind erforderlich; zugehörige Projektunterlagen werden ausdrücklich ausgewählt, ein zusätzlicher Datenblatt-Link kann ergänzt werden. Diese Unterlagen werden zugleich dem aktuellen Projekt zugeordnet. Farbton, Charge und Etikettenfoto werden nicht in den Katalog kopiert. Bestehende Kombinationen aus Hersteller, Produkt und Artikelnummer werden aktualisiert statt dupliziert. Der Katalog verwendet die privaten Betriebsfavoriten und ist nicht öffentlich oder für andere Betriebe sichtbar. Ganze Aufbauten bleiben getrennte Betriebsstandards. Es werden keine recherchierten Produkte automatisch nachgefüllt.
+
+Der einzelne NFC-Link ist in Materialbearbeitung und Bauphase kopierbar, auch vor der Übergabe. Schreiben auf den physischen Tag und Lesen auf dem echten Smartphone sind vor Ort zu prüfen.
