@@ -71,7 +71,11 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="testanbieter-test-pro"]').click();assert.equal($('#documents').value,firstDocs);
    $('[data-open-catalog="primer"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="zweiter-test-primer"]').click();assert.equal($('#primer-name').value,'Test Primer');assert.ok(!$('#documents').value.includes('unconfirmed.pdf'));
    assert.equal($('.project-steps [aria-current]').textContent,'2. Bauphase');
-   input('#surface-system_type','MicroTec');input('#application_area','Wände & Boden');input('#substrate','Vorbereiteter Estrich');
+   input('#surface-system_type','MicroTec');input('#application_area','Wände & Boden');$('#application_area').dispatchEvent(new win.Event('change'));input('#substrate','Vorbereiteter Estrich');
+   const selectPreparation=(id,value)=>{input(id,value);$(id).dispatchEvent(new win.Event('change'));};
+   selectPreparation('#prep-walls-base-kind','drywall');selectPreparation('#prep-walls-base-by','other');input('#prep-walls-base-company','Trockenbau Beispiel');
+   $('[data-prep-add="walls"]').click();selectPreparation('#prep-walls-0-kind','filled');selectPreparation('#prep-walls-0-by','own');
+   selectPreparation('#prep-floor-base-kind','screed');selectPreparation('#prep-floor-base-by','unknown');
    input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
    $('[data-save-library="surface"]').click();await wait(()=>$('#modal').open&&$('#library-product'));
    input('#library-url','https://example.test/project-product.pdf');input('#library-document-name','Passendes Produktblatt');submit('#library-product');
@@ -82,6 +86,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('#nfc-link').click();assert.equal($('#nfc-url').value,origin+'/#p/'+pass.token);$('#modal').close();
    $('#remember-standard').click();await wait(()=>$('#notice').textContent.startsWith('Standard gespeichert'));
    const savedStandard=(await db.query('select profile from pp_private.companies')).rows[0].profile.standards.seamless;
+   assert.equal(savedStandard.preparation,undefined);
    assert.equal(savedStandard.surface.name,'Testoberfläche Pro');assert.equal(savedStandard.surface.color,'');assert.equal(savedStandard.surface.batch,'');assert.equal(savedStandard.photos,undefined);assert.ok(savedStandard.documents.length>0);
    $('#preview').click();await wait(()=>$('#handover'));
    assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');
@@ -93,6 +98,9 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    input('#search','Testoberfläche');assert.ok($('#projects').textContent.includes('Fugenloses Testbad'));
    win.location.hash='p/'+pass.token;await wait(()=>$('#owner-edit'));
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok($('#panel-tiles').textContent.includes('Vorbereiteter Estrich'));
+   assert.ok($('#panel-tiles').textContent.includes('Trockenbau Beispiel'));assert.ok($('#panel-tiles').textContent.includes('Ausgeführt durch: Testbetrieb <A>'));
+   const handoverPreparation=(await db.query('select handover_snapshot from pp_private.projects')).rows[0].handover_snapshot.content.preparation;
+   assert.equal(handoverPreparation[0].area,'walls');assert.equal(handoverPreparation[0].steps[0].by,'own');assert.equal(handoverPreparation[1].substrate.kind,'screed');
    const project=(await db.query('select id,version,content from pp_private.projects')).rows[0];
    assert.equal(project.content.trade,'seamless');assert.equal(project.content.surface.manufacturer,'Testanbieter');
    const forged=await globalThis.fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:project.id,version:project.version,title:'Fugenloses Testbad',content:{...project.content,trade:'tile'},internal:{}})});

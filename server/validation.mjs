@@ -1,4 +1,5 @@
 import {productKeys} from '../public/trades.mjs';
+import {preparationAreas,substrateTypes,preparationTypes,preparationActors} from '../public/preparation-data.mjs';
 export class HttpError extends Error {
   constructor(status,message){super(message);this.status=status;}
 }
@@ -50,11 +51,26 @@ export function standard(value,kind){
 export function content(value){
   const v=obj(value);const usage=text(v.usage_available_at,40);
   if(usage&&!Number.isFinite(Date.parse(usage)))fail('Bitte ein gültiges Nutzungsdatum wählen.');
-  return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...Object.fromEntries(productKeys.map(k=>[k,product(v[k])])),
+  return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,product(v[k])])),
     usage_available_at:usage,care_notes:care(v.care_notes),
     photos:list(v.photos,8,photo),
     spare_materials:list(v.spare_materials,5,s=>({...fields(s,['material','quantity','location']),photo:photo(s.photo)})),
     documents:list(v.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))};
+}
+export function preparation(value){
+ const selected=(value,options,message)=>{if(typeof value!=='string'||!Object.hasOwn(options,value))fail(message);return value;};
+ const item=(value,base)=>{
+  const v=obj(value),kind=selected(v.kind,base?substrateTypes:preparationTypes,'Bitte den Untergrund oder die Vorbereitungsarbeit auswählen.');
+  const by=selected(v.by,preparationActors,'Bitte auswählen, wer die Arbeit ausgeführt hat.');
+  const custom=kind==='other'?text(v.custom,200):'';if(kind==='other'&&!custom)fail('Bitte den Untergrund oder die Arbeit kurz benennen.');
+  return {kind,by,custom,company:by==='other'?text(v.company,200):'',note:text(v.note,500)};
+ };
+ const seen=new Set();
+ return list(value,3,value=>{
+  const v=obj(value),area=selected(v.area,preparationAreas,'Bitte einen gültigen Bereich wählen.');
+  if(seen.has(area))fail('Bitte jeden Bereich nur einmal dokumentieren.');seen.add(area);
+  return {area,label:area==='other'?text(v.label,1000):'',substrate:v.substrate==null?null:item(v.substrate,true),steps:list(v.steps,20,v=>item(v,false))};
+ });
 }
 export function additions(value){return list(value,30,v=>{
   obj(v);const name=text(v.type,80);if(!name)fail();
