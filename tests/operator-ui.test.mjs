@@ -103,12 +103,17 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    input('#silicone-color','Sonderton Bestand');input('#silicone-name','Eigenes Silikon');
    assert.equal($('#silicone-colors').children.length,0);assert.equal($('#silicone-color').value,'Sonderton Bestand');
    assert.equal($('#tile-name'),null);assert.ok($('#surface-name'));assert.equal($('#care-surface').value,'Nur freigegebene Pflegemittel verwenden.');
+   assert.equal($('[data-material-status="waterproofing"]').textContent,'Noch offen');
+   $('[data-material-jump="surface"]').click();assert.equal($('#editor-next').textContent,'Weiter: Abdichtung →');
+   $('#editor-next').click();assert.equal($('[data-material="waterproofing"]').open,true);assert.equal($('#editor-next').textContent,'Weiter: Silikon / Anschlussfugen →');
+   $('#editor-next').click();assert.equal($('[data-material="silicone"]').open,true);assert.equal($('#editor-next').textContent,'Weiter: Fotos & Unterlagen →');
+   $('[data-material-jump="waterproofing"]').click();assert.equal($('[data-material="waterproofing"]').open,true);
    assert.equal($('#waterproofing-color'),null);assert.equal($('#waterproofing-batch'),null);
    assert.equal($('#waterproofing-water-class').value,'');assert.equal($('#waterproofing-type').value,'');
    assert.match($('#waterproofing-documentation').textContent,/Fotos der Abdichtung \(empfohlen\)/);
    assert.ok(!$('[data-favorite="waterproofing:0"]').textContent.includes('grau'));
    $('[data-favorite="waterproofing:0"]').click();await wait(()=>!$('[data-favorite="waterproofing:0"]').disabled);
-   assert.equal($('#waterproofing-name').value,'Seccoral 1K');assert.equal($('#waterproofing-water-class').value,'');
+   assert.equal($('[data-material-status="waterproofing"]').textContent,'PCI Seccoral 1K');assert.equal($('[data-material-jump="waterproofing"]').classList.contains('is-missing'),false);assert.equal($('#waterproofing-name').value,'Seccoral 1K');assert.equal($('#waterproofing-water-class').value,'');
    submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
    const photo='data:image/jpeg;base64,/9j/AA==',photo2='data:image/jpeg;base64,/9j/BB==';
    const active=(await db.query('select id from pp_private.projects')).rows[0].id;
