@@ -1,0 +1,63 @@
+/* Phone layout: leave room for the form, touch targets and the browser keyboard. */
+@media screen and (max-width:600px){
+ html{scroll-padding-block:24px 120px}
+ .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+ .form-grid,.form-grid>*{min-width:0}
+ input,select,textarea{min-width:0;max-width:100%;font-size:16px}
+ .field input,.field select,.field textarea,.dialog input,.dialog select,.dialog textarea{font-size:16px}
+ .field input:not([type=checkbox]):not([type=radio]),.field select{min-height:48px}
+ .field input[type=datetime-local],.field input[type=date]{width:100%;min-width:0;display:block}
+ input[type=file]{width:100%;overflow:hidden}
+ input[type=file]::file-selector-button{min-height:44px;margin-right:8px;padding:8px 12px;border:1px solid var(--line);border-radius:5px;background:var(--pale);color:var(--ink);font:inherit}
+ .btn,.chip{min-height:48px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+ label.chip{display:inline-flex;align-items:center;gap:8px}
+ .chip input[type=checkbox]{flex-shrink:0;width:20px;height:20px;margin:0}
+ summary,.catalog-quick summary,.catalog-sources>summary,.system-finish .material-edit>summary{min-height:48px}
+ .dialog{width:calc(100% - 16px);max-width:630px;max-height:calc(100dvh - 16px);padding:18px;padding-bottom:max(18px,env(safe-area-inset-bottom));overscroll-behavior:contain;scroll-padding-block:18px}
+ .dialog h2{font-size:26px;min-width:0}
+ .dialog .close{min-width:48px;min-height:48px;flex-shrink:0}
+ .dialog #catalog-picker{max-height:none;overflow:visible}
+ .catalog-card{padding:14px;border-radius:10px}
+ .catalog-quick-row{flex-direction:column;align-items:stretch;gap:10px}
+ .catalog-quick-row>div{min-width:0}
+ .catalog-quick-row .btn{width:100%;min-height:48px}
+ .catalog-docs{padding-left:18px}
+ .catalog-docs a{display:inline-block;padding-block:8px}
+ .editor-title{padding-top:14px}
+ .editor-title .project-steps{gap:5px;font-size:12px}
+ .project-steps li{padding:7px 8px}
+ .editor-section-body{padding:12px}
+ .material-fields{padding:12px}
+ .material-fold.form-block>summary{gap:8px}
+ .material-fields .btn{min-height:48px}
+ .system-finish{padding:12px 10px}
+ .material-fields .chips .chip{width:100%;text-align:left;border-radius:8px}
+ .product-change .btn{width:100%}
+ .sticky{gap:8px;padding-top:10px;margin-top:14px}
+ .autosave-bar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);align-items:center}
+ .autosave-bar #save-status{grid-column:1;min-width:0}
+ .autosave-bar #preview{grid-column:2;grid-row:1;min-width:0;padding-inline:10px}
+ .autosave-bar #save:not([hidden]){grid-column:1 / -1;grid-row:2;width:100%}
+ /* Let native browser scrolling expose fields above the on-screen keyboard. */
+ form:has(input:focus,textarea:focus,select:focus)>.sticky{position:static}
+ .account-menu nav{min-width:min(210px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
+ .pass-grid{grid-template-columns:repeat(auto-fit,minmax(64px,1fr))}
+ .list-item .content{min-width:0;flex:1 1 150px}
+ .list-item .buttons{padding-left:0;width:100%}
+ .list-item .buttons a{min-height:48px;padding:10px 8px}
+ .favorite-group{padding:12px}
+ .favorite-edit{padding:12px}
+ .favorite-row>.row{gap:24px}
+ .favorite-edit>.row>.btn{flex:1}
+ .toast{bottom:calc(16px + env(safe-area-inset-bottom));max-width:calc(100% - 24px)}
+}
+@media screen and (max-width:360px){
+ .editor-section>summary{padding:14px 12px}
+ .editor-section>summary strong{font-size:18px}
+ .material-fold.form-block>summary{flex-wrap:wrap}
+ .material-fold.form-block>summary:after{margin-left:auto}
+ .top:has(.account-menu){gap:8px}
+ .account-menu>summary{padding-inline:10px}
+ .handover-review{padding:14px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
