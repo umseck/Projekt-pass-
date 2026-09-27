@@ -86,3 +86,5 @@
 @media(max-width:600px){.autosave-bar #editor-progress{grid-column:1 / -1;grid-row:1}.autosave-bar #save-status{grid-column:1;grid-row:2}.autosave-bar #preview,.autosave-bar #editor-next{grid-column:2;grid-row:2;min-width:0;padding-inline:10px}.autosave-bar #save:not([hidden]){grid-row:3}.editor-section>summary{gap:10px}}
 
 .editor-section,.material-fold{scroll-margin-top:16px;overflow-anchor:none}
+
+#route-status{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:30;padding:8px 16px;background:var(--olive);color:white;text-align:center;font-size:14px;pointer-events:none}#route-status[hidden]{display:none}

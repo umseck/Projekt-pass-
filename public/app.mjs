@@ -15,6 +15,7 @@ import {operatorPage,accessPage} from './operator.mjs';
 import {names,productKeys,trades,tradeFor} from './trades.mjs';
 import {catalogPage,openCatalogPicker,mergeDocuments,loadCatalog,setCompanyCatalog} from './catalog.mjs';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+let dashboardLoadedAt=0;
 let dashboard=null,dirty=false,routeVersion=0,ownerKey='',editorSession=null;
 const steps=active=>`<ol class="project-steps" aria-label="Projektschritte">${['Aktivieren','Bauphase','Übergabe'].map((label,i)=>`<li ${i===active?'aria-current="step"':''}>${i+1}. ${label}</li>`).join('')}</ol>`;
 const blankProduct=()=>({manufacturer:'',name:'',color:'',format:'',article_number:'',batch:'',system_type:'',sheen:'',label_photo:''});
@@ -28,7 +29,9 @@ function notify(message){$('#notice').textContent=message;$('#notice').classList
 async function api(op,body={}){
  const r=await fetch('/api/'+op,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  let data;try{data=await r.json();}catch{throw Error('Die Verbindung ist noch nicht eingerichtet. Bitte erneut versuchen.');}
- if(!r.ok){const e=Error(data.error||'Bitte erneut versuchen.');e.status=r.status;throw e;}return data;
+ if(!r.ok){if(r.status===401){dashboardLoadedAt=0;dashboard=null;}const e=Error(data.error||'Bitte erneut versuchen.');e.status=r.status;throw e;}
+ if(!['bootstrap','project','preview','scan','flow_get','flow_portal','operator_list','operator_company','access_info'].includes(op))dashboardLoadedAt=0;
+ return data;
 }
 function errorHTML(message){return `<p class="error" role="alert">${esc(message)}</p>`;}
 function shell(body,{customer=false,company={},compact=false}={}){
@@ -48,9 +51,9 @@ function bindForm(id,fn){const form=$(id);form.onsubmit=e=>{e.preventDefault();r
 const message='<div class="form-message" role="status"></div>';
 function login(returnTo='home'){
  shell(`<section class="hero login-box"><span class="eyebrow">Ihr Betriebszugang</span><h1>Gute Arbeit.<br>Gut übergeben.</h1><p class="intro">Ihre Projekte, Materialien und Projektpässe an einem Ort.</p><form id="login" class="spaced">${field('E-Mail','email','','email','required autocomplete="username"')}${field('Passwort','password','','password','required autocomplete="current-password"')}${message}<button class="btn olive wide" type="submit">Anmelden</button></form><p class="hint">Der Zugang wird für Ihren Betrieb eingerichtet. Ihre Kunden brauchen zum Lesen keine Anmeldung.</p></section>`,{customer:true});
- bindForm('#login',async form=>{dashboard=await api('login',fields(form));if(location.hash==='#'+returnTo)render();else go(returnTo);});
+ bindForm('#login',async form=>{dashboard=await api('login',fields(form));dashboardLoadedAt=Date.now();setCompanyCatalog(dashboard.company);if(location.hash==='#'+returnTo)render();else go(returnTo);});
 }
-async function loadDashboard(){dashboard=await api('bootstrap');setCompanyCatalog(dashboard.company);return dashboard;}
+async function loadDashboard({reuse=false}={}){if(reuse&&dashboard&&Date.now()-dashboardLoadedAt<30000)return dashboard;dashboard=await api('bootstrap');dashboardLoadedAt=Date.now();setCompanyCatalog(dashboard.company);return dashboard;}
 function home(){
  const d=dashboard,free=d.passes.filter(p=>!p.project_id&&!p.disabled).length,activated=d.passes.length-free;
  shell(`<section class="admin-title"><span class="eyebrow">${esc(d.company.name)}</span><h1>Die Übergabe.<br>Einfach gut gemacht.</h1><a class="btn olive" href="#passes">Aktivieren →</a><div class="stats"><div><strong>${free}</strong><span>Freie Pässe</span></div><div><strong>${activated}</strong><span>Aktivierte Pässe</span></div><div><strong>${d.projects.length}</strong><span>Projekte</span></div></div><div class="row between"><h2>Meine Projekte</h2><span class="small muted">${d.passes.length} Projektpässe</span></div><div class="search"><label class="sr-only" for="search">Projekte suchen</label><input id="search" type="search" placeholder="Projekt, Passnummer, Material oder Kunde"></div><div id="projects"></div></section>`);
@@ -332,7 +335,7 @@ async function settings(){
 let previousHash=location.hash,allowNavigation=false;
 async function render(){
  editorSession?.dispose();editorSession=null;
- const runId=++routeVersion;const [route,arg]=location.hash.slice(1).split('/');if($('#modal').open)$('#modal').close();
+ const runId=++routeVersion;const loading=document.querySelector('#route-status');if(loading){loading.textContent='Seite wird geladen …';loading.hidden=false;}const [route,arg]=location.hash.slice(1).split('/');if($('#modal').open)$('#modal').close();
  const operatorContext=()=>({api,shell,bindForm,run,notify,go,dashboard,isCurrent:()=>runId===routeVersion,
    setDirty:value=>{dirty=value;},completeAccess:data=>{dashboard=data;dirty=false;history.replaceState(null,'',location.pathname+location.search+'#home');previousHash=location.hash;render();}});
  try{
@@ -341,7 +344,7 @@ async function render(){
   if(route==='p'){await customer(arg);return;}
   if(route==='access'){await accessPage(arg,operatorContext());return;}
   if(route==='login'||!route){login();return;}
-  await loadDashboard();if(runId!==routeVersion)return;
+  await loadDashboard({reuse:true});if(runId!==routeVersion)return;
   if(['admin','business-new','business'].includes(route)){await operatorPage(route,arg,operatorContext());return;}
   if(route==='catalog'){await catalogPage({shell,isCurrent:()=>runId===routeVersion});return;}
   if(dashboard.role==='operator'&&!dashboard.company){if(route==='home'){await operatorPage('admin',null,operatorContext());return;}go('admin');return;}
@@ -352,7 +355,7 @@ async function render(){
   if(runId!==routeVersion)return;
   if(e.status===401){login(location.hash.slice(1)||'home');notify(e.message);return;}
   shell(`<section class="hero"><h1>${route==='p'?'Ihr Projektpass.':'Einen Moment.'}</h1>${errorHTML(e.message)}<button class="btn olive spaced" id="retry">Erneut versuchen</button>${route==='p'?`<p><a class="btn text" href="#activate/${esc(arg)}">Als Fachbetrieb öffnen →</a></p>`:'<p><a class="btn text" href="#login">Zum Betriebszugang →</a></p>'}</section>`,{customer:true});$('#retry').onclick=render;
- }
+ }finally{if(runId===routeVersion&&loading){loading.hidden=true;loading.textContent='';}}
 }
 window.addEventListener('hashchange',async()=>{
  if(allowNavigation){allowNavigation=false;return;}
