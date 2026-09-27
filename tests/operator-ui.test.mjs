@@ -54,7 +54,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('[data-care-kind="surface"]').hidden,false);assert.equal($('[data-care-kind="tile"]').hidden,true);
    $('input[name="preferred-manufacturer"][value="Testanbieter"]').checked=true;
    input('#care-surface','Nur freigegebene Pflegemittel verwenden.');
-   input('#favorite-waterproofing','PCI | Seccoral 1K | grau |');input('#favorite-surface','EPI | Quartz R | Sand |');submit('#settings');await wait(()=>$('#search'));
+   for(const [kind,maker,name,color] of [['waterproofing','PCI','Seccoral 1K',''],['surface','EPI','Quartz R','Sand']]){$('[data-favorite-new="'+kind+'"]').click();input('#favorite-maker',maker);input('#favorite-name',name);if(color)input('#favorite-color',color);$('[data-favorite-apply]').click();}submit('#settings');await wait(()=>$('#search'));
    assert.equal((await db.query('select profile from pp_private.companies')).rows[0].profile.trade,'seamless');
    assert.deepEqual((await db.query('select profile from pp_private.companies')).rows[0].profile.preferred_manufacturers,['Testanbieter']);
    assert.ok($('#app').textContent.includes('Testbetrieb <A>'));
