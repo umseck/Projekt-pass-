@@ -1,5 +1,6 @@
 import {productKeys} from '../public/trades.mjs';
 import {preparationAreas,substrateTypes,preparationTypes,preparationActors} from '../public/preparation-data.mjs';
+import {waterClasses,waterproofingTypes,projectPhotoLimit} from '../public/waterproofing-data.mjs';
 export class HttpError extends Error {
   constructor(status,message){super(message);this.status=status;}
 }
@@ -52,11 +53,20 @@ export function standard(value,kind){
 export function content(value){
   const v=obj(value);const usage=text(v.usage_available_at,40);
   if(usage&&!Number.isFinite(Date.parse(usage)))fail('Bitte ein gültiges Nutzungsdatum wählen.');
-  return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,product(v[k])])),
+  const photos=list(v.photos,projectPhotoLimit,photo),details=v.waterproofing_details===undefined?undefined:waterproofingDetails(v.waterproofing_details);
+  if(photos.length+(details?.photos.length||0)>projectPhotoLimit)fail('Bitte höchstens 8 Fotos insgesamt für Abdichtung und Übergabe wählen.');
+  return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,{...product(v[k]),...(k==='waterproofing'?{color:''}:{})}])),
+    ...(details===undefined?{}:{waterproofing_details:details}),
     usage_available_at:usage,care_notes:care(v.care_notes),
-    photos:list(v.photos,8,photo),
+    photos,
     spare_materials:list(v.spare_materials,5,s=>({...fields(s,['material','quantity','location']),photo:photo(s.photo)})),
     documents:list(v.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))};
+}
+export function waterproofingDetails(value){
+ const v=obj(value),waterClass=text(v.water_class,10),type=text(v.type,20);
+ if(waterClass&&!waterClasses.includes(waterClass))fail('Bitte eine gültige Wassereinwirkungsklasse wählen.');
+ if(type&&!Object.hasOwn(waterproofingTypes,type))fail('Bitte Dichtbahn oder Dichtmasse wählen.');
+ return {water_class:waterClass,type,photos:list(v.photos,projectPhotoLimit,photo)};
 }
 export function preparation(value){
  const selected=(value,options,message)=>{if(typeof value!=='string'||!Object.hasOwn(options,value))fail(message);return value;};

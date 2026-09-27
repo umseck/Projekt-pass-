@@ -54,7 +54,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('[data-care-kind="surface"]').hidden,false);assert.equal($('[data-care-kind="tile"]').hidden,true);
    $('input[name="preferred-manufacturer"][value="Testanbieter"]').checked=true;
    input('#care-surface','Nur freigegebene Pflegemittel verwenden.');
-   input('#favorite-surface','EPI | Quartz R | Sand |');submit('#settings');await wait(()=>$('#search'));
+   input('#favorite-waterproofing','PCI | Seccoral 1K | grau |');input('#favorite-surface','EPI | Quartz R | Sand |');submit('#settings');await wait(()=>$('#search'));
    assert.equal((await db.query('select profile from pp_private.companies')).rows[0].profile.trade,'seamless');
    assert.deepEqual((await db.query('select profile from pp_private.companies')).rows[0].profile.preferred_manufacturers,['Testanbieter']);
    assert.ok($('#app').textContent.includes('Testbetrieb <A>'));
@@ -65,6 +65,30 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    const pass=(await db.query('select id,token from pp_private.passes where number=120')).rows[0];
    win.location.hash='activate/'+pass.id;await wait(()=>$('#activate'));input('#title','Fugenloses Testbad');submit('#activate');await wait(()=>$('#edit'));
    assert.equal($('#tile-name'),null);assert.ok($('#surface-name'));assert.equal($('#care-surface').value,'Nur freigegebene Pflegemittel verwenden.');
+   assert.equal($('#waterproofing-color'),null);assert.equal($('#waterproofing-batch'),null);
+   assert.equal($('#waterproofing-water-class').value,'');assert.equal($('#waterproofing-type').value,'');
+   assert.match($('#waterproofing-documentation').textContent,/Fotos der Abdichtung \(empfohlen\)/);
+   assert.ok(!$('[data-favorite="waterproofing:0"]').textContent.includes('grau'));
+   $('[data-favorite="waterproofing:0"]').click();
+   assert.equal($('#waterproofing-name').value,'Seccoral 1K');assert.equal($('#waterproofing-water-class').value,'');
+   submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
+   const photo='data:image/jpeg;base64,/9j/AA==',photo2='data:image/jpeg;base64,/9j/BB==';
+   const active=(await db.query('select id from pp_private.projects')).rows[0].id;
+   assert.deepEqual((await db.query('select content from pp_private.projects')).rows[0].content.waterproofing_details,{water_class:'',type:'',photos:[]});
+   // Seed previously uploaded JPEGs to exercise reopen, remove, save and snapshot persistence.
+   await db.query("update pp_private.projects set content=jsonb_set(content,'{waterproofing_details}',$1::jsonb) where id=$2",[JSON.stringify({water_class:'W1-I',type:'sheet',photos:[photo,photo2]}),active]);
+   win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
+   assert.equal($('#waterproofing-water-class').value,'W1-I');assert.equal($('#waterproofing-type').value,'sheet');
+   assert.equal(win.document.querySelectorAll('#waterproofing-photos img').length,2);
+   $('[data-remove-waterproofing="1"]').click();assert.equal(win.document.querySelectorAll('#waterproofing-photos img').length,1);
+   assert.equal($('#waterproofing-photo-upload').required,false);
+   // Both upload controls enforce the combined limit before attempting image decoding.
+   for(const selector of ['#waterproofing-photo-upload','#project-photos']){
+    Object.defineProperty($(selector),'files',{configurable:true,value:Array(8).fill(new win.File(['image'],'test.jpg',{type:'image/jpeg'}))});
+    await $(selector).onchange({target:$(selector)});
+    assert.match($('#notice').textContent,/höchstens 8 Fotos insgesamt/);assert.equal($('#save').disabled,false);
+   }
+   assert.equal(win.document.querySelectorAll('#waterproofing-photos img').length,1);
    assert.equal($('#surface-colors').children.length,0);assert.equal($('#surface-color').value,'');
    assert.ok($('#surface-name').compareDocumentPosition($('#surface-color'))&win.Node.DOCUMENT_POSITION_FOLLOWING);
    input('#surface-manufacturer','EPI');input('#surface-name','Quartz R');
@@ -95,7 +119,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    selectPreparation('#prep-walls-base-kind','drywall');selectPreparation('#prep-walls-base-by','other');input('#prep-walls-base-company','Trockenbau Beispiel');
    $('[data-prep-add="walls"]').click();selectPreparation('#prep-walls-0-kind','filled');selectPreparation('#prep-walls-0-by','own');
    selectPreparation('#prep-floor-base-kind','screed');selectPreparation('#prep-floor-base-by','unknown');
-   input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
+   input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#waterproofing-water-class','W2-I');input('#waterproofing-type','compound');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
    $('[data-save-library="surface"]').click();await wait(()=>$('#modal').open&&$('#library-product'));
    input('#library-url','https://example.test/project-product.pdf');input('#library-document-name','Passendes Produktblatt');submit('#library-product');
    await wait(()=>$('#notice').textContent.startsWith('Produkt im Betriebskatalog'));
@@ -106,13 +130,13 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    input('#surface-color','Sonderton <Sand> 123');
    $('#remember-standard').click();await wait(()=>$('#notice').textContent.startsWith('Standard gespeichert'));
    const savedStandard=(await db.query('select profile from pp_private.companies')).rows[0].profile.standards.seamless;
-   assert.equal(savedStandard.preparation,undefined);
+   assert.equal(savedStandard.preparation,undefined);assert.equal(savedStandard.waterproofing_details,undefined);assert.equal(savedStandard.waterproofing.color,'');
    assert.equal(savedStandard.surface.name,'Testoberfläche Pro');assert.equal(savedStandard.surface.color,'');assert.equal(savedStandard.surface.batch,'');assert.equal(savedStandard.photos,undefined);assert.ok(savedStandard.documents.length>0);
    assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Sonderton <Sand> 123');
    $('#preview').click();await wait(()=>$('#handover'));
    assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
-   $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));
+   $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));assert.ok($('#panel-joints').textContent.includes('W2-I'));assert.ok($('#panel-joints').textContent.includes('Dichtmasse'));assert.equal($('#panel-joints img').getAttribute('src'),photo);
    $('#handover').click();await wait(()=>$('#copy-link'));
    // Changing the business default only affects future projects.
    win.location.hash='settings';await wait(()=>$('#settings'));input('#trade','tile');submit('#settings');await wait(()=>$('#search'));
@@ -124,6 +148,8 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    const handoverPreparation=(await db.query('select handover_snapshot from pp_private.projects')).rows[0].handover_snapshot.content.preparation;
    assert.equal(handoverPreparation[0].area,'walls');assert.equal(handoverPreparation[0].steps[0].by,'own');assert.equal(handoverPreparation[1].substrate.kind,'screed');
    const project=(await db.query('select id,version,content from pp_private.projects')).rows[0];
+   assert.deepEqual(project.content.waterproofing_details,{water_class:'W2-I',type:'compound',photos:[photo]});
+   assert.deepEqual((await db.query('select handover_snapshot from pp_private.projects')).rows[0].handover_snapshot.content.waterproofing_details,project.content.waterproofing_details);
    assert.equal(project.content.trade,'seamless');assert.equal(project.content.surface.manufacturer,'Testanbieter');
    const forged=await globalThis.fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:project.id,version:project.version,title:'Fugenloses Testbad',content:{...project.content,trade:'tile'},internal:{}})});
    assert.equal(forged.status,200);assert.equal((await forged.json()).content.trade,'seamless');

@@ -16,6 +16,10 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
   sich am Projekt in den privaten Betriebskatalog übernehmen. Siehe `CATALOG_SOURCES.md`.
 - Fugenlos-Vorlage: Fläche, Untergrund, Oberflächensystem, Grundierung, Abdichtung,
   Versiegelung, Anschlussfugen und Pflege. Keine erfundenen Material- oder Pflegevorgaben.
+- Abdichtung: Produkt ohne Farbfeld, optionale Wassereinwirkungsklasse und Dichtbahn/Dichtmasse.
+  „Fotos der Abdichtung (empfohlen)“ bleibt freiwillig. Die Angaben liegen separat in
+  `content.waterproofing_details`, erscheinen nach Übergabe beim Kunden und bleiben im
+  Übergabesnapshot erhalten. Sie werden nicht in Betriebskatalog oder Materialstandard kopiert.
 - Untergrund und Vorbereitung: getrennte Auswahl für Wände und Boden; jede Arbeit mit
   eigenem ausführendem Betrieb, optionalem Firmennamen und Beschreibung. Vorhandene Notizen
   bleiben erhalten. Die strukturierten Angaben liegen in `content.preparation`, werden bei
@@ -27,7 +31,8 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
   nur als SHA-256 gespeichert, im Betrieb ersetzbar. Kein Kontozwang zum Lesen oder Ergänzen.
 - Schlüsselrotation, Linksperre, Löschung, Versionsprüfung gegen Überschreiben durch parallele Geräte.
 - Fotos lokal im Browser komprimiert und ohne EXIF neu gerendert; anschließend im geschützten
-  Projektinhalt der Datenbank gespeichert. Für den kleinen Pilot maximal 8 Übergabefotos.
+  Projektinhalt der Datenbank gespeichert. Für den kleinen Pilot maximal 8 Fotos insgesamt
+  für Abdichtung und Übergabe; beide Uploads und die API prüfen die gemeinsame Grenze.
   Kein öffentlicher Bucket, kein externer Bilddienst. Supabase Storage ist noch nicht nötig.
 - Kundenexport als JSON mit Fotos und als PDF über den Druckdialog; keine Bindung der Daten an ein einzelnes Handy.
 - Serviceanfrage öffnet das E-Mail-Programm mit Projektkontext. Der Kunde sendet selbst und kann

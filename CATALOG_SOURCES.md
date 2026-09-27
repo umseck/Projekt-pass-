@@ -39,3 +39,11 @@ Farben stehen separat in `public/color-palettes.mjs`. Es wird keine Farbe automa
 - ArtStucco wird als Anbieter geführt; keine erfundenen Pava-Artikelnummern oder technischen Datenblätter.
 
 Produktinformationen dienen der Dokumentation der tatsächlichen Auswahl. Sie legen weder einen automatisch ausgeführten Aufbau noch eine pauschale Freigabe für jede Nassbereichssituation fest.
+
+## Zusätzlich bestätigtes Betriebsprodukt: PCI Seccoral 1K
+
+Auf Nutzerangabe für den privaten Betriebskatalog bestätigt; der gemeinsame Oberflächenkatalog bleibt unverändert.
+
+- Offizielle Produktseite: https://www.pci-augsburg.eu/de/produkte/pci-seccoral-1k
+- Technisches Merkblatt, Stand 7/26: https://doc.pci-augsburg.com/php/index.pdf?changed=1783548000&check=d72558a7b969a59b11b2d122e5098270&download=&lang=0&pfile=0_127_1&prod=109
+- Herstellerbezeichnung: flexible Dichtschlämme. In der vereinfachten Projektauswahl entspricht dies „Dichtmasse“; keine automatische Wassereinwirkungsklasse aus den erlaubten Anwendungsbereichen ableiten. Die tatsächliche Klasse und Ausführung bleiben Projektangaben.
