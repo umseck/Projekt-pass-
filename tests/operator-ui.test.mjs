@@ -28,7 +28,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
  const win=new Window({url:origin+'/#login'});win.document.body.innerHTML='<div id="app"></div><dialog id="modal"></dialog><div id="notice"></div>';
  const baseCatalog=JSON.parse(await readFile(new URL('../public/catalog.json',import.meta.url),'utf8'));
  globalThis.window=win;globalThis.document=win.document;globalThis.location=win.location;globalThis.history=win.history;globalThis.FormData=win.FormData;globalThis.confirm=()=>true;
- let cookie='';globalThis.fetch=async(path,opts)=>{if(path==='/catalog.json')return json({version:1,checked_at:'2026-09-26',manufacturers:[...baseCatalog.manufacturers,{id:'testanbieter',name:'Testanbieter'},{id:'zweiter',name:'Zweiter Testanbieter'}],products:[...baseCatalog.products,{id:'testanbieter-test-pro',manufacturer_id:'testanbieter',name:'Testoberfläche Pro',kinds:['surface'],documents:[{name:'Testblatt',type:'Technisches Merkblatt',url:'https://example.test/TestPRO_TM.pdf',verification:'pdf'}]},{id:'testanbieter-test-ultra',manufacturer_id:'testanbieter',name:'Testoberfläche Ultra',kinds:['surface'],documents:[]},{id:'zweiter-test-finish',manufacturer_id:'zweiter',name:'Test Versiegelung',kinds:['finish'],documents:[{url:'https://example.test/unconfirmed.pdf',verification:'source_link'}]}]});const r=await handle(new Request(origin+path,{...opts,headers:{...opts.headers,origin,cookie}}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'test_secret',SUPABASE_PUBLISHABLE_KEY:'test_public'});if(r.headers.has('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];return r;};
+ let cookie='',saveOffline=false;globalThis.fetch=async(path,opts)=>{if(path==='/api/save'&&saveOffline)throw Error('Test: keine Verbindung');if(path==='/catalog.json')return json({version:1,checked_at:'2026-09-26',manufacturers:[...baseCatalog.manufacturers,{id:'testanbieter',name:'Testanbieter'},{id:'zweiter',name:'Zweiter Testanbieter'}],products:[...baseCatalog.products,{id:'testanbieter-test-pro',manufacturer_id:'testanbieter',name:'Testoberfläche Pro',kinds:['surface'],documents:[{name:'Testblatt',type:'Technisches Merkblatt',url:'https://example.test/TestPRO_TM.pdf',verification:'pdf'}]},{id:'testanbieter-test-ultra',manufacturer_id:'testanbieter',name:'Testoberfläche Ultra',kinds:['surface'],documents:[]},{id:'zweiter-test-finish',manufacturer_id:'zweiter',name:'Test Versiegelung',kinds:['finish'],documents:[{url:'https://example.test/unconfirmed.pdf',verification:'source_link'}]}]});const r=await handle(new Request(origin+path,{...opts,headers:{...opts.headers,origin,cookie}}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'test_secret',SUPABASE_PUBLISHABLE_KEY:'test_public'});if(r.headers.has('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];return r;};
  const $=s=>win.document.querySelector(s),input=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new win.Event('input',{bubbles:true}));},submit=s=>$(s).dispatchEvent(new win.Event('submit',{bubbles:true,cancelable:true}));
  try{
    await import('../public/app.mjs?operator-integration');await wait(()=>$('#login'));
@@ -73,6 +73,25 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.ok([...win.document.querySelectorAll('[data-editor-section]')].every(s=>!s.open));
    assert.ok($('.account-menu'));assert.equal($('.account-menu').open,false);
    assert.equal($('#documents').hidden,true);
+   assert.ok($('[data-material="waterproofing"] #waterproofing-photo-upload'));
+   assert.equal($('[data-editor-section="files"] #waterproofing-photo-upload'),null);
+   input('#surface-color','Automatisch gespeichert');
+   await wait(()=>$('#save-status').textContent==='Gespeichert');
+   assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Automatisch gespeichert');
+   saveOffline=true;input('#surface-color','Bleibt bei Verbindungsfehler');
+   await wait(()=>$('#save-status').textContent.includes('Nicht gespeichert'));
+   assert.equal($('#surface-color').value,'Bleibt bei Verbindungsfehler');
+   assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Automatisch gespeichert');
+   saveOffline=false;win.dispatchEvent(new win.Event('online'));
+   await wait(()=>$('#save-status').textContent==='Gespeichert');
+   assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Bleibt bei Verbindungsfehler');
+   input('#surface-color','Wird vor Navigation gespeichert');
+   const autoId=(await db.query('select id from pp_private.projects')).rows[0].id;
+   win.location.hash='home';await wait(()=>$('#search'));
+   assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Wird vor Navigation gespeichert');
+   win.location.hash='edit/'+autoId;await wait(()=>$('#edit'));
+   assert.equal($('#save').hidden,true);
+   input('#surface-color','');submit('#edit');await wait(()=>$('#save-status').textContent==='Gespeichert');
    $('#add-document').click();await wait(()=>$('#project-document'));
    input('#document-name','Eigene Pflegeanleitung | Sonderfläche');input('#document-url','https://example.test/manual-care.pdf');submit('#project-document');await wait(()=>!$('#modal').open);
    assert.ok($('#document-list').textContent.includes('Eigene Pflegeanleitung'));assert.ok($('[data-editor-summary="files"]').textContent.includes('1 Unterlage'));
@@ -179,11 +198,18 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('#remember-standard').click();await wait(()=>$('#notice').textContent.startsWith('Standard gespeichert'));
    const savedStandard=(await db.query('select profile from pp_private.companies')).rows[0].profile.standards.seamless;
    assert.equal(savedStandard.primer,undefined);assert.equal(savedStandard.finish.name,'Versiegelung 3');
+   // Applying the usual build to an older incomplete project fills only the missing product.
+   await db.query("update pp_private.projects set content=jsonb_set(content,'{waterproofing}','{}'::jsonb) where id=$1",[active]);
+   win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
+   assert.equal($('#waterproofing-name').value,'');assert.ok($('#use-standard'));
+   $('#use-standard').click();await wait(()=>$('#waterproofing-name').value==='Abdichtung 2');
+   assert.equal($('#surface-color').value,'Sonderton <Sand> 123');assert.equal($('#finish-name').value,'Versiegelung 3');
+   assert.equal($('#waterproofing-water-class').value,'W2-I');assert.equal(win.document.querySelectorAll('#waterproofing-photos img').length,1);
    assert.equal(savedStandard.preparation,undefined);assert.equal(savedStandard.waterproofing_details,undefined);assert.equal(savedStandard.waterproofing.color,'');
    assert.equal(savedStandard.surface.name,'Testoberfläche Pro');assert.equal(savedStandard.surface.color,'');assert.equal(savedStandard.surface.batch,'');assert.equal(savedStandard.photos,undefined);assert.ok(savedStandard.documents.length>0);
    assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Sonderton <Sand> 123');
    $('#preview').click();await wait(()=>$('#handover'));
-   assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');
+   assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');assert.ok($('#handover-review').textContent.includes('Versiegelung 3'));assert.equal($('#customer-preview').open,false);
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
    $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));assert.ok($('#panel-joints').textContent.includes('W2-I'));assert.ok($('#panel-joints').textContent.includes('Dichtmasse'));assert.equal($('#panel-joints img').getAttribute('src'),photo);
    $('#handover').click();await wait(()=>$('#copy-link'));

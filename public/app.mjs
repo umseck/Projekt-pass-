@@ -1,3 +1,6 @@
+import {createAutosave} from './autosave.mjs';
+import {handoverReview} from './handover-review.mjs';
+import {missingStandardProducts} from './standard-build.mjs';
 import {editorSection,bindEditorSections} from './editor-layout.mjs';
 import {defaultFinish,finishSelection} from './system-finish.mjs';
 import {waterproofingFields,waterproofingPhotoFields,waterproofingHTML} from './waterproofing.mjs';
@@ -11,7 +14,7 @@ import {operatorPage,accessPage} from './operator.mjs';
 import {names,productKeys,trades,tradeFor} from './trades.mjs';
 import {catalogPage,openCatalogPicker,mergeDocuments,loadCatalog,setCompanyCatalog} from './catalog.mjs';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-let dashboard=null,dirty=false,routeVersion=0,ownerKey='';
+let dashboard=null,dirty=false,routeVersion=0,ownerKey='',editorSession=null;
 const steps=active=>`<ol class="project-steps" aria-label="Projektschritte">${['Aktivieren','Bauphase','Übergabe'].map((label,i)=>`<li ${i===active?'aria-current="step"':''}>${i+1}. ${label}</li>`).join('')}</ol>`;
 const blankProduct=()=>({manufacturer:'',name:'',color:'',format:'',article_number:'',batch:'',system_type:'',sheen:'',label_photo:''});
 const applicationAreas=['Boden','Wände','Wände & Boden'];
@@ -66,13 +69,17 @@ function passes(){
 function activate(id){
  const pass=dashboard.passes.find(p=>p.id===id||p.token===id);if(!pass)throw Error('Dieser Pass gehört nicht zu Ihrem Betrieb.');
  if(pass.project_id){go('edit/'+pass.project_id);return;}if(pass.disabled)throw Error('Dieser Pass wurde stillgelegt. Bitte einen freien Pass wählen.');
- shell(`<section class="admin-title"><a class="btn text" href="#passes">← Ihre Pässe</a>${steps(0)}<span class="eyebrow">Aktivieren</span><h1>Projektpass ${num(pass.number)}</h1><p class="intro">Was soll Ihr Kunde später noch wissen?</p><form id="activate" class="spaced">${dashboard.company.standards?.[dashboard.company.trade||'tile']?'<p class="hint">Ihr gespeicherter Aufbau wird übernommen. Im nächsten Schritt können Sie jedes Produkt ändern.</p>':''}${field('Wie heißt das Projekt?','title','','text','required maxlength="150" placeholder="Bad Familie Müller"')}${message}<button class="btn olive wide" type="submit">Aktivieren →</button></form></section>`);
+ shell(`<section class="admin-title"><a class="btn text" href="#passes">← Ihre Pässe</a>${steps(0)}<span class="eyebrow">Aktivieren</span><h1>Projektpass ${num(pass.number)}</h1><p class="intro">Was soll Ihr Kunde später noch wissen?</p><form id="activate" class="spaced">${dashboard.company.standards?.[dashboard.company.trade||'tile']?`<aside class="standard-start"><strong>Mit meinem üblichen Aufbau starten</strong><p>${tradeFor(dashboard.company.trade).products.map(k=>dashboard.company.standards[dashboard.company.trade||'tile'][k]).filter(hasProduct).map(p=>esc([p.manufacturer,p.name].filter(Boolean).join(' '))).join(' · ')}</p><span class="hint">Wird vorausgefüllt. Fläche und Farbtöne ergänzen Sie im nächsten Schritt.</span></aside>`:''}${field('Wie heißt das Projekt?','title','','text','required maxlength="150" placeholder="Bad Familie Müller"')}${message}<button class="btn olive wide" type="submit">Aktivieren →</button></form></section>`);
  bindForm('#activate',async form=>{const p=await api('activate',{pass_id:pass.id,title:fields(form).title});dirty=false;go('edit/'+p.id);});
 }
-function favoriteButtons(kind,favorites=[]){return favorites.length?`<div class="chips">${favorites.slice(0,5).map((v,i)=>`<button class="chip" type="button" data-favorite="${kind}:${i}">${esc([v.manufacturer,v.name,kind==='waterproofing'?'':v.color].filter(Boolean).join(' · '))}</button>`).join('')}</div>`:'';}
+function favoriteButtons(kind,favorites=[]){
+ const preferred=new Set((dashboard?.company?.preferred_manufacturers||[]).map(m=>m.toLocaleLowerCase('de'))),indexed=favorites.map((v,i)=>({v,i}));
+ const mine=indexed.filter(({v})=>preferred.has((v.manufacturer||'').toLocaleLowerCase('de'))),shown=(mine.length?mine:indexed).slice(0,3);
+ return shown.length?`<div class="chips">${shown.map(({v,i})=>`<button class="chip" type="button" data-favorite="${kind}:${i}">${esc([v.manufacturer,v.name,kind==='waterproofing'?'':v.color].filter(Boolean).join(' · '))}</button>`).join('')}</div>`:'';
+}
 function productForm(kind,p,favorites=[],primary='tile',details={},nested=false,systemFinish=''){
  const selected=hasProduct(p),title=nested&&kind==='grout'?'Fugenmaterial':names[kind];
- return `<details class="form-block material-card material-fold" data-material="${kind}"><summary><span><strong>${title}</strong><small class="material-summary" id="summary-${kind}">${esc([[p.manufacturer,p.name].filter(Boolean).join(' '),kind==='waterproofing'?'':p.color].filter(Boolean).join(' · ')||'Noch kein Produkt ausgewählt')}</small></span></summary><div class="material-fields"><details class="material-edit" ${selected?'':'open'}><summary>Produkt ${selected?'ändern':'auswählen'}</summary>${favoriteButtons(kind,favorites)}<button class="btn light" type="button" data-open-catalog="${kind}">${kind==='surface'?'System':'Produkt'} auswählen</button><details class="manual-product"><summary>Eigenes Produkt / Angaben ändern</summary><div class="form-grid">${field('Hersteller',kind+'-manufacturer',p.manufacturer)}${field(kind==='tile'?'Serie / Artikel':kind==='waterproofing'?'Produkt':'Produkt / System',kind+'-name',p.name)}${kind==='tile'?field('Format',kind+'-format',p.format):''}${kind==='surface'?field('Systemart',kind+'-system_type',p.system_type,'text','placeholder="Wird bei der Systemauswahl ausgefüllt"'):''}</div><button class="btn light" type="button" data-save-library="${kind}">Im Betriebskatalog speichern</button></details></details>${kind==='waterproofing'?waterproofingFields(details):`${colorField(kind,p)}${systemFinish}<details class="spaced"><summary>Artikelnummer, Charge${kind===primary?' & Etikett':''}</summary>${field('Artikelnummer',kind+'-article_number',p.article_number)}${field('Charge / Kaliber',kind+'-batch',p.batch)}${kind===primary?`${photoInput('Foto vom Etikett','label-photo')}<div id="label-preview">${photoPreview(p.label_photo)}</div>`:''}</details>`}</div></details>`;
+ return `<details class="form-block material-card material-fold" data-material="${kind}"><summary><span><strong>${title}</strong><small class="material-summary" id="summary-${kind}">${esc([[p.manufacturer,p.name].filter(Boolean).join(' '),kind==='waterproofing'?'':p.color].filter(Boolean).join(' · ')||'Noch kein Produkt ausgewählt')}</small></span></summary><div class="material-fields">${favoriteButtons(kind,favorites)}<button class="btn light product-change" type="button" data-open-catalog="${kind}">${selected?'Ändern':kind==='surface'?'System auswählen':'Produkt auswählen'}</button><details class="material-edit manual-product"><summary>Eigene Angaben</summary><div class="form-grid">${field('Hersteller',kind+'-manufacturer',p.manufacturer)}${field(kind==='tile'?'Serie / Artikel':kind==='waterproofing'?'Produkt':'Produkt / System',kind+'-name',p.name)}${kind==='tile'?field('Format',kind+'-format',p.format):''}${kind==='surface'?field('Systemart',kind+'-system_type',p.system_type,'text','placeholder="Wird bei der Systemauswahl ausgefüllt"'):''}</div><button class="btn light" type="button" data-save-library="${kind}">Im Betriebskatalog speichern</button></details>${kind==='waterproofing'?waterproofingFields(details)+waterproofingPhotoFields():`${colorField(kind,p)}${systemFinish}<details class="spaced"><summary>Artikelnummer, Charge${kind===primary?' & Etikett':''}</summary>${field('Artikelnummer',kind+'-article_number',p.article_number)}${field('Charge / Kaliber',kind+'-batch',p.batch)}${kind===primary?`${photoInput('Foto vom Etikett','label-photo')}<div id="label-preview">${photoPreview(p.label_photo)}</div>`:''}</details>`}</div></details>`;
 }
 function finishForm(p,favorites=[]){
  return `<div class="system-finish" data-material="finish"><span class="field-label">Versiegelung</span><p id="summary-finish">${esc([p.manufacturer,p.name].filter(Boolean).join(' ')||'Noch nicht hinterlegt')}</p><small id="finish-status" class="muted"></small><details class="material-edit"><summary>Versiegelung ändern</summary>${favoriteButtons('finish',favorites)}<button class="btn light" type="button" data-open-catalog="finish">Andere Versiegelung auswählen</button><div class="form-grid spaced">${field('Hersteller','finish-manufacturer',p.manufacturer)}${field('Produkt','finish-name',p.name)}${field('Glanzgrad (optional)','finish-sheen',p.sheen)}</div><details class="manual-product"><summary>Weitere Angaben</summary>${field('Artikelnummer','finish-article_number',p.article_number)}${field('Charge','finish-batch',p.batch)}${field('Farbton (optional)','finish-color',p.color)}<button type="button" class="btn light" data-save-library="finish">Im Betriebskatalog speichern</button></details><div class="row"><button type="button" class="btn text" id="reset-finish">Systemvorschlag übernehmen</button><button type="button" class="btn text" id="clear-finish">Angabe entfernen</button></div></details></div>`;
@@ -90,22 +97,23 @@ function localDate(value){if(!value)return '';const d=new Date(value);return new
 async function edit(id){
  let p=await api('project',{id});if(location.hash!=='#edit/'+id)return;if(p.handover_snapshot){go('work/'+id);return;}
  const c=structuredClone(p.content),trade=tradeFor(c.trade),primary=trade.primary,sp=c.spare_materials?.[0]||{};let photos=c.photos||[],waterproofingPhotos=c.waterproofing_details?.photos||[],label=c[primary]?.label_photo||'',sparePhoto=sp.photo||'',busyPhotos=0;
- let previousSurface={...c.surface},finishMode=c.finish_selection||'';
+ let previousSurface={...c.surface},finishMode=c.finish_selection||'',autosaver;
+ function changed(){if(autosaver&&!form.isConnected)return;dirty=true;if(autosaver)$('.form-message',form).textContent='';autosaver?.changed();}
  const projectFields=`${field('Projektname','title',p.title,'text','required maxlength="150"')}${c.trade==='seamless'?`<div class="spaced">${applicationAreaField(c.application_area)}<details class="spaced" id="preparation-section"><summary>Untergrund & Vorbereitung (optional)</summary><div id="preparation-editor"></div><details class="preparation-notes" ${c.substrate?'open':''}><summary>Ergänzende Notiz (optional)</summary>${area('Ergänzende Notiz','substrate',c.substrate)}</details></details></div>`:''}<details class="spaced"><summary>Interne Kundendaten (optional)</summary>${field('Kundenname (intern)','customer_name',p.internal?.customer_name)}${field('Adresse (intern)','address',p.internal?.address)}<p class="hint">Nur für Ihren Betrieb sichtbar.</p></details>`;
- const materials=`${materialForms(trade,c,dashboard.company)}<details class="standard-save"><summary>Aufbau für weitere Projekte merken</summary><button type="button" class="btn light" id="remember-standard">Als meinen Standard speichern</button><p class="hint">Übernimmt Produkte und zugeordnete Unterlagen. Farbton, Charge, Fotos und Projektdaten bleiben bei diesem Projekt.</p></details>`;
- const files=`${trade.products.includes('waterproofing')?waterproofingPhotoFields():''}<details class="spaced"><summary>Fotos vom fertigen Bad</summary>${photoInput('Fotos hinzufügen','project-photos',true)}<div id="photos"></div><p class="hint">Für Ihren Kunden sichtbar. Bis zu 8 Fotos${trade.products.includes('waterproofing')?' insgesamt für Abdichtung und Übergabe':''}.</p></details><details class="spaced"><summary>Produktunterlagen & weitere Links</summary><textarea id="documents" name="documents" hidden maxlength="50000">${esc(docsText(c.documents))}</textarea><div id="document-list"></div><button type="button" class="btn light spaced" id="add-document">+ Unterlage verlinken</button><p class="hint">Ausgewählte Produktunterlagen werden hier gesammelt. Links müssen für Ihren Kunden erreichbar sein.</p></details>`;
+ const materials=`<div class="standard-start"><p class="hint">${dashboard.company.standards?.[c.trade||'tile']?'Ihr üblicher Aufbau ist verfügbar. Vorausgefüllte Produkte kurz prüfen und den Farbton ergänzen.':'Produkte einmal auswählen und unten als Ihren üblichen Aufbau merken.'}</p>${dashboard.company.standards?.[c.trade||'tile']?'<button type="button" class="btn light" id="use-standard">Meinen üblichen Aufbau verwenden</button><p class="hint">Ergänzt nur fehlende Produkte. Ihre bisherigen Angaben bleiben erhalten.</p>':''}</div>${materialForms(trade,c,dashboard.company)}<details class="standard-save"><summary>Aufbau für weitere Projekte merken</summary><button type="button" class="btn light" id="remember-standard">Als meinen Standard speichern</button><p class="hint">Übernimmt Produkte und zugeordnete Unterlagen. Farbton, Charge, Fotos und Projektdaten bleiben bei diesem Projekt.</p></details>`;
+ const files=`<details class="spaced"><summary>Fotos vom fertigen Bad</summary>${photoInput('Fotos hinzufügen','project-photos',true)}<div id="photos"></div><p class="hint">Für Ihren Kunden sichtbar. Bis zu 8 Fotos${trade.products.includes('waterproofing')?' insgesamt für Abdichtung und Übergabe':''}.</p></details><details class="spaced"><summary>Produktunterlagen & weitere Links</summary><textarea id="documents" name="documents" hidden maxlength="50000">${esc(docsText(c.documents))}</textarea><div id="document-list"></div><button type="button" class="btn light spaced" id="add-document">+ Unterlage verlinken</button><p class="hint">Ausgewählte Produktunterlagen werden hier gesammelt. Links müssen für Ihren Kunden erreichbar sein.</p></details>`;
  const handover=`${field(trade.usage,'usage',localDate(c.usage_available_at),'datetime-local')}<div class="chips"><button type="button" class="chip" data-usage="0">Sofort</button><button type="button" class="chip" data-usage="24">In 24 Stunden</button><button type="button" class="chip" data-usage="48">In 48 Stunden</button><button type="button" class="chip" data-usage="clear">Keine Angabe</button></div><p class="hint">Den Zeitpunkt legen Sie als Fachbetrieb fest.</p><details class="spaced"><summary>Pflegehinweise (optional)</summary>${trade.care.map(k=>area(names[k],'care-'+k,c.care_notes?.[k])).join('')}<p class="hint">Nur vom Betrieb geprüfte Hinweise hinterlegen.</p></details><details class="spaced"><summary>Ersatzmaterial (optional)</summary>${field('Material','spare-material',sp.material)}${field('Menge','spare-quantity',sp.quantity)}${field('Lagerort','spare-location',sp.location)}${photoInput('Foto vom Lagerort','spare-photo')}<div id="spare-preview">${photoPreview(sparePhoto)}</div></details>`;
- shell(`<section class="admin-title editor-title"><a class="btn text" href="#work/${p.id}">← Projektübersicht & Mitteilungen</a>${steps(p.status==='handed_over'?2:1)}<h1>${esc(p.title)}</h1><p class="muted">Pass ${num(p.pass_number)} · Projektdokumentation</p></section><form id="edit">${editorSection('project','Projekt & Fläche',projectFields)}${editorSection('materials','Materialien',materials)}${editorSection('files','Fotos & Unterlagen',files)}${editorSection('handover','Übergabe & Pflege',handover)}${message}<div class="sticky"><button class="btn light" type="submit" id="save">Speichern</button><button class="btn olive" type="button" id="preview">Übergabe prüfen →</button></div></form><details class="section no-print editor-tools"><summary>Pass & Zugriff verwalten</summary><button type="button" class="btn light" id="nfc-link">NFC-Link anzeigen</button><div class="row spaced"><button class="btn light" id="visibility">${p.disabled?'Kundenlink wieder freigeben':'Kundenlink sperren'}</button><button class="btn light" id="owner-key">Schlüssel für Kundenergänzungen</button><button class="btn danger" id="delete">Projekt löschen</button></div></details>`,{compact:true});
+ shell(`<section class="admin-title editor-title"><a class="btn text" href="#work/${p.id}">← Projektübersicht & Mitteilungen</a>${steps(p.status==='handed_over'?2:1)}<h1>${esc(p.title)}</h1><p class="muted">Pass ${num(p.pass_number)} · Projektdokumentation</p></section><form id="edit">${editorSection('project','Projekt & Fläche',projectFields)}${editorSection('materials','Materialien',materials)}${editorSection('files','Fotos & Unterlagen',files)}${editorSection('handover','Übergabe & Pflege',handover)}${message}<div class="sticky autosave-bar"><span id="save-status" role="status" aria-live="polite">Gespeichert</span><button class="btn light" type="submit" id="save" hidden>Jetzt speichern</button><button class="btn olive" type="button" id="preview">Übergabe prüfen →</button></div></form><details class="section no-print editor-tools"><summary>Pass & Zugriff verwalten</summary><button type="button" class="btn light" id="nfc-link">NFC-Link anzeigen</button><div class="row spaced"><button class="btn light" id="visibility">${p.disabled?'Kundenlink wieder freigeben':'Kundenlink sperren'}</button><button class="btn light" id="owner-key">Schlüssel für Kundenergänzungen</button><button class="btn danger" id="delete">Projekt löschen</button></div></details>`,{compact:true});
  const form=$('#edit');bindEditorSections(form);
  $$('[data-material]',form).forEach(card=>bindColorOptions(card,card.dataset.material));
  if($('#waterproofing-water-class')){
   $('#waterproofing-water-class').value=c.waterproofing_details?.water_class||'';
   $('#waterproofing-type').value=c.waterproofing_details?.type||'';
  }
- const preparationEditor=$('#preparation-editor')?createPreparationEditor($('#preparation-editor'),c.preparation||[],{choice:applicationAreas.includes(c.application_area)?c.application_area:c.application_area?'other':'',customLabel:c.application_area||'',onChange:()=>dirty=true}):null;
+ const preparationEditor=$('#preparation-editor')?createPreparationEditor($('#preparation-editor'),c.preparation||[],{choice:applicationAreas.includes(c.application_area)?c.application_area:c.application_area?'other':'',customLabel:c.application_area||'',onChange:()=>changed()}):null;
  if($('#application_area'))$('#application_area').value=applicationAreas.includes(c.application_area)?c.application_area:c.application_area?'other':'';
  if($('#application_area'))$('#application_area').onchange=()=>{
-  const custom=$('#application_area').value==='other';$('#application-area-custom').hidden=!custom;$('#application_area_custom').disabled=!custom;dirty=true;
+  const custom=$('#application_area').value==='other';$('#application-area-custom').hidden=!custom;$('#application_area_custom').disabled=!custom;changed();
   preparationEditor?.setArea($('#application_area').value,$('#application_area_custom').value);
   if(custom)$('#application_area_custom').focus();
  };
@@ -116,7 +124,7 @@ async function edit(id){
   const card=$('[data-material="'+kind+'"]');
   $('#summary-'+kind).textContent=[[$('#'+kind+'-manufacturer').value,$('#'+kind+'-name').value].filter(Boolean).join(' '),$('#'+kind+'-color')?.value,kind==='finish'?$('#finish-sheen').value:''].filter(Boolean).join(' · ')||(kind==='finish'?'Noch nicht hinterlegt':'Noch kein Produkt ausgewählt');
   refreshColorOptions(card,kind,{reset:close});if(close){$('.material-edit',card).open=false;$$('.manual-product',card).forEach(d=>d.open=false);}
-  if(kind!=='finish')$('.material-edit > summary',card).textContent='Produkt '+(hasProduct(readProduct(kind))?'ändern':'auswählen');
+  if(kind!=='finish')$('[data-open-catalog]',card).textContent=hasProduct(readProduct(kind))?'Ändern':'Produkt auswählen';
   if(kind==='finish'){$('#finish-status').textContent=finishMode==='system'?'Aus dem System vorausgefüllt':hasProduct(readProduct('finish'))?'Eigene Auswahl':finishMode==='manual'?'Keine Angabe':'Bei Bedarf ergänzen';$('#reset-finish').hidden=!defaultFinish(readProduct('surface'));}
   refreshOverview();
  }
@@ -128,22 +136,22 @@ async function edit(id){
   if(next){previousSurface={...item};finishMode=next.mode;if(next.replace)writeProduct('finish',next.product);refreshMaterial('finish',next.replace);}
   if(kind==='finish'){finishMode='manual';}
   if(kind===primary){label=item.label_photo||'';renderLabel();}
-  refreshMaterial(kind,true);dirty=true;
+  refreshMaterial(kind,true);changed();
  }
  function syncSurface(){
   const item=readProduct('surface'),next=finishSelection(item,previousSurface,readProduct('finish'),finishMode);
   previousSurface={...item};finishMode=next.mode;
-  if(next.replace){writeProduct('finish',next.product);dirty=true;try{$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),next.product.documents||[]));}catch(e){notify('Versiegelung übernommen. '+e.message);}}
+  if(next.replace){writeProduct('finish',next.product);changed();try{$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),next.product.documents||[]));}catch(e){notify('Versiegelung übernommen. '+e.message);}}
   refreshMaterial('finish',next.replace);
  }
  function renderDocuments(){
   const docs=parseDocs($('#documents').value);
   $('#document-list').innerHTML=docs.map((doc,i)=>`<div class="editor-document"><div>${safeLink(doc.url)?`<a href="${esc(safeLink(doc.url))}" target="_blank" rel="noopener noreferrer">${esc(doc.name||doc.type)} ↗</a>`:esc(doc.name||doc.type)}<span class="hint">${esc(doc.type)}</span></div><button type="button" class="btn text" data-remove-document="${i}" aria-label="${esc((doc.name||doc.type)+' entfernen')}">Entfernen</button></div>`).join('')||'<p class="hint">Noch keine Unterlagen. Bei der Produktauswahl können passende Merkblätter übernommen werden.</p>';
-  $$('[data-remove-document]',form).forEach(button=>button.onclick=()=>{$('#documents').value=docsText(docs.filter((_,i)=>i!==Number(button.dataset.removeDocument)));dirty=true;refreshOverview();});
+  $$('[data-remove-document]',form).forEach(button=>button.onclick=()=>{$('#documents').value=docsText(docs.filter((_,i)=>i!==Number(button.dataset.removeDocument)));changed();refreshOverview();});
  }
  $('#add-document').onclick=()=>{
   modal('Unterlage verlinken',`<form id="project-document">${field('Bezeichnung','document-name','','text','required placeholder="z. B. Pflegeanleitung"')}${field('Link zur Unterlage','document-url','','url','required placeholder="https://…"')}${message}<button class="btn olive" type="submit">Hinzufügen</button></form>`);
-  bindForm('#project-document',async dialogForm=>{const v=fields(dialogForm);if(!safeLink(v['document-url']))throw Error('Bitte einen vollständigen http- oder https-Link eingeben.');$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),[{name:v['document-name'],type:'Unterlage',url:v['document-url']}]));dirty=true;refreshOverview();$('#modal').close();});
+  bindForm('#project-document',async dialogForm=>{const v=fields(dialogForm);if(!safeLink(v['document-url']))throw Error('Bitte einen vollständigen http- oder https-Link eingeben.');$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),[{name:v['document-name'],type:'Unterlage',url:v['document-url']}]));changed();refreshOverview();$('#modal').close();});
  };
  function refreshOverview(){
   const set=(key,value)=>$('[data-editor-summary="'+key+'"]').textContent=value;
@@ -157,7 +165,7 @@ async function edit(id){
   const careCount=trade.care.filter(k=>$('#care-'+k)?.value.trim()).length;
   set('handover',[$('#usage').value?'Nutzungszeitpunkt hinterlegt':'',careCount?`${careCount} Pflegehinweise`:''].filter(Boolean).join(' · ')||'Nutzung, Pflege und Ersatzmaterial – optional');
  }
- form.oninput=e=>{dirty=true;const kind=e.target.closest('[data-material]')?.dataset.material;if(kind==='finish')finishMode='manual';if(kind)refreshMaterial(kind);else refreshOverview();};
+ form.oninput=e=>{changed();const kind=e.target.closest('[data-material]')?.dataset.material;if(kind==='finish')finishMode='manual';if(kind)refreshMaterial(kind);else refreshOverview();};
  if(primary==='surface'){
   for(const key of ['manufacturer','name'])$('#surface-'+key).addEventListener('change',syncSurface);
   $('#reset-finish').onclick=()=>{const item=defaultFinish(readProduct('surface'));if(!item)return;try{applyProduct('finish',item,item.documents||[]);finishMode='system';refreshMaterial('finish',true);}catch(e){notify(e.message);}};
@@ -165,15 +173,15 @@ async function edit(id){
   syncSurface();
  }
  form.addEventListener('change',refreshOverview);refreshOverview();
- function renderPhotos(){$('#photos').innerHTML=`<div class="gallery">${photos.map((v,i)=>`<div class="thumb"><img src="${v}" alt="Übergabefoto ${i+1}"><button type="button" data-remove="${i}" aria-label="Foto entfernen">×</button></div>`).join('')}</div>`;$$('[data-remove]').forEach(b=>b.onclick=()=>{photos.splice(+b.dataset.remove,1);dirty=true;renderPhotos();});refreshOverview();}renderPhotos();
- async function upload(input,fn){busyPhotos++;$('#save').disabled=$('#preview').disabled=true;try{await fn([...input.files]);dirty=true;}catch(e){notify(e.message);}finally{busyPhotos--;if(!busyPhotos)$('#save').disabled=$('#preview').disabled=false;input.value='';}}
- function renderLabel(){$('#label-preview').innerHTML=photoPreview(label)+(label?'<button class="btn text" type="button" id="remove-label">Etikettenfoto entfernen</button>':'');if($('#remove-label'))$('#remove-label').onclick=()=>{label='';dirty=true;renderLabel();};}
- function renderSpare(){$('#spare-preview').innerHTML=photoPreview(sparePhoto)+(sparePhoto?'<button class="btn text" type="button" id="remove-spare">Lagerfoto entfernen</button>':'');if($('#remove-spare'))$('#remove-spare').onclick=()=>{sparePhoto='';dirty=true;renderSpare();};}
+ function renderPhotos(){$('#photos').innerHTML=`<div class="gallery">${photos.map((v,i)=>`<div class="thumb"><img src="${v}" alt="Übergabefoto ${i+1}"><button type="button" data-remove="${i}" aria-label="Foto entfernen">×</button></div>`).join('')}</div>`;$$('[data-remove]').forEach(b=>b.onclick=()=>{photos.splice(+b.dataset.remove,1);changed();renderPhotos();});refreshOverview();}renderPhotos();
+ async function upload(input,fn){busyPhotos++;$('#save').disabled=$('#preview').disabled=true;try{await fn([...input.files]);if(form.isConnected)changed();}catch(e){if(form.isConnected)notify(e.message);}finally{busyPhotos--;if(form.isConnected&&!busyPhotos)$('#save').disabled=$('#preview').disabled=false;input.value='';}}
+ function renderLabel(){if(!form.isConnected)return;$('#label-preview').innerHTML=photoPreview(label)+(label?'<button class="btn text" type="button" id="remove-label">Etikettenfoto entfernen</button>':'');if($('#remove-label'))$('#remove-label').onclick=()=>{label='';changed();renderLabel();};}
+ function renderSpare(){if(!form.isConnected)return;$('#spare-preview').innerHTML=photoPreview(sparePhoto)+(sparePhoto?'<button class="btn text" type="button" id="remove-spare">Lagerfoto entfernen</button>':'');if($('#remove-spare'))$('#remove-spare').onclick=()=>{sparePhoto='';changed();renderSpare();};}
  renderLabel();renderSpare();
- function renderWaterproofingPhotos(){const root=$('#waterproofing-photos');if(!root)return;root.innerHTML=`<div class="gallery">${waterproofingPhotos.map((v,i)=>`<div class="thumb"><img src="${labelPhoto(v)}" alt="Foto der Abdichtung ${i+1}"><button type="button" data-remove-waterproofing="${i}" aria-label="Foto der Abdichtung entfernen">×</button></div>`).join('')}</div>`;$$('[data-remove-waterproofing]',root).forEach(b=>b.onclick=()=>{waterproofingPhotos.splice(+b.dataset.removeWaterproofing,1);dirty=true;renderWaterproofingPhotos();});refreshOverview();}renderWaterproofingPhotos();
+ function renderWaterproofingPhotos(){const root=$('#waterproofing-photos');if(!root)return;root.innerHTML=`<div class="gallery">${waterproofingPhotos.map((v,i)=>`<div class="thumb"><img src="${labelPhoto(v)}" alt="Foto der Abdichtung ${i+1}"><button type="button" data-remove-waterproofing="${i}" aria-label="Foto der Abdichtung entfernen">×</button></div>`).join('')}</div>`;$$('[data-remove-waterproofing]',root).forEach(b=>b.onclick=()=>{waterproofingPhotos.splice(+b.dataset.removeWaterproofing,1);changed();renderWaterproofingPhotos();});refreshOverview();}renderWaterproofingPhotos();
  async function addPhotos(files,target,render){
   const check=()=>{if(photos.length+waterproofingPhotos.length+files.length>projectPhotoLimit)throw Error('Bitte höchstens 8 Fotos insgesamt für Abdichtung und Übergabe wählen.');};
-  check();const added=[];for(const f of files)added.push(await compress(f));check();target.push(...added);render();
+  check();const added=[];for(const f of files)added.push(await compress(f));if(!form.isConnected)return;check();target.push(...added);render();
  }
  $('#project-photos').onchange=e=>upload(e.target,files=>addPhotos(files,photos,renderPhotos));
  if($('#waterproofing-photo-upload'))$('#waterproofing-photo-upload').onchange=e=>upload(e.target,files=>addPhotos(files,waterproofingPhotos,renderWaterproofingPhotos));
@@ -185,7 +193,7 @@ async function edit(id){
   const kind=b.dataset.openCatalog,item={...blankProduct(),manufacturer:manufacturer.name,name:product.name,article_number:product.article_number||'',format:product.format||'',system_type:product.system_type||'',sheen:product.sheen||''};
   applyProduct(kind,item,docs,includeDocs);$('#modal').close();notify(kind==='waterproofing'?'Produkt übernommen. Unterlagen bitte prüfen.':'Produkt übernommen. Farbton, Charge und Unterlagen bitte prüfen.');
  }}),$('.form-message',form)));
- $$('[data-usage]').forEach(b=>b.onclick=()=>{$('#usage').value=b.dataset.usage==='clear'?'':localDate(new Date(Date.now()+(+b.dataset.usage)*3600000));dirty=true;refreshOverview();});
+ $$('[data-usage]').forEach(b=>b.onclick=()=>{$('#usage').value=b.dataset.usage==='clear'?'':localDate(new Date(Date.now()+(+b.dataset.usage)*3600000));changed();refreshOverview();});
  function values(){const v=fields(form);let preparation;if(preparationEditor){try{preparation=preparationEditor.read();}catch(error){$('[data-editor-section="project"]').open=true;$('#preparation-section').open=true;throw error;}}return {id:p.id,version:p.version,title:v.title,internal:{customer_name:v.customer_name,address:v.address},content:{...c,
   trade:c.trade||'tile',application_area:v.application_area==='other'?(v.application_area_custom??''):(v.application_area??c.application_area??''),substrate:v.substrate??c.substrate??'',...(preparationEditor?{preparation}:{}),
   ...Object.fromEntries(trade.products.map(k=>[k,Object.fromEntries(Object.keys(blankProduct()).map(f=>[f,k==='waterproofing'&&f==='color'?'':k===primary&&f==='label_photo'?label:v[k+'-'+f]??c[k]?.[f]??'']))])),
@@ -194,9 +202,9 @@ async function edit(id){
   care_notes:{...c.care_notes,...Object.fromEntries(trade.care.map(k=>[k,v['care-'+k]]))},photos,
   usage_available_at:v.usage?new Date(v.usage).toISOString():'',
   spare_materials:[...([v['spare-material'],v['spare-quantity'],v['spare-location'],sparePhoto].some(Boolean)?[{material:v['spare-material'],quantity:v['spare-quantity'],location:v['spare-location'],photo:sparePhoto}]:[]),...(c.spare_materials||[]).slice(1)],documents:parseDocs(v.documents)}};}
- async function save(){if(busyPhotos)throw Error('Bitte warten, bis die Fotos vorbereitet sind.');if(!form.reportValidity())throw Error('Bitte den Projektnamen ergänzen.');p=await api('save',values());refreshOverview();dirty=false;$('.form-message',form).textContent='Auf dem Server gespeichert.';}
+ async function save(){if(busyPhotos)throw Error('Bitte warten, bis die Fotos vorbereitet sind.');if(!form.reportValidity())throw Error('Bitte den Projektnamen ergänzen.');await autosaver.flush();$('.form-message',form).textContent='Auf dem Server gespeichert.';}
  bindForm('#edit',save);
- $$('[data-save-library]').forEach(b=>b.onclick=()=>run(b,async()=>{const kind=b.dataset.saveLibrary;saveProductDialog(kind,values().content[kind],parseDocs($('#documents').value),{modal,bindForm,dashboard,api,notify,saveProject:save,includeDocuments:docs=>{$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),docs));dirty=true;}});},$('.form-message',form)));
+ $$('[data-save-library]').forEach(b=>b.onclick=()=>run(b,async()=>{const kind=b.dataset.saveLibrary;saveProductDialog(kind,values().content[kind],parseDocs($('#documents').value),{modal,bindForm,dashboard,api,notify,saveProject:save,includeDocuments:docs=>{$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),docs));changed();}});},$('.form-message',form)));
  $('#remember-standard').onclick=()=>run($('#remember-standard'),async()=>{
   const catalog=await loadCatalog(),current=values().content,documents=[];
   for(const kind of trade.products){const item=current[kind];const match=catalog.products.find(x=>x.kinds.includes(kind)&&x.name===item.name&&(x.article_number||'')===(item.article_number||'')&&catalog.manufacturers.find(m=>m.id===x.manufacturer_id)?.name===item.manufacturer);if(match)documents.push(...match.documents.filter(d=>d.verification!=='source_link'&&current.documents.some(v=>v.url===d.url)));}
@@ -212,7 +220,39 @@ async function edit(id){
   modal('Ergänzungen gehören dem Kunden',`<p>Der separate Schlüssel erlaubt eigene Ergänzungen. Die Angaben Ihres Betriebs bleiben geschützt.</p><p>Ein neuer Schlüssel ersetzt den bisherigen. Geben Sie ihn nur an den Eigentümer weiter.</p><button class="btn olive spaced" id="generate-key">Neuen Schlüssel erstellen</button>${message}`);
   $('#generate-key').onclick=()=>run($('#generate-key'),async()=>{if(dirty)await save();const r=await api('owner_key',{id:p.id,version:p.version});p=r;modal('Persönlicher Ergänzungsschlüssel',`<p>Nur an den Eigentümer weitergeben. Der Schlüssel wird nur jetzt angezeigt.</p><p class="secret">${r.owner_key}</p><button class="btn olive spaced" id="copy-key">Schlüssel kopieren</button>`);$('#copy-key').onclick=()=>run($('#copy-key'),async()=>{await navigator.clipboard.writeText(r.owner_key);notify('Schlüssel kopiert.');});},$('.form-message',$('#modal')));
  };
- $('#delete').onclick=()=>{modal('Projekt endgültig löschen?',`<p>„${esc(p.title)}“ und die Kundenergänzungen werden gelöscht. Pass ${num(p.pass_number)} wird stillgelegt, damit seine alte Karte niemals ein anderes Bad öffnet.</p><button class="btn danger spaced" id="confirm-delete">Ja, Projekt löschen</button>${message}`);$('#confirm-delete').onclick=()=>run($('#confirm-delete'),async()=>{await api('delete',{id:p.id,version:p.version});dirty=false;$('#modal').close();go('home');},$('.form-message',$('#modal')));};
+ $('#delete').onclick=()=>{modal('Projekt endgültig löschen?',`<p>„${esc(p.title)}“ und die Kundenergänzungen werden gelöscht. Pass ${num(p.pass_number)} wird stillgelegt, damit seine alte Karte niemals ein anderes Bad öffnet.</p><button class="btn danger spaced" id="confirm-delete">Ja, Projekt löschen</button>${message}`);$('#confirm-delete').onclick=()=>run($('#confirm-delete'),async()=>{await save();await api('delete',{id:p.id,version:p.version});autosaver.dispose();dirty=false;$('#modal').close();go('home');},$('.form-message',$('#modal')));};
+ const initialDirty=dirty;
+ autosaver=createAutosave({
+  read:()=>{if(!form.checkValidity())throw Error('Bitte den Projektnamen ergänzen.');const {id,version,...data}=values();return data;},
+  initial:initialDirty?null:undefined,ready:()=>busyPhotos===0,
+  write:async data=>{const saved=await api('save',{...data,id:p.id,version:p.version});p=saved;},
+  onState:(state,error)=>{
+   if(!form.isConnected)return;
+   dirty=state!=='saved';
+   $('#save-status').dataset.state=state;
+   $('#save-status').textContent=state==='saved'?'Gespeichert':state==='saving'?'Wird gespeichert …':state==='pending'?'Änderungen noch nicht gespeichert':'Nicht gespeichert – '+(error?.message||'bitte erneut versuchen');
+   $('#save').textContent=state==='error'?'Erneut speichern':'Jetzt speichern';$('#save').hidden=state!=='error';
+  }
+ });
+ const online=()=>{if(form.isConnected&&dirty)autosaver.flush().catch(()=>{});};
+ window.addEventListener('online',online);
+ editorSession={flush:()=>save(),dispose:()=>{autosaver.dispose();window.removeEventListener('online',online);}};
+ form.addEventListener('change',()=>changed());
+ if(initialDirty)autosaver.changed();
+ if($('#use-standard'))$('#use-standard').onclick=()=>run($('#use-standard'),async()=>{
+  const standard=dashboard.company.standards[c.trade||'tile'],current=values().content;
+  const missing=missingStandardProducts(current,standard,trade);
+  if(!missing.length){notify('Die Produkte sind bereits eingetragen. Einzelne Produkte ändern Sie über „Ändern“.');return;}
+  const catalog=await loadCatalog(),docs=[];
+  for(const [kind,item] of missing){const match=catalog.products.find(x=>x.kinds.includes(kind)&&x.name===item.name&&(x.article_number||'')===(item.article_number||'')&&catalog.manufacturers.find(m=>m.id===x.manufacturer_id)?.name===item.manufacturer);if(match)docs.push(...match.documents.filter(d=>d.verification!=='source_link'));}
+  const merged=mergeDocuments(parseDocs($('#documents').value),docs);
+  for(const [kind,item] of missing)writeProduct(kind,item);
+  if(primary==='surface'){previousSurface={...readProduct('surface')};if(missing.some(([k])=>k==='finish'))finishMode='manual';syncSurface();}
+  $('#documents').value=docsText(mergeDocuments(merged,parseDocs($('#documents').value)));
+  for(const [kind] of missing)refreshMaterial(kind,true);
+  changed();notify('Fehlende Produkte aus Ihrem Aufbau ergänzt. Farbton und Ausführung bitte prüfen.');
+ },$('.form-message',form));
+
 }
 function material(p={},label,kind='',details={}){
  const waterproofing=kind==='waterproofing',extra=waterproofing?waterproofingHTML(details):'';
@@ -224,7 +264,7 @@ function contact(company){return `<section class="section"><div class="contact">
 async function customer(id,preview=false){
  const p=await api(preview?'preview':'scan',preview?{id}:{token:id});const expected='#'+(preview?'preview':'p')+'/'+id;if(location.hash!==expected)return;
  const c=p.content||{},company=p.company||{},trade=tradeFor(c.trade),other=[...trade.products,...(c.trade==='seamless'&&hasProduct(c.primer)?['primer']:[])].filter(k=>k!==trade.primary),hasTile=hasProduct(c[trade.primary])||c.application_area||c.substrate||c.preparation?.length||(c.spare_materials||[]).length,hasJoints=other.some(k=>hasProduct(c[k])||(k==='waterproofing'&&hasWaterproofingDetails(c.waterproofing_details))),hasCare=trade.care.some(k=>c.care_notes?.[k]);
- shell(`${preview?`<div class="preview-strip no-print"><a class="btn text" href="#edit/${p.id}">← Weiter bearbeiten</a><div>${steps(2)}<p>Materialien und Farbton prüfen. So sieht Ihr Kunde den Projektpass.</p></div></div>`:''}<section class="hero"><span class="eyebrow">Ihr Projektpass · ${num(p.pass_number)}</span><h1>${esc(p.title)}</h1><p class="welcome-copy">Ihre Arbeiten sind dokumentiert.<span>Alles Wichtige bleibt bei Ihnen.</span></p><p class="hero-meta">Projektpass erstellt am ${date(p.activated_at)}<br>Ausgeführt von ${esc(company.name)}</p>${c.photos?.[0]?`<img class="hero-photo" src="${labelPhoto(c.photos[0])}" alt="Ihr Bad bei Übergabe">`:''}</section>
+ shell(`${preview?`<div class="preview-strip no-print"><a class="btn text" href="#edit/${p.id}">← Weiter bearbeiten</a><div>${steps(2)}</div></div>${handoverReview(p,trade)}<details class="customer-preview" id="customer-preview"><summary>Kundenansicht ansehen</summary><div>`:''}<section class="hero"><span class="eyebrow">Ihr Projektpass · ${num(p.pass_number)}</span><h1>${esc(p.title)}</h1><p class="welcome-copy">Ihre Arbeiten sind dokumentiert.<span>Alles Wichtige bleibt bei Ihnen.</span></p><p class="hero-meta">Projektpass erstellt am ${date(p.activated_at)}<br>Ausgeführt von ${esc(company.name)}</p>${c.photos?.[0]?`<img class="hero-photo" src="${labelPhoto(c.photos[0])}" alt="Ihr Bad bei Übergabe">`:''}</section>
  ${c.usage_available_at?`<aside class="quiet"><span class="eyebrow">${Date.parse(c.usage_available_at)>Date.now()?'Heute wichtig':'Zur Übergabe'}</span><h3>${trade.usage}</h3><p>${date(c.usage_available_at,true)} Uhr</p><span class="source">Vom Fachbetrieb dokumentiert</span></aside>`:''}
  <section class="question"><h2>Was möchten Sie wissen?</h2><div class="actions">${[[hasTile,'tiles',trade.materialAction],[hasJoints,'joints',trade.buildTitle],[hasCare,'care','Pflege'],[true,'help','Ich brauche Hilfe']].filter(([show])=>show).map(([,key,label])=>`<button class="action" data-panel="${key}" aria-expanded="false" ${key!=='help'?`aria-controls="panel-${key}"`:''}><strong>${label}</strong><span class="arrow">↗</span></button>`).join('')}</div></section>
  ${hasTile?`<section class="customer-panel" id="panel-tiles" hidden tabindex="-1"><h2>${trade.materialTitle}</h2>${material(c[trade.primary],'')}${c.application_area?`<div class="care"><h3>Anwendungsbereich</h3><p>${esc(c.application_area)}</p></div>`:''}${c.substrate||c.preparation?.length?`<div class="care"><h3>Untergrund & Vorbereitung</h3>${preparationHTML(c.preparation||[],p.handover_snapshot?.company?.name||company.name,c.application_area)}${c.substrate?`<p class="preline">${esc(c.substrate)}</p>`:''}</div>`:''}${(c.spare_materials||[]).map(s=>`<div class="spare"><h3>Für später aufgehoben</h3><p>${esc([s.quantity,s.material].filter(Boolean).join(' '))}</p>${s.location?`<p>${esc(s.location)}</p>`:''}${photoPreview(s.photo)}<span class="source">Vom Fachbetrieb dokumentiert</span></div>`).join('')}</section>`:''}
@@ -236,7 +276,7 @@ async function customer(id,preview=false){
  ${contact(company)}
  <details class="customer-fold section" id="owner-section"><summary>Mein Bad vervollständigen</summary><div><p>Ihr Fachbetrieb hat seine Arbeit dokumentiert. Hier können Sie weitere Bereiche Ihres Badezimmers ergänzen.</p>${ownerHTML(p.owner_additions)}${!preview?'<button class="btn light spaced" id="owner-edit">Eigene Ergänzungen bearbeiten</button>':''}</div></details>
  <section class="section no-print"><button class="btn light" id="export">Projektpass speichern</button><p class="hint">Wer diesen Kundenlink besitzt, kann die freigegebenen Informationen lesen. Teilen Sie ihn bewusst.</p></section>
- ${preview?`<div class="sticky"><button class="btn olive wide" id="handover">An Kunden übergeben →</button></div>${message}`:''}`,{customer:true,company});
+ ${preview?`</div></details><div class="sticky"><button class="btn olive wide" id="handover">Angaben geprüft – übergeben →</button></div>${message}`:''}`,{customer:true,company});
  if($('#owner-journal-entry'))$('#owner-journal-entry').onclick=()=>ownerEntry(p,{modal,api,bindForm,notify,token:id,refresh:()=>customer(id)});
  $$('[data-panel]').forEach(b=>b.onclick=()=>{if(b.dataset.panel==='help'){service(p);return;}const target=$('#panel-'+b.dataset.panel),open=target.hidden;$$('.customer-panel').forEach(el=>el.hidden=true);$$('[data-panel]').forEach(el=>el.setAttribute('aria-expanded','false'));target.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open){target.focus({preventScroll:true});target.scrollIntoView({behavior:'smooth',block:'start'});}});
  $('#help').onclick=()=>service(p);$('#export').onclick=()=>{
@@ -290,6 +330,7 @@ async function settings(){
 }
 let previousHash=location.hash,allowNavigation=false;
 async function render(){
+ editorSession?.dispose();editorSession=null;
  const runId=++routeVersion;const [route,arg]=location.hash.slice(1).split('/');if($('#modal').open)$('#modal').close();
  const operatorContext=()=>({api,shell,bindForm,run,notify,go,dashboard,isCurrent:()=>runId===routeVersion,
    setDirty:value=>{dirty=value;},completeAccess:data=>{dashboard=data;dirty=false;history.replaceState(null,'',location.pathname+location.search+'#home');previousHash=location.hash;render();}});
@@ -312,8 +353,10 @@ async function render(){
   shell(`<section class="hero"><h1>${route==='p'?'Ihr Projektpass.':'Einen Moment.'}</h1>${errorHTML(e.message)}<button class="btn olive spaced" id="retry">Erneut versuchen</button>${route==='p'?`<p><a class="btn text" href="#activate/${esc(arg)}">Als Fachbetrieb öffnen →</a></p>`:'<p><a class="btn text" href="#login">Zum Betriebszugang →</a></p>'}</section>`,{customer:true});$('#retry').onclick=render;
  }
 }
-window.addEventListener('hashchange',()=>{
+window.addEventListener('hashchange',async()=>{
  if(allowNavigation){allowNavigation=false;return;}
+ const target=location.hash;
+ if(dirty&&editorSession){try{await editorSession.flush();}catch{}if(location.hash!==target)return;}
  if(dirty&&!confirm('Es gibt ungespeicherte Änderungen. Seite trotzdem verlassen?')){allowNavigation=true;location.hash=previousHash;return;}
  dirty=false;previousHash=location.hash;ownerKey='';render();
 });

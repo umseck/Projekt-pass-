@@ -61,3 +61,13 @@
 .system-finish .row{gap:8px}.system-finish .row>.btn{font-size:13px}
 .system-finish [hidden]{display:none}
 @media(max-width:600px){.system-finish{padding:12px}}
+.standard-start{padding:14px 16px;background:#f1f5eb;border-radius:8px;margin-bottom:16px}.standard-start p{margin:6px 0;line-height:1.5}
+.product-change{margin:8px 0}.material-fields>.chips{margin-top:0}.material-fields>.manual-product{margin-bottom:14px}
+.autosave-bar{align-items:center;gap:10px}.autosave-bar #save-status{flex:1 1 100%;font-size:13px;color:#435229}.autosave-bar #save-status[data-state="error"]{color:#973c30}.autosave-bar #save-status[data-state="pending"],.autosave-bar #save-status[data-state="saving"]{color:#6d6148}
+.autosave-bar{flex-wrap:wrap}.autosave-bar #save{flex:0 1 auto;font-size:13px}
+.autosave-bar #save[hidden]{display:none}
+.handover-review{max-width:700px;margin:24px auto;padding:22px;background:#f1f5eb;border-radius:12px}.handover-review h1{font-size:28px;margin-bottom:16px}.handover-review dl{margin:20px 0}.handover-review dl>div{padding:12px 0;border-bottom:1px solid #dbe4d1}.handover-review dt{font-size:13px;color:var(--muted)}.handover-review dd{margin:4px 0 0;font-size:16px}
+.customer-preview{margin:18px 0}.customer-preview>summary{min-height:48px;cursor:pointer;font-size:17px}
+@media(max-width:600px){.handover-review{padding:16px}.autosave-bar #save-status{line-height:1.4}}
+.catalog-quick{padding:14px 16px;margin:10px 0}.catalog-quick-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.catalog-quick h3{font-size:19px;margin:4px 0}.catalog-quick .btn{flex-shrink:0;padding:10px 14px;min-height:44px}.catalog-quick details{margin-top:8px}.catalog-quick summary,.catalog-sources>summary{font-size:13px;cursor:pointer;min-height:36px;display:flex;align-items:center}.catalog-sources{margin:10px 0}
+@media(max-width:380px){.catalog-quick-row{align-items:flex-start;flex-direction:column}.catalog-quick-row .btn{width:100%}}
