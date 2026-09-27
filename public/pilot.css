@@ -48,3 +48,16 @@
 .top:has(.account-menu){flex-direction:row;align-items:center;min-height:76px}.top:has(.account-menu) .top-right{width:auto;justify-content:flex-end}
 @media(max-width:380px){.editor-section>summary{gap:9px}.editor-optional{font-size:11px;padding:3px 6px}}
 .account-menu[open]>summary{margin-bottom:0}
+
+/* The coating belongs to the selected surface; manual fields stay one tap away. */
+.system-finish{margin-top:18px;padding:14px 16px;background:#f1f5eb;border:1px solid #dbe4d1;border-radius:8px}
+.system-finish>.field-label{font-size:13px;color:#59684b;font-weight:600}
+.system-finish>p{font-size:16px;margin:5px 0;line-height:1.4}
+.system-finish>small{display:block;font-size:12px}
+.system-finish>.material-edit{margin-top:4px}
+.system-finish .material-edit>summary{font-size:14px;min-height:44px;margin-bottom:0}
+.system-finish .material-edit[open]>summary{margin-bottom:12px}
+.manual-product{margin-top:12px}.editor-section-body .manual-product>summary{font-size:14px;color:var(--muted)}
+.system-finish .row{gap:8px}.system-finish .row>.btn{font-size:13px}
+.system-finish [hidden]{display:none}
+@media(max-width:600px){.system-finish{padding:12px}}

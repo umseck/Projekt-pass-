@@ -46,7 +46,7 @@ export function company(value){
 }
 export function standard(value,kind){
  const v=obj(value);
- const keys=kind==='seamless'?['surface','primer','waterproofing','finish','silicone']:['tile','grout','silicone'];
+ const keys=kind==='seamless'?['surface','waterproofing','finish','silicone']:['tile','grout','silicone'];
  return {...Object.fromEntries(keys.map(k=>{const p=product(v[k]);return [k,{...p,color:'',batch:'',label_photo:''}];})),
   documents:list(v.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))};
 }
@@ -57,6 +57,7 @@ export function content(value){
   if(photos.length+(details?.photos.length||0)>projectPhotoLimit)fail('Bitte höchstens 8 Fotos insgesamt für Abdichtung und Übergabe wählen.');
   return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,{...product(v[k]),...(k==='waterproofing'?{color:''}:{})}])),
     ...(details===undefined?{}:{waterproofing_details:details}),
+    ...(v.finish_selection===undefined?{}:{finish_selection:['manual','system',''].includes(v.finish_selection)?v.finish_selection:fail('Bitte die Versiegelung erneut auswählen.')}),
     usage_available_at:usage,care_notes:care(v.care_notes),
     photos,
     spare_materials:list(v.spare_materials,5,s=>({...fields(s,['material','quantity','location']),photo:photo(s.photo)})),

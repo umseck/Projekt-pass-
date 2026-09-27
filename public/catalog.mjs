@@ -1,5 +1,6 @@
 import {esc,safeLink} from './ui.mjs';
-export const categories={tile:'Fliese',grout:'Fugenmörtel',surface:'Oberflächensystem',primer:'Grundierung',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
+import {systemFinishes} from './system-finish.mjs';
+export const categories={tile:'Fliese',grout:'Fugenmörtel',surface:'Oberflächensystem',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
 let cached,companyProducts=[],preferredManufacturers=[];
 const makerKey=value=>String(value||'').trim().toLocaleLowerCase('de');
 export function setCompanyCatalog(company){
@@ -15,7 +16,7 @@ export async function loadCatalog(){
   if(!maker){maker={id:p.manufacturer_id,name:p.manufacturer,note:'Eigene Produkte Ihres Betriebs.',documents:[]};manufacturers.push(maker);}
   return {...p,manufacturer_id:maker.id};
  });
- const shared=base.products.filter(p=>!own.some(x=>x.manufacturer_id===p.manufacturer_id&&makerKey(x.name)===makerKey(p.name)&&makerKey(x.article_number)===makerKey(p.article_number)&&p.kinds.every(k=>x.kinds.includes(k))));
+ const shared=[...base.products,...systemFinishes].filter(p=>!own.some(x=>x.manufacturer_id===p.manufacturer_id&&makerKey(x.name)===makerKey(p.name)&&makerKey(x.article_number)===makerKey(p.article_number)&&p.kinds.every(k=>x.kinds.includes(k))));
  return {...base,manufacturers,preferred_manufacturers:[...preferredManufacturers],products:[...own,...shared]};
 }
 export function matchingProducts(c,{manufacturer='',query='',kind=''}={}){
@@ -23,7 +24,7 @@ export function matchingProducts(c,{manufacturer='',query='',kind=''}={}){
  const preferred=new Set((c.preferred_manufacturers||[]).map(makerKey));
  return c.products.filter(p=>{
   const maker=c.manufacturers.find(m=>m.id===p.manufacturer_id);
-  return (!manufacturer||(manufacturer==='__preferred'?preferred.has(makerKey(maker?.name)):p.manufacturer_id===manufacturer))&&(!kind||p.kinds.includes(kind))&&(!q||[p.name,maker?.name,p.note].join(' ').toLocaleLowerCase('de').includes(q));
+  return p.kinds.some(k=>Object.hasOwn(categories,k))&&(!manufacturer||(manufacturer==='__preferred'?preferred.has(makerKey(maker?.name)):p.manufacturer_id===manufacturer))&&(!kind||p.kinds.includes(kind))&&(!q||[p.name,maker?.name,p.note].join(' ').toLocaleLowerCase('de').includes(q));
  });
 }
 export function mergeDocuments(existing,added){
@@ -38,7 +39,7 @@ function controls(c,kind,picking){
  const preferred=new Set((c.preferred_manufacturers||[]).map(makerKey)),mine=makers.filter(m=>preferred.has(makerKey(m.name))),others=makers.filter(m=>!preferred.has(makerKey(m.name)));
  const options=ms=>ms.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('');
  const manufacturerOptions=mine.length?`<option value="__preferred" selected>Meine Hersteller</option><option value="">Alle Hersteller</option><optgroup label="Meine Hersteller">${options(mine)}</optgroup>${others.length?`<optgroup label="Weitere Hersteller">${options(others)}</optgroup>`:''}`:`<option value="">Alle Hersteller</option>${options(makers)}`;
- return `<p class="hint">Vorbereitete Herstellerauswahl und Ihre eigenen Produkte. Selbst gespeicherte Produkte bleiben in Ihrem Betrieb.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer">${manufacturerOptions}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Primer"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Zugeordnete Produktunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div><div id="catalog-manufacturer-info"></div><p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
+ return `<p class="hint">Vorbereitete Herstellerauswahl und Ihre eigenen Produkte. Selbst gespeicherte Produkte bleiben in Ihrem Betrieb.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer">${manufacturerOptions}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Silikon"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Zugeordnete Produktunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div><div id="catalog-manufacturer-info"></div><p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
 function bindCatalog(root,c,{kind='',onPick}={}){
  const $=s=>root.querySelector(s);
  function render(){
