@@ -18,7 +18,8 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
  });
  const win=new Window({url:origin+'/#login'});win.document.body.innerHTML='<div id="app"></div><dialog id="modal"></dialog><div id="notice"></div>';
  let cookie='';globalThis.window=win;globalThis.document=win.document;globalThis.location=win.location;globalThis.FormData=win.FormData;globalThis.confirm=()=>true;
- globalThis.fetch=async(path,options)=>{const r=await handle(new Request(origin+path,{...options,headers:{...options.headers,origin,cookie}}),env);if(r.headers.has('Set-Cookie'))cookie=r.headers.get('Set-Cookie').split(';')[0];return r;};
+ const catalog=JSON.parse(await readFile(new URL('../public/catalog.json',import.meta.url),'utf8'));
+ globalThis.fetch=async(path,options)=>{if(path==='/catalog.json')return Response.json(catalog);const r=await handle(new Request(origin+path,{...options,headers:{...options.headers,origin,cookie}}),env);if(r.headers.has('Set-Cookie'))cookie=r.headers.get('Set-Cookie').split(';')[0];return r;};
  const $=s=>win.document.querySelector(s),input=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new win.Event('input',{bubbles:true}));},submit=s=>$(s).dispatchEvent(new win.Event('submit',{bubbles:true,cancelable:true}));
  try{
   await import('../public/app.mjs?integration');await wait(()=>$('#login'));
@@ -30,12 +31,27 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   assert.ok($('#label-preview img'));assert.equal($('#tile-batch').value,'ALT-CHARGE');
   $('[data-favorite="tile:0"]').click();$('[data-favorite="grout:0"]').click();$('[data-favorite="silicone:0"]').click();
   assert.equal($('#tile-name').value,'Mystone');assert.equal($('#grout-color').value,'Basalt');
+  assert.equal($('#joint-materials-title').textContent,'Silikon & Fugenmaterialien');
+  assert.equal($('#joint-materials [data-material="grout"] > summary strong').textContent,'Fugenmaterial');
+  assert.ok($('#joint-materials [data-material="silicone"]'));assert.equal($('#silicone-colors').children.length,0);
+  $('[data-open-catalog="silicone"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));
+  $('[data-catalog-pick="pci-silcofug-e"]').click();
+  assert.equal($('#silicone-name').value,'Silcofug E');assert.equal($('#silicone-color').value,'');
+  assert.equal($('#silicone-colors').children.length,28);assert.equal($('#grout-color').value,'Basalt');
+  input('#silicone-color','16 · Silbergrau');
+  assert.ok($('#documents').value.includes('Technisches Merkblatt (7/25)'));
+  submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
+  win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+initial.id;await wait(()=>$('#edit'));
+  assert.equal($('#silicone-color').value,'16 · Silbergrau');assert.equal($('#silicone-colors').children.length,28);
+  assert.equal($('#grout-color').value,'Basalt');
+
   assert.equal($('#tile-batch').value,'');assert.equal($('#tile-article_number').value,'');assert.equal($('#label-preview img'),null);
   input('#customer_name','PRIVATE CUSTOMER');input('#address','PRIVATE ADDRESS');
   $('#preview').click();await wait(()=>$('#handover'));assert.ok(!$('#app').textContent.includes('PRIVATE ADDRESS'));assert.ok(!$('#app').textContent.includes('Keine Bilder'));
   const savedContent=(await db.query('select content from pp_private.projects')).rows[0].content;
+  assert.equal(savedContent.silicone.name,'Silcofug E');assert.equal(savedContent.silicone.color,'16 · Silbergrau');assert.equal(savedContent.grout.color,'Basalt');
   assert.equal(savedContent.tile.label_photo,'');assert.equal(savedContent.spare_materials.length,2);assert.equal(savedContent.spare_materials[1].location,'Garage');
-  $('[data-panel="joints"]').click();assert.equal($('#panel-joints').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));
+  $('[data-panel="joints"]').click();assert.equal($('#panel-joints').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));assert.equal($('#panel-joints h2').textContent,'Silikon & Fugenmaterialien');assert.ok($('#panel-joints').textContent.includes('16 · Silbergrau'));assert.ok($('#panel-joints').textContent.includes('Silcofug E'));
   $('#handover').click();await wait(()=>$('#copy-link'));assert.ok($('#app').textContent.includes('Bereit für'));
   win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));
   assert.ok(!$('#app').textContent.includes('PRIVATE CUSTOMER'));assert.equal($('#handover'),null);

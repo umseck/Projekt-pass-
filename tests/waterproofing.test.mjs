@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Window} from 'happy-dom';
 import {content,standard,company} from '../server/validation.mjs';
-import {waterproofingFields,waterproofingHTML} from '../public/waterproofing.mjs';
+import {waterproofingFields,waterproofingPhotoFields,waterproofingHTML} from '../public/waterproofing.mjs';
 
 const photo='data:image/jpeg;base64,/9j/AA==';
 test('waterproofing stays optional, preserves project documentation and rejects unsafe or oversized input',()=>{
@@ -26,7 +26,7 @@ test('waterproofing stays optional, preserves project documentation and rejects 
 test('optional waterproofing fields reopen without guessing a class; customer photos reject unsafe URLs',async()=>{
  const win=new Window();
  try{
-  win.document.body.innerHTML=waterproofingFields();
+  win.document.body.innerHTML=waterproofingFields()+waterproofingPhotoFields();
   const $=s=>win.document.querySelector(s);
   assert.equal($('#waterproofing-water-class').value,'');assert.equal($('#waterproofing-type').value,'');
   assert.equal($('#waterproofing-photo-upload').required,false);assert.equal($('#waterproofing-photo-upload').multiple,true);

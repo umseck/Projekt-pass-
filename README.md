@@ -10,10 +10,15 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 - Betreiberverwaltung: Betriebe anlegen, Profil bearbeiten und Einrichtungslinks erstellen.
 - Betriebsprofil mit Gewerkeauswahl: Fliesenleger oder Fugenlose Oberflächen.
 - Der gemeinsame Produktkatalog enthält die ausdrücklich ausgewählten Oberflächensysteme
-  von EPI, Murface, Lamurista und ArtStucco mit zugeordneten Farbkollektionen.
+  von EPI, Murface, Lamurista und ArtStucco sowie PCI Silcofug E mit zugeordneten Farbkollektionen.
   Betriebe wählen bei der Einrichtung optional ihre üblichen Hersteller. Diese erscheinen
   zuerst; weitere Hersteller bleiben auswählbar. Eigene Produkte samt Unterlagen lassen
   sich am Projekt in den privaten Betriebskatalog übernehmen. Siehe `CATALOG_SOURCES.md`.
+- Fliesen: gemeinsamer Abschnitt „Silikon & Fugenmaterialien“ mit getrennten Produkt- und Farbfeldern.
+  Fugenlos behält den eigenen Silikonabschnitt. Silcofug E bietet 28 Farbtöne inklusive transparent;
+  die Liste erscheint nur für dieses Silikon, und freie Farben bleiben möglich.
+  Oberflächensysteme bieten „Anderer Farbton“ für Sonderfarben, RAL/NCS oder freien Text.
+  Beim Wechsel zur Standardliste und beim Wiederöffnen bleiben eingegebene Farbtöne erhalten.
 - Fugenlos-Vorlage: Fläche, Untergrund, Oberflächensystem, Grundierung, Abdichtung,
   Versiegelung, Anschlussfugen und Pflege. Keine erfundenen Material- oder Pflegevorgaben.
 - Abdichtung: Produkt ohne Farbfeld, optionale Wassereinwirkungsklasse und Dichtbahn/Dichtmasse.
@@ -24,6 +29,11 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
   eigenem ausführendem Betrieb, optionalem Firmennamen und Beschreibung. Vorhandene Notizen
   bleiben erhalten. Die strukturierten Angaben liegen in `content.preparation`, werden bei
   der Übergabe eingefroren und nicht in den Materialstandard für neue Projekte übernommen.
+- Handwerkerbearbeitung: vier kompakte Karten (Projekt & Fläche, Materialien, Fotos & Unterlagen,
+  Übergabe & Pflege). Nur ein Bereich und ein Material sind gleichzeitig geöffnet.
+  Ruhige Hintergrundfarben, Produkt-/Farbenzusammenfassungen und getrennte optionale Angaben.
+  Unterlagen werden als Linkliste ergänzt; keine technische Trennzeichen-Eingabe im Formular.
+  Speichern und Übergabe bleiben sichtbar; Betriebsmenü und NFC-Verwaltung sind zugeklappt.
 - Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
 - Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.

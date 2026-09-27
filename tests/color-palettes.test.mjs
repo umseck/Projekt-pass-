@@ -21,3 +21,16 @@ test('surface palettes recognize common names without leaking to other makers, s
   ['surface','Murface','Murmarble'],['surface','Lamurista','Tantum'],['surface','ArtStucco','Unbekannt'],['surface','EPI','Micro'],
  ])assert.equal(paletteFor(...args),null);
 });
+
+test('Silcofug E colours are product-specific and include official colour numbers',()=>{
+ const palette=paletteFor('silicone','PCI','Silcofug E');
+ assert.equal(palette.colors.length,28);assert.equal(new Set(palette.colors).size,28);
+ assert.ok(palette.colors.includes('Transparent'));assert.ok(palette.colors.includes('01 · Brillantweiß'));
+ assert.ok(palette.colors.includes('16 · Silbergrau'));assert.ok(palette.colors.includes('61 · Schiefergrau'));
+ assert.ok(!palette.colors.some(c=>c.startsWith('20'))); // Silcoferm S white is a different product.
+ assert.equal(paletteFor('silicone','PCI Augsburg GmbH','PCI Silcofug® E'),palette);
+ for(const args of [
+  ['silicone','PCI','Silcoferm S'],['silicone','PCI','Silcofug Multicolor'],['silicone','PCI','Silco G'],
+  ['silicone','OTTO','Silcofug E'],['grout','PCI','Silcofug E'],['surface','PCI','Silcofug E'],
+ ])assert.equal(paletteFor(...args),null);
+});

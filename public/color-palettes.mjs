@@ -211,13 +211,52 @@ export const colorPalettes = {
       "Treviso",
       "Tropea"
     ]
+  },
+  "pci-silcofug-e": {
+    "id": "pci-silcofug-e",
+    "name": "PCI Silcofug E – Farbtöne",
+    "source": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
+    "checked_at": "2026-09-27",
+    "colors": [
+      "Transparent",
+      "01 · Brillantweiß",
+      "02 · Bahamabeige",
+      "03 · Caramel",
+      "05 · Mittelbraun",
+      "11 · Jasmin",
+      "12 · Anemone",
+      "16 · Silbergrau",
+      "18 · Manhattan",
+      "19 · Basalt",
+      "21 · Hellgrau",
+      "22 · Sandgrau",
+      "23 · Lichtgrau",
+      "31 · Zementgrau",
+      "40 · Schwarz",
+      "41 · Dunkelbraun",
+      "43 · Pergamon",
+      "44 · Topas",
+      "47 · Anthrazit",
+      "53 · Ocker",
+      "54 · Ahorn",
+      "55 · Nussbraun",
+      "56 · Terrabraun",
+      "57 · Rehbraun",
+      "58 · Mahagoni",
+      "59 · Mokka",
+      "60 · Schwarzbraun",
+      "61 · Schiefergrau"
+    ]
   }
 };
 
 const normalized=value=>String(value??'').toLowerCase().replace(/[^a-z0-9]/g,'');
 export function paletteFor(kind,manufacturer,product){
- if(kind!=='surface'||!String(product??'').trim())return null;
- const maker=normalized(manufacturer),system=normalized(product).replace(/^epi/,'');
+ if(!String(product??'').trim())return null;
+ const maker=normalized(manufacturer),name=normalized(product);
+ if(kind==='silicone'&&['pci','pciaugsburg','pciaugsburggmbh'].includes(maker)&&['silcofuge','pcisilcofuge'].includes(name))return colorPalettes['pci-silcofug-e'];
+ if(kind!=='surface')return null;
+ const system=name.replace(/^epi/,'');
  if(['epi','byepi','epifloors','epigroup','epigroupbv'].includes(maker)&&['quartzr','quarzr','corestone','corestonenature'].includes(system))return colorPalettes.corestone;
  if(['murface','murfacegmbh'].includes(maker)&&['mono','mfmono','industrial','mfindustrial'].includes(system))return colorPalettes.murface;
  if(['lamurista','lamuristagmbh'].includes(maker)&&['hardrock','hardrockpro','lamuristahardrock','lamuristahardrockpro'].includes(system))return colorPalettes.lamurista;
@@ -228,18 +267,38 @@ export function paletteFor(kind,manufacturer,product){
  return null;
 }
 const options=palette=>(palette?.colors||[]).map(value=>`<option value="${esc(value)}"></option>`).join('');
-const paletteHint=palette=>palette?`${esc(palette.name)} · auswählen oder eigenen Farbton eingeben.`:'';
-export function colorField(kind,product){
- if(kind!=='surface')return field('Farbton',kind+'-color',product.color);
- const palette=paletteFor(kind,product.manufacturer,product.name);
- return `<div data-color-palette="${palette?.id||''}">${field('Farbton / Farbnummer',kind+'-color',product.color,'text',`list="${kind}-colors" aria-describedby="${kind}-color-hint" placeholder="Farbton wählen oder eingeben" autocomplete="off"`)}<datalist id="${kind}-colors">${options(palette)}</datalist><p class="hint" id="${kind}-color-hint" ${palette?'':'hidden'}>${paletteHint(palette)}</p></div>`;
+const isCustomColor=(kind,palette,color)=>kind==='surface'&&Boolean(palette&&color&&!palette.colors.includes(color));
+function setColorMode(wrapper,kind,palette,custom){
+ const input=wrapper.querySelector('#'+kind+'-color'),hint=wrapper.querySelector('.hint'),button=wrapper.querySelector('[data-custom-color]');
+ wrapper.dataset.customColor=String(custom);
+ if(custom)input.removeAttribute('list');else input.setAttribute('list',kind+'-colors');
+ wrapper.querySelector('label').textContent=custom?'Anderer Farbton':'Farbton / Farbnummer';
+ input.placeholder=custom?'z. B. RAL 9001, NCS oder eigene Farbbezeichnung':'Farbton wählen oder eingeben';
+ hint.textContent=palette?palette.name+(custom?' · Eigenen Farbton, RAL- oder NCS-Code eingeben.':' · auswählen oder eigenen Farbton eingeben.'):'';
+ hint.hidden=!palette;
+ if(button){button.hidden=!palette;button.textContent=custom?'Standardfarbtöne anzeigen':'Anderer Farbton';button.setAttribute('aria-pressed',String(custom));}
 }
-export function refreshColorOptions(card,kind){
+export function colorField(kind,product){
+ if(!['surface','silicone'].includes(kind))return field('Farbton',kind+'-color',product.color);
+ const palette=paletteFor(kind,product.manufacturer,product.name);
+ return `<div data-color-palette="${palette?.id||''}">${field('Farbton / Farbnummer',kind+'-color',product.color,'text',`list="${kind}-colors" aria-describedby="${kind}-color-hint" placeholder="Farbton wählen oder eingeben" autocomplete="off"`)}<datalist id="${kind}-colors">${options(palette)}</datalist>${kind==='surface'?`<button class="btn text" type="button" data-custom-color="${kind}" aria-controls="${kind}-color" aria-pressed="false" ${palette?'':'hidden'}>Anderer Farbton</button>`:''}<p class="hint" id="${kind}-color-hint" ${palette?'':'hidden'}>${palette?esc(palette.name)+' · auswählen oder eigenen Farbton eingeben.':''}</p></div>`;
+}
+export function bindColorOptions(card,kind){
+ const wrapper=card.querySelector('[data-color-palette]');if(!wrapper)return;
+ const button=wrapper.querySelector('[data-custom-color]');
+ if(button)button.onclick=()=>{
+  const palette=paletteFor(kind,card.querySelector('#'+kind+'-manufacturer').value,card.querySelector('#'+kind+'-name').value);
+  const custom=wrapper.dataset.customColor!=='true';setColorMode(wrapper,kind,palette,custom);
+  const input=wrapper.querySelector('#'+kind+'-color');input.focus();if(custom)input.select();
+ };
+ refreshColorOptions(card,kind,{reset:true});
+}
+export function refreshColorOptions(card,kind,{reset=false}={}){
  const wrapper=card.querySelector('[data-color-palette]');if(!wrapper)return;
  const palette=paletteFor(kind,card.querySelector('#'+kind+'-manufacturer').value,card.querySelector('#'+kind+'-name').value);
- const id=palette?.id||'';if(wrapper.dataset.colorPalette===id)return;
+ const id=palette?.id||'';if(wrapper.dataset.colorPalette===id&&!reset)return;
  wrapper.dataset.colorPalette=id;
  wrapper.querySelector('datalist').innerHTML=options(palette);
- const hint=wrapper.querySelector('.hint');hint.innerHTML=paletteHint(palette);hint.hidden=!palette;
+ setColorMode(wrapper,kind,palette,isCustomColor(kind,palette,wrapper.querySelector('#'+kind+'-color').value));
  // Never change an entered/saved project colour when refreshing suggestions.
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "checked_at": "2026-09-27",
-  "scope": "Vom Nutzer ausgewählte Oberflächensysteme für den Bad-Piloten. Betriebseigene Produkte bleiben ergänzbar.",
+  "scope": "Vom Nutzer ausgewählte Oberflächensysteme und Silikon für den Bad-Piloten. Betriebseigene Produkte bleiben ergänzbar.",
   "manufacturers": [
     {
       "id": "epi",
@@ -29,6 +29,13 @@
       "name": "ArtStucco",
       "url": "https://artstucco.de/",
       "note": "Anbieter von Wand- und Lavasteinoberflächen. Farben getrennt nach Produktlinie.",
+      "documents": []
+    },
+    {
+      "id": "pci",
+      "name": "PCI",
+      "url": "https://www.pci-augsburg.eu/",
+      "note": "Zum Start: PCI Silcofug E mit den offiziellen Farbtönen.",
       "documents": []
     }
   ],
@@ -160,6 +167,33 @@
           "name": "ArtStucco – Lavasteinboden",
           "type": "Produktinformationen",
           "url": "https://artstucco.de/produktauswahl/boden/",
+          "language": "de",
+          "verification": "page"
+        }
+      ]
+    },
+    {
+      "id": "pci-silcofug-e",
+      "manufacturer_id": "pci",
+      "name": "Silcofug E",
+      "kinds": [
+        "silicone"
+      ],
+      "system_type": "Silikon-Dichtstoff",
+      "source_url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
+      "note": "Silikon für Anschluss- und Bewegungsfugen. Farbton und Farbnummer passend zum verwendeten Material auswählen.",
+      "documents": [
+        {
+          "name": "PCI Silcofug E – Technisches Merkblatt (7/25)",
+          "type": "Technisches Merkblatt",
+          "url": "https://doc.pci-augsburg.com/php/index.pdf?changed=1788300000&check=06b6f418221331cdbbc299eba67501d8&download=&lang=0&pfile=0_106_1&prod=98",
+          "language": "de",
+          "verification": "pdf"
+        },
+        {
+          "name": "PCI Silcofug E – Produktinformationen & Farbtöne",
+          "type": "Produktinformationen",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
           "language": "de",
           "verification": "page"
         }

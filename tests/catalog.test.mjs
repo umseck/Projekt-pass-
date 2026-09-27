@@ -9,10 +9,11 @@ test('curated pilot systems have matching palettes; Murface stays limited to Mon
  assert.deepEqual(c.products.filter(p=>p.manufacturer_id==='murface').map(p=>p.name).sort(),['MF Industrial','MF Mono']);
  for(const p of c.products){
   const m=c.manufacturers.find(m=>m.id===p.manufacturer_id);assert.ok(m);
-  assert.ok(paletteFor('surface',m.name,p.name),m.name+' '+p.name);
+  assert.ok(paletteFor(p.kinds[0],m.name,p.name),m.name+' '+p.name);
   assert.ok(p.source_url.startsWith('https://'));assert.ok(Array.isArray(p.documents));
  }
- assert.deepEqual(matchingProducts(c,{kind:'silicone'}),[]);
+ assert.deepEqual(matchingProducts(c,{kind:'silicone'}).map(p=>p.name),['Silcofug E']);
+ assert.ok(!matchingProducts(c,{kind:'grout'}).some(p=>p.name==='Silcofug E'));
 });
 test('preferred makers filter without hiding other makers or mixing private business products',async()=>{
  const original=globalThis.fetch;globalThis.fetch=async()=>new Response(JSON.stringify(c));

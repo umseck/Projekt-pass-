@@ -2,9 +2,9 @@
 
 ## Umfang und Entscheidungen
 
-Der frühere breite Recherchekatalog wurde am 26. September 2026 auf Nutzerwunsch geleert. Am 27. September wurden gezielt Oberflächensysteme und Farbtöne neu freigegeben: EPI Quartz R, Lamurista HardRock/HardRock PRO, bei Murface ausschließlich Industrial/Mono sowie ArtStucco für das Bad. Weitere Produktgruppen bleiben leer, bis sie konkret ergänzt werden.
+Der frühere breite Recherchekatalog wurde am 26. September 2026 auf Nutzerwunsch geleert. Am 27. September wurden gezielt Oberflächensysteme und Farbtöne neu freigegeben: EPI Quartz R, Lamurista HardRock/HardRock PRO, bei Murface ausschließlich Industrial/Mono sowie ArtStucco für das Bad. Als erstes Silikon wurde anschließend PCI Silcofug E ergänzt. Weitere Produkte folgen anhand der tatsächlich verwendeten Materialien.
 
-`public/catalog.json` enthält sieben auswählbare Systeme. Betriebseigene Produkte und Unterlagen bleiben privat; identische Herstellernamen werden in der Auswahl zusammengeführt, ohne private Produkte anderen Betrieben zugänglich zu machen. `preferred_manufacturers` ist eine optionale Betriebspräferenz. Sie filtert den Einstieg im Produktwähler, ersetzt aber keine Materialauswahl am Projekt. Andere Hersteller bleiben erreichbar.
+`public/catalog.json` enthält sieben auswählbare Oberflächensysteme und PCI Silcofug E. Betriebseigene Produkte und Unterlagen bleiben privat; identische Herstellernamen werden in der Auswahl zusammengeführt, ohne private Produkte anderen Betrieben zugänglich zu machen. `preferred_manufacturers` ist eine optionale Betriebspräferenz. Sie filtert den Einstieg im Produktwähler, ersetzt aber keine Materialauswahl am Projekt. Andere Hersteller bleiben erreichbar.
 
 Farben stehen separat in `public/color-palettes.mjs`. Es wird keine Farbe automatisch gewählt. Freie Farbangaben, z. B. NCS/RAL oder Sonderfarben, bleiben möglich. Farbtöne, Chargen und Projektfotos werden nicht als Produktstammdaten gespeichert. Bestehende Projektangaben bleiben unverändert.
 
@@ -47,3 +47,13 @@ Auf Nutzerangabe für den privaten Betriebskatalog bestätigt; der gemeinsame Ob
 - Offizielle Produktseite: https://www.pci-augsburg.eu/de/produkte/pci-seccoral-1k
 - Technisches Merkblatt, Stand 7/26: https://doc.pci-augsburg.com/php/index.pdf?changed=1783548000&check=d72558a7b969a59b11b2d122e5098270&download=&lang=0&pfile=0_127_1&prod=109
 - Herstellerbezeichnung: flexible Dichtschlämme. In der vereinfachten Projektauswahl entspricht dies „Dichtmasse“; keine automatische Wassereinwirkungsklasse aus den erlaubten Anwendungsbereichen ableiten. Die tatsächliche Klasse und Ausführung bleiben Projektangaben.
+
+
+## PCI Silcofug E
+
+- „PCI Silco g“ wurde als PCI Silcofug E eingeordnet und diese Annahme dem Nutzer mitgeteilt. Kein Produkt unter erfundener Bezeichnung „Silco G“ angelegt.
+- Offizielle Produktseite/Farben: https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e
+- Technisches Merkblatt, Stand 7/25 (am 27. September 2026 von der aktuellen Produktseite abgerufen): https://doc.pci-augsburg.com/php/index.pdf?changed=1788300000&check=06b6f418221331cdbbc299eba67501d8&download=&lang=0&pfile=0_106_1&prod=98
+- 28 Auswahlwerte: transparent und die 27 nummerierten Farbtöne der Produktseite/310-ml-Kartusche. Keine Übernahme der Farbliste von Silcoferm S oder Silcofug Multicolor. Der 400-ml-Schlauch hat eine kleinere Farbauswahl; die Auswahl enthält keine Gebinde- oder Lieferzusage.
+- Nur der Materialrolle `silicone` zugeordnet. Das Produkt ist kein Fugenmörtel. Fugenmaterial und Silikon bleiben getrennt dokumentierbar, auch unter der gemeinsamen Überschrift der Fliesen-Vorlage.
+- Freie Farbeingabe bleibt möglich. Ein Produktwechsel überschreibt beim Katalogwählen keine Fugenmörtelangaben. Bloßes Bearbeiten des Produktnamens löscht keinen gespeicherten Farbton.
