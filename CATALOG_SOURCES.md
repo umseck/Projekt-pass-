@@ -73,3 +73,11 @@ Automatische Vorschläge sind bearbeitbare Dokumentationshilfen. Sie sind keine 
 - **ArtStucco bleibt offen:** Die öffentlichen Wand-/Bodenseiten nennen keine eindeutige Versiegelungsvariante für die im Katalog gewählten Einträge. Ein Suchhinweis auf Idro-Gel/Idro-Pol in einem Anbieterbeitrag konnte nicht ausreichend geprüft werden. Deshalb keine erfundene automatische Zuordnung. Produkt/Etikett bzw. freigegebenen Aufbau bei der realen Projektdokumentation ergänzen.
 
 Technische Unterlagen der bestätigten Versiegelung werden bei der Systemauswahl zusammen mit den Produktunterlagen übernommen, sofern dies im Produktwähler aktiviert ist. Vorhandene Links bleiben wie bisher erhalten und sind über Fotos & Unterlagen einzeln entfernbar. Private Favoriten desselben Systems erhalten denselben Vorschlag; Hersteller und Produktname werden streng zugeordnet, keine unscharfe Markenvermutung.
+
+## Automatische HardRock-Unterlagen und Pflege (27. September 2026)
+
+- Offizielle Medienseite und HardRock-Produktseite erneut geprüft. Flipbook-Konfiguration `/wp-json/ipages/v1/item/18` bestätigt das HardRock-PRO-Merkblatt: https://lamurista.de/wp-content/uploads/2026/01/Lamurista_HardrockPRO_TM.pdf
+- Die unter HardRock verlinkte Clean-&-Care-Anleitung (`/wp-json/ipages/v1/item/32`) verweist auf https://lamurista.de/wp-content/uploads/2025/11/Clean-Clear-01-25_WEB.pdf . PDF heruntergeladen und Text geprüft: ausdrücklich für fugenlose Oberflächen mit HardRock. Zuordnung zu HardRock und HardRock PRO als Pflegeanleitung.
+- Beim allgemeinen HardRock-Eintrag nur Produktinformationen und Pflegeanleitung; das PRO-Merkblatt ausschließlich für die genaue PRO-Auswahl. Kein erfundenes generisches technisches Merkblatt.
+- Exakt gleichnamige Betriebsprodukte erhalten ergänzend bestätigte Katalogunterlagen; eigene Unterlagen bleiben erhalten. Auch Schnellwahl übernimmt diese Dokumente. Keine unscharfe Zuordnung zu anderen Varianten oder Herstellern. Links werden nach URL dedupliziert.
+- Automatische Übernahme bei neuer Produktauswahl; keine nachträgliche Änderung übergebener Projekte. Bestehende Projektunterlagen bleiben erhalten und können einzeln entfernt werden.

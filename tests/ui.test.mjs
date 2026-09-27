@@ -29,7 +29,7 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   await db.query('update pp_private.projects set content=content || $1::jsonb where id=$2',[JSON.stringify({tile:{name:'Altes Material',article_number:'ALT-123',batch:'ALT-CHARGE',label_photo:'data:image/jpeg;base64,/9j/AA=='},spare_materials:[{material:'Fliesen',quantity:'2',location:'Keller',photo:''},{material:'Reservefuge',quantity:'1 kg',location:'Garage',photo:''}]}),initial.id]);
   win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+initial.id;await wait(()=>$('#edit'));
   assert.ok($('#label-preview img'));assert.equal($('#tile-batch').value,'ALT-CHARGE');
-  $('[data-favorite="tile:0"]').click();$('[data-favorite="grout:0"]').click();$('[data-favorite="silicone:0"]').click();
+  $('[data-favorite="tile:0"]').click();await wait(()=>!$('[data-favorite="tile:0"]').disabled);$('[data-favorite="grout:0"]').click();await wait(()=>!$('[data-favorite="grout:0"]').disabled);$('[data-favorite="silicone:0"]').click();await wait(()=>!$('[data-favorite="silicone:0"]').disabled);
   assert.equal($('#tile-name').value,'Mystone');assert.equal($('#grout-color').value,'Basalt');
   assert.equal($('#joint-materials-title').textContent,'Silikon & Fugenmaterialien');
   assert.equal($('#joint-materials [data-material="grout"] > summary strong').textContent,'Fugenmaterial');

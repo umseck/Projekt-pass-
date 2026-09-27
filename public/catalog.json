@@ -109,8 +109,23 @@
       ],
       "system_type": "Oberflächensystem",
       "source_url": "https://lamurista.de/hardrock/",
-      "note": "Allgemeine HardRock-Bezeichnung. Genaue Variante laut Gebinde ergänzen. Unterlagen für PRO oder ULTRA werden nicht automatisch zugeordnet.",
-      "documents": []
+      "note": "Allgemeine HardRock-Bezeichnung. Pflegeanleitung wird übernommen. Für das technische Merkblatt bitte die genaue Variante laut Gebinde auswählen, z. B. HardRock PRO.",
+      "documents": [
+        {
+          "name": "Lamurista HardRock – Produktinformationen und Downloads",
+          "type": "Produktinformationen",
+          "url": "https://lamurista.de/hardrock/",
+          "language": "de",
+          "verification": "page"
+        },
+        {
+          "name": "Lamurista HardRock – Reinigung & Pflege (Clean & Care)",
+          "type": "Pflegeanleitung",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Clean-Clear-01-25_WEB.pdf",
+          "language": "de",
+          "verification": "pdf"
+        }
+      ]
     },
     {
       "id": "lamurista-hardrock-pro",
@@ -124,11 +139,18 @@
       "note": "Verarbeitungsfertiger Oberflächenspachtel für Wände, Böden und Bäder.",
       "documents": [
         {
-          "name": "Lamurista HardRock – Produktinformationen und Downloads",
-          "type": "Produktinformationen",
-          "url": "https://lamurista.de/hardrock/",
+          "name": "Lamurista HardRock PRO – Technisches Merkblatt",
+          "type": "Technisches Merkblatt",
+          "url": "https://lamurista.de/wp-content/uploads/2026/01/Lamurista_HardrockPRO_TM.pdf",
           "language": "de",
-          "verification": "page"
+          "verification": "pdf"
+        },
+        {
+          "name": "Lamurista HardRock – Reinigung & Pflege (Clean & Care)",
+          "type": "Pflegeanleitung",
+          "url": "https://lamurista.de/wp-content/uploads/2025/11/Clean-Clear-01-25_WEB.pdf",
+          "language": "de",
+          "verification": "pdf"
         }
       ]
     },

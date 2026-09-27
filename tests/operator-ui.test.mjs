@@ -107,7 +107,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('#waterproofing-water-class').value,'');assert.equal($('#waterproofing-type').value,'');
    assert.match($('#waterproofing-documentation').textContent,/Fotos der Abdichtung \(empfohlen\)/);
    assert.ok(!$('[data-favorite="waterproofing:0"]').textContent.includes('grau'));
-   $('[data-favorite="waterproofing:0"]').click();
+   $('[data-favorite="waterproofing:0"]').click();await wait(()=>!$('[data-favorite="waterproofing:0"]').disabled);
    assert.equal($('#waterproofing-name').value,'Seccoral 1K');assert.equal($('#waterproofing-water-class').value,'');
    submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
    const photo='data:image/jpeg;base64,/9j/AA==',photo2='data:image/jpeg;base64,/9j/BB==';
@@ -140,11 +140,11 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    input('#surface-color','Sonderton <Sand> 123');input('#surface-manufacturer','.murface');input('#surface-name','MF Industrial');
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='MF WHITE · B00'));
    assert.equal($('#surface-color').value,'Sonderton <Sand> 123');
-   $('[data-favorite="surface:0"]').click();
+   $('[data-favorite="surface:0"]').click();await wait(()=>!$('[data-favorite="surface:0"]').disabled);
    assert.equal($('#finish-name').value,'Corestone Sealer');assert.equal($('#finish-manufacturer').value,'EPI');
    assert.equal($('#finish-status').textContent,'Aus dem System vorausgefüllt');
    input('#finish-name','Meine Versiegelung');input('#finish-sheen','Matt');
-   $('[data-favorite="surface:0"]').click();assert.equal($('#finish-name').value,'Meine Versiegelung');
+   $('[data-favorite="surface:0"]').click();await wait(()=>!$('[data-favorite="surface:0"]').disabled);assert.equal($('#finish-name').value,'Meine Versiegelung');
    submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
    win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
    assert.equal($('#finish-name').value,'Meine Versiegelung');assert.equal($('#finish-sheen').value,'Matt');
@@ -158,6 +158,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('#catalog-manufacturer').value,'__preferred');
    input('#catalog-manufacturer','lamurista');$('#catalog-manufacturer').dispatchEvent(new win.Event('change'));
    $('[data-catalog-pick="lamurista-hardrock-pro"]').click();
+   assert.ok($('#documents').value.includes('Lamurista_HardrockPRO_TM.pdf'));assert.ok($('#documents').value.includes('Clean-Clear-01-25_WEB.pdf'));
    assert.equal($('#finish-name').value,'GoodLack wb');assert.equal($('#finish-manufacturer').value,'Lamurista');
    assert.equal($('#finish-sheen').value,'');assert.ok($('#documents').value.includes('Lamurista_GoodLack_wb_TM-Neu.pdf'));
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='München'));assert.equal($('#surface-color').value,'');

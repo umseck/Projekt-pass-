@@ -14,10 +14,19 @@ export async function loadCatalog(){
  const own=companyProducts.map(p=>{
   let maker=manufacturers.find(m=>makerKey(m.name)===makerKey(p.manufacturer));
   if(!maker){maker={id:p.manufacturer_id,name:p.manufacturer,note:'Eigene Produkte Ihres Betriebs.',documents:[]};manufacturers.push(maker);}
-  return {...p,manufacturer_id:maker.id};
+  const match=[...base.products,...systemFinishes].find(x=>x.manufacturer_id===maker.id&&makerKey(x.name)===makerKey(p.name)&&makerKey(x.article_number)===makerKey(p.article_number)&&x.kinds.every(k=>p.kinds.includes(k)));
+  const documents=[...(p.documents||[])];
+  for(const d of match?.documents||[])if(!documents.some(x=>x.url===d.url))documents.push(d);
+  return {...p,manufacturer_id:maker.id,documents};
  });
  const shared=[...base.products,...systemFinishes].filter(p=>!own.some(x=>x.manufacturer_id===p.manufacturer_id&&makerKey(x.name)===makerKey(p.name)&&makerKey(x.article_number)===makerKey(p.article_number)&&p.kinds.every(k=>x.kinds.includes(k))));
  return {...base,manufacturers,preferred_manufacturers:[...preferredManufacturers],products:[...own,...shared]};
+}
+export async function productDocuments(kind,item){
+ const c=await loadCatalog();
+ const maker=c.manufacturers.find(m=>makerKey(m.name)===makerKey(item.manufacturer));
+ const match=c.products.find(p=>p.manufacturer_id===maker?.id&&p.kinds.includes(kind)&&makerKey(p.name)===makerKey(item.name)&&makerKey(p.article_number)===makerKey(item.article_number));
+ return mergeDocuments(item.documents||[],(match?.documents||[]).filter(d=>d.verification!=='source_link'));
 }
 export function matchingProducts(c,{manufacturer='',query='',kind=''}={}){
  const q=query.trim().toLocaleLowerCase('de');

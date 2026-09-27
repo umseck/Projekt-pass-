@@ -13,7 +13,7 @@ import {workflowPage,participantPage,journalHTML,ownerEntry} from './workflow.mj
 import {esc,num,date,safeLink,hasProduct,labelPhoto,field,area,fields,compress,download} from './ui.mjs';
 import {operatorPage,accessPage} from './operator.mjs';
 import {names,productKeys,trades,tradeFor} from './trades.mjs';
-import {catalogPage,openCatalogPicker,mergeDocuments,loadCatalog,setCompanyCatalog} from './catalog.mjs';
+import {catalogPage,openCatalogPicker,mergeDocuments,loadCatalog,setCompanyCatalog,productDocuments} from './catalog.mjs';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 let dashboardLoadedAt=0;
 let dashboard=null,dirty=false,routeVersion=0,ownerKey='',editorSession=null;
@@ -191,7 +191,7 @@ async function edit(id){
  if($('#waterproofing-photo-upload'))$('#waterproofing-photo-upload').onchange=e=>upload(e.target,files=>addPhotos(files,waterproofingPhotos,renderWaterproofingPhotos));
  $('#label-photo').onchange=e=>upload(e.target,async files=>{if(files[0])label=await compress(files[0]);renderLabel();});
  $('#spare-photo').onchange=e=>upload(e.target,async files=>{if(files[0])sparePhoto=await compress(files[0]);renderSpare();});
- $$('[data-favorite]').forEach(b=>b.onclick=()=>run(b,async()=>{const [kind,i]=b.dataset.favorite.split(':');const item={...blankProduct(),...dashboard.company.favorites[kind][i]};applyProduct(kind,item,item.documents||[]);notify('Material übernommen.');},$('.form-message',form)));
+ $$('[data-favorite]').forEach(b=>b.onclick=()=>run(b,async()=>{const [kind,i]=b.dataset.favorite.split(':');const item={...blankProduct(),...dashboard.company.favorites[kind][i]};applyProduct(kind,item,await productDocuments(kind,item));notify('Material übernommen.');},$('.form-message',form)));
  $$('[data-open-catalog]').forEach(b=>b.onclick=()=>run(b,()=>openCatalogPicker(b.dataset.openCatalog,{modal,isCurrent:()=>location.hash==='#edit/'+p.id,onPick:(product,manufacturer,includeDocs)=>{
   const docs=includeDocs?product.documents.filter(d=>d.verification!=='source_link'):[];
   const kind=b.dataset.openCatalog,item={...blankProduct(),manufacturer:manufacturer.name,name:product.name,article_number:product.article_number||'',format:product.format||'',system_type:product.system_type||'',sheen:product.sheen||''};

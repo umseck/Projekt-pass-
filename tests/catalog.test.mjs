@@ -42,3 +42,21 @@ test('catalog filters respect material role and manufacturer; document merge is 
  assert.deepEqual(mergeDocuments([], [{url:'javascript:alert(1)'}]),[]);
  assert.throws(()=>mergeDocuments(Array.from({length:20},(_,i)=>({...a,url:'https://example.test/'+i})),[b]),/20 Unterlagen/);
 });
+test('HardRock documents match the variant and survive private catalog overrides',async()=>{
+ const generic=c.products.find(p=>p.id==='lamurista-hardrock');
+ const pro=c.products.find(p=>p.id==='lamurista-hardrock-pro');
+ assert.ok(generic.documents.some(d=>d.type==='Pflegeanleitung'));
+ assert.ok(!generic.documents.some(d=>d.url.includes('HardrockPRO_TM')));
+ assert.ok(pro.documents.some(d=>d.type==='Technisches Merkblatt'&&d.url.endsWith('Lamurista_HardrockPRO_TM.pdf')));
+ const original=globalThis.fetch;globalThis.fetch=async()=>new Response(JSON.stringify(c));
+ try{
+  setCompanyCatalog({favorites:{surface:[{manufacturer:'Lamurista',name:'HardRock PRO',documents:[]}]}});
+  const privateCatalog=await loadCatalog(),p=privateCatalog.products.find(p=>p.id==='own-surface-0');
+  assert.deepEqual(p.documents,pro.documents);
+  const {productDocuments}=await import('../public/catalog.mjs');
+  const docs=await productDocuments('surface',{manufacturer:'Lamurista',name:'HardRock PRO'});
+  assert.ok(docs.some(d=>d.type==='Pflegeanleitung'));
+  assert.ok(docs.some(d=>d.type==='Technisches Merkblatt'));
+  assert.deepEqual(await productDocuments('surface',{manufacturer:'Lamurista',name:'Unbekannte Variante'}),[]);
+ }finally{globalThis.fetch=original;setCompanyCatalog(null);}
+});
