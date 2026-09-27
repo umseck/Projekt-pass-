@@ -12,6 +12,7 @@ test('preparation keeps walls, floor and each executor distinct through editing 
  const set=(id,value)=>{const el=$('#'+id);el.value=value;el.dispatchEvent(new win.Event(el.tagName==='SELECT'?'change':'input',{bubbles:true}));};
  try{
   assert.equal(root.querySelectorAll('[data-prep-group]').length,2);
+  assert.deepEqual([...$('#prep-floor-base-kind').options].map(o=>o.textContent),['Bitte auswählen','Altbelag','Estrich','Sonstiges']);
   set('prep-walls-base-kind','drywall');assert.throws(()=>editor.read(),/wer den Untergrund erstellt/);
   set('prep-walls-base-by','other');set('prep-walls-base-company','Trockenbau Beispiel');
   $('[data-prep-add="walls"]').click();set('prep-walls-0-kind','filled');set('prep-walls-0-by','own');
@@ -21,9 +22,9 @@ test('preparation keeps walls, floor and each executor distinct through editing 
   assert.equal(saved[0].substrate.company,'Trockenbau Beispiel');
   assert.deepEqual(saved[0].steps.map(s=>s.by),['own','other']);
   assert.equal(saved[1].substrate.kind,'screed');assert.equal(saved[1].substrate.by,'unknown');
-  // Changing the project area never silently discards completed documentation.
-  editor.setArea('Boden');assert.ok($('[data-prep-remove-area="walls"]'));assert.deepEqual(editor.read(),saved);
-  editor.setArea('Wände & Boden');assert.equal($('#prep-walls-base-kind').value,'drywall');
+  // Only selected areas are visible and saved; changing back restores the current draft.
+  editor.setArea('Boden');assert.equal($('[data-prep-group="walls"]'),null);assert.deepEqual(editor.read(),[saved[1]]);
+  editor.setArea('Wände & Boden');assert.equal($('#prep-walls-base-kind').value,'drywall');assert.deepEqual(editor.read(),saved);
   const reopened=createPreparationEditor(root,saved,{choice:'Wände & Boden'});
   assert.deepEqual(reopened.read(),saved);assert.equal($('#prep-walls-1-company').value,'Grundierer Beispiel');
   // Switching an executor cannot attribute the previous contractor's name to our business.
@@ -34,7 +35,12 @@ test('preparation keeps walls, floor and each executor distinct through editing 
   assert.throws(()=>reopened.read(),/kurz benennen/);set('prep-other-base-custom','Holz');
   reopened.setCustomLabel('Treppe & Podest');assert.equal(reopened.read().at(-1).label,'Treppe & Podest');
   assert.equal(reopened.read().at(-1).substrate.custom,'Holz');
-  $('[data-prep-remove-area="walls"]').click();assert.equal(reopened.read().some(g=>g.area==='walls'),false);
+  reopened.setArea('Boden');assert.equal($('[data-prep-group="walls"]'),null);assert.equal($('[data-prep-group="other"]'),null);assert.equal(reopened.read().some(g=>g.area==='walls'),false);
+  set('prep-floor-base-kind','existing');assert.equal(content({preparation:reopened.read()}).preparation[0].substrate.kind,'existing');
+  assert.match(preparationHTML(reopened.read()),/Untergrund: Altbelag/);assert.ok(!preparationHTML(saved,'Testbetrieb','Boden').includes('Trockenbau'));
+  reopened.setArea('Wände');assert.equal($('[data-prep-group="floor"]'),null);assert.equal(reopened.read()[0].area,'walls');
+  const legacy=createPreparationEditor(root,[{area:'floor',substrate:{kind:'tiles',by:'unknown',note:'Bestand erhalten'},steps:[]}],{choice:'Boden'});
+  assert.equal($('#prep-floor-base-kind').value,'other');assert.equal(legacy.read()[0].substrate.custom,'Fliesen');assert.equal(legacy.read()[0].substrate.note,'Bestand erhalten');
   assert.ok(changes>0);
  }finally{await win.happyDOM.abort();win.close();}
 });
