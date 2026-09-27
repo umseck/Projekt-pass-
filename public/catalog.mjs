@@ -48,7 +48,7 @@ function controls(c,kind,picking){
  const preferred=new Set((c.preferred_manufacturers||[]).map(makerKey)),mine=makers.filter(m=>preferred.has(makerKey(m.name))),others=makers.filter(m=>!preferred.has(makerKey(m.name)));
  const options=ms=>ms.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('');
  const manufacturerOptions=mine.length?`<option value="__preferred" selected>Meine Hersteller</option><option value="">Alle Hersteller</option><optgroup label="Meine Hersteller">${options(mine)}</optgroup>${others.length?`<optgroup label="Weitere Hersteller">${options(others)}</optgroup>`:''}`:`<option value="">Alle Hersteller</option>${options(makers)}`;
- return `<p class="hint">Vorbereitete Herstellerauswahl und Ihre eigenen Produkte. Selbst gespeicherte Produkte bleiben in Ihrem Betrieb.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer">${manufacturerOptions}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Silikon"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Zugeordnete Produktunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div>${picking?'<details class="catalog-sources"><summary>Herstellerinformationen</summary><div id="catalog-manufacturer-info"></div></details>':'<div id="catalog-manufacturer-info"></div>'}<p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
+ return `${picking?'':'<p class="hint">Herstellerprodukte und eigene Produkte Ihres Betriebs.</p>'}<div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer">${manufacturerOptions}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Silikon"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<details class="catalog-document-options"><summary>Passende Unterlagen werden mit übernommen</summary><label><input type="checkbox" id="catalog-include-docs" checked> Merkblätter und Pflegeanleitungen übernehmen</label><p class="hint">Vorhandene Links bleiben erhalten. Nach einem Wechsel alte Unterlagen bitte prüfen.</p></details>':''}<div id="catalog-message" role="status"></div>${picking?'<details class="catalog-sources"><summary>Herstellerinformationen</summary><div id="catalog-manufacturer-info"></div></details>':'<div id="catalog-manufacturer-info"></div>'}<p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
 function bindCatalog(root,c,{kind='',onPick}={}){
  const $=s=>root.querySelector(s);
  function render(){
@@ -70,10 +70,11 @@ function bindCatalog(root,c,{kind='',onPick}={}){
  }
  $('#catalog-manufacturer').onchange=render;$('#catalog-query').oninput=render;if($('#catalog-kind'))$('#catalog-kind').onchange=render;render();
 }
-export async function openCatalogPicker(kind,{modal,onPick,isCurrent=()=>true}){
+export async function openCatalogPicker(kind,{modal,onPick,onManual,isCurrent=()=>true}){
  const c=await loadCatalog();if(!isCurrent())return;
- modal(categories[kind]+' auswählen',`<div id="catalog-picker">${controls(c,kind,true)}</div>`);
+ modal(categories[kind]+' auswählen',`<div id="catalog-picker">${controls(c,kind,true)}${onManual?'<button type="button" class="btn light wide spaced" id="catalog-manual">Produkt nicht dabei? Selbst eintragen →</button>':''}</div>`);
  bindCatalog(document.querySelector('#catalog-picker'),c,{kind,onPick});
+ if(onManual)document.querySelector('#catalog-manual').onclick=onManual;
 }
 export async function catalogPage({shell,isCurrent=()=>true}){
  const c=await loadCatalog();if(!isCurrent())return;

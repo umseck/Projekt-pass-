@@ -72,7 +72,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.ok([...win.document.querySelectorAll('.manual-product')].every(s=>!s.open));
    assert.equal($('[data-editor-section="project"]').open,true);assert.ok([...win.document.querySelectorAll('[data-editor-section]:not([data-editor-section="project"])')].every(s=>!s.open));assert.equal($('#preview').hidden,true);assert.equal($('#editor-next').textContent,'Weiter: Materialien →');
    assert.ok($('.account-menu'));assert.equal($('.account-menu').open,false);
-   assert.equal($('#documents').hidden,true);
+   assert.equal($('#documents').hidden,true);assert.ok($('[data-editor-section="materials"] .material-overview'));assert.equal(win.document.querySelectorAll('[data-editor-go]').length,4);
    assert.ok($('[data-material="waterproofing"] #waterproofing-photo-upload'));
    assert.equal($('[data-editor-section="files"] #waterproofing-photo-upload'),null);
    input('#surface-color','Automatisch gespeichert');
@@ -108,6 +108,8 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('#editor-next').click();assert.equal($('[data-material="waterproofing"]').open,true);assert.equal($('#editor-next').textContent,'Weiter: Silikon / Anschlussfugen →');
    $('#editor-next').click();assert.equal($('[data-material="silicone"]').open,true);assert.equal($('#editor-next').textContent,'Weiter: Fotos & Unterlagen →');
    $('[data-material-jump="waterproofing"]').click();assert.equal($('[data-material="waterproofing"]').open,true);
+   $('[data-open-catalog="waterproofing"]').click();await wait(()=>$('#modal').open&&$('#catalog-manual'));
+   $('#catalog-manual').click();assert.equal($('#modal').open,false);assert.equal($('[data-material="waterproofing"] .manual-product').open,true);assert.equal(win.document.activeElement.id,'waterproofing-manufacturer');
    assert.equal($('#waterproofing-color'),null);assert.equal($('#waterproofing-batch'),null);
    assert.equal($('#waterproofing-water-class').value,'');assert.equal($('#waterproofing-type').value,'');
    assert.match($('#waterproofing-documentation').textContent,/Fotos der Abdichtung \(empfohlen\)/);
@@ -226,6 +228,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Sonderton <Sand> 123');
    $('#preview').click();await wait(()=>$('#handover'));
    assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');assert.ok($('#handover-review').textContent.includes('Versiegelung 3'));assert.equal($('#customer-preview').open,false);
+   assert.ok($('#panel-care .care-documents a[href$="Clean-Clear-01-25_WEB.pdf"]'));
    assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
    $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));assert.ok($('#panel-joints').textContent.includes('W2-I'));assert.ok($('#panel-joints').textContent.includes('Dichtmasse'));assert.equal($('#panel-joints img').getAttribute('src'),photo);
    $('#handover').click();await wait(()=>$('#copy-link'));

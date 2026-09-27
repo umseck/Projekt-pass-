@@ -13,9 +13,14 @@ test('compact sections keep entered data and reveal invalid fields without openi
   $('#title').value='Bad Klement';
   $('#editor-next').click();assert.equal(sections[0].open,false);assert.equal(sections[1].open,true);assert.equal(scrolled,sections[1]);
   assert.equal($('[data-material="surface"]').open,true);
+  assert.equal($('[data-editor-go="materials"]').getAttribute('aria-current'),'step');
+  $('#editor-back').click();assert.equal(sections[0].open,true);assert.equal($('#editor-back').hidden,true);
+  $('[data-editor-go="materials"]').click();assert.equal(sections[1].open,true);
+
   $('[data-material="silicone"] > summary').click();assert.equal($('[data-material="surface"]').open,false);
   assert.equal($('[data-material="silicone"]').open,true);
-  $('[data-editor-section="files"] > summary').click();assert.equal(sections[1].open,false);assert.equal(sections[2].open,true);
+  $('#editor-back').click();assert.equal($('[data-material="surface"]').open,true);
+  $('[data-editor-go="files"]').click();assert.equal(sections[1].open,false);assert.equal(sections[2].open,true);
   $('#editor-next').click();assert.equal(sections[3].open,true);assert.equal($('#preview').hidden,false);assert.equal($('#editor-next').hidden,true);
   const data=Object.fromEntries(new win.FormData(form));
   assert.deepEqual(data,{title:'Bad Klement','surface-color':'NCS S 1502-Y','silicone-color':'16 · Silbergrau',documents:'Produktblatt',care:'Eigene Pflegehinweise'});
