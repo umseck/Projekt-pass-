@@ -74,3 +74,15 @@
 
 /* Simple private product list in the business profile. */
 .favorite-group{margin-top:20px;padding:20px;background:var(--white);border:1px solid var(--line);border-radius:8px}.favorite-group>h3{margin-bottom:12px}.favorite-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.favorite-row>div:first-child{min-width:0}.favorite-row small{display:block;color:var(--muted)}.favorite-row>.row{flex-shrink:0}.favorite-group>.row{margin-top:12px}.favorite-edit{padding:18px;margin:12px 0;background:var(--pale);border-radius:6px}.favorite-edit summary{cursor:pointer}.favorite-edit .error:empty{display:none}@media(max-width:600px){.favorite-group{padding:16px}.favorite-row{align-items:flex-start;flex-direction:column;gap:0}.favorite-edit{padding:14px}.favorite-group>.row{gap:8px}.favorite-group>.row>.btn{width:100%}}
+
+/* A single active step and one clear next action. */
+.editor-step-number{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:var(--stone);font-weight:650;color:var(--ink)}
+.editor-section>summary>span:nth-child(2){flex:1;min-width:0}
+.editor-section>summary>span.editor-step-number{flex:0 0 32px}
+.editor-section[open]>summary .editor-step-number{background:var(--olive);color:white}
+.editor-guidance{margin:0 0 18px;color:var(--ink);font-size:15px}
+.editor-progress{flex:1 1 100%;font-size:13px;font-weight:600}
+.autosave-bar #editor-next[hidden],.autosave-bar #preview[hidden]{display:none}
+@media(max-width:600px){.autosave-bar #editor-progress{grid-column:1 / -1;grid-row:1}.autosave-bar #save-status{grid-column:1;grid-row:2}.autosave-bar #preview,.autosave-bar #editor-next{grid-column:2;grid-row:2;min-width:0;padding-inline:10px}.autosave-bar #save:not([hidden]){grid-row:3}.editor-section>summary{gap:10px}}
+
+.editor-section,.material-fold{scroll-margin-top:16px;overflow-anchor:none}

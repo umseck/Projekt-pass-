@@ -70,7 +70,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.ok($('[data-material="surface"] [data-material="finish"]'));
    assert.equal($('[data-material="finish"] .material-edit').open,false);
    assert.ok([...win.document.querySelectorAll('.manual-product')].every(s=>!s.open));
-   assert.ok([...win.document.querySelectorAll('[data-editor-section]')].every(s=>!s.open));
+   assert.equal($('[data-editor-section="project"]').open,true);assert.ok([...win.document.querySelectorAll('[data-editor-section]:not([data-editor-section="project"])')].every(s=>!s.open));assert.equal($('#preview').hidden,true);assert.equal($('#editor-next').textContent,'Weiter: Materialien →');
    assert.ok($('.account-menu'));assert.equal($('.account-menu').open,false);
    assert.equal($('#documents').hidden,true);
    assert.ok($('[data-material="waterproofing"] #waterproofing-photo-upload'));
@@ -131,11 +131,11 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.ok($('#surface-name').compareDocumentPosition($('#surface-color'))&win.Node.DOCUMENT_POSITION_FOLLOWING);
    input('#surface-manufacturer','EPI');input('#surface-name','Quartz R');
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='Concrete (Blend)'));
-   assert.equal($('#surface-color').value,'');assert.equal($('[data-custom-color="surface"]').hidden,false);
-   $('[data-custom-color="surface"]').click();assert.equal($('#surface-color').getAttribute('list'),null);
+   assert.equal($('#surface-color').value,'');assert.equal($('#surface-color-select').closest('.field').hidden,false);
+   $('#surface-color-select').value='__custom__';$('#surface-color-select').dispatchEvent(new win.Event('change',{bubbles:true}));assert.equal($('#surface-color').getAttribute('list'),null);
    assert.equal($('label[for="surface-color"]').textContent,'Anderer Farbton');
    input('#surface-color','RAL 9001 / Sondermischung');
-   $('[data-custom-color="surface"]').click();assert.equal($('#surface-color').getAttribute('list'),'surface-colors');
+   $('#surface-color-select').value='__custom__';$('#surface-color-select').dispatchEvent(new win.Event('change',{bubbles:true}));assert.ok($('#surface-color-select'));
    assert.equal($('#surface-color').value,'RAL 9001 / Sondermischung');
    input('#surface-color','Sonderton <Sand> 123');input('#surface-manufacturer','.murface');input('#surface-name','MF Industrial');
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='MF WHITE · B00'));
@@ -172,14 +172,14 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
    assert.equal($('#surface-color-select').value,'München');assert.equal($('#surface-color').value,'München');
 
-   assert.equal($('#surface-color').getAttribute('list'),'surface-colors');
-   $('[data-custom-color="surface"]').click();input('#surface-color','NCS S 1502-Y / Sonderton');
+   assert.ok($('#surface-color-select'));
+   $('#surface-color-select').value='__custom__';$('#surface-color-select').dispatchEvent(new win.Event('change',{bubbles:true}));input('#surface-color','NCS S 1502-Y / Sonderton');
    submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
    win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
    assert.equal($('#surface-color').value,'NCS S 1502-Y / Sonderton');assert.equal($('#surface-color').getAttribute('list'),null);
    assert.equal($('label[for="surface-color"]').textContent,'Anderer Farbton');
-   $('[data-custom-color="surface"]').click();assert.equal($('#surface-color').value,'NCS S 1502-Y / Sonderton');
-   assert.equal($('#surface-color').getAttribute('list'),'surface-colors');
+   $('#surface-color-select').value='__custom__';$('#surface-color-select').dispatchEvent(new win.Event('change',{bubbles:true}));assert.equal($('#surface-color').value,'NCS S 1502-Y / Sonderton');
+   assert.ok($('#surface-color-select'));
 
    $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));
    input('#catalog-manufacturer','testanbieter');$('#catalog-manufacturer').dispatchEvent(new win.Event('change'));input('#catalog-query','Testoberfläche');

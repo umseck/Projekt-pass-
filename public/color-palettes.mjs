@@ -269,23 +269,22 @@ export function paletteFor(kind,manufacturer,product){
 const options=palette=>(palette?.colors||[]).map(value=>`<option value="${esc(value)}"></option>`).join('');
 const isCustomColor=(kind,palette,color)=>Boolean(palette&&color&&!palette.colors.includes(color));
 function setColorMode(wrapper,kind,palette,custom){
- const input=wrapper.querySelector('#'+kind+'-color'),hint=wrapper.querySelector('.hint'),button=wrapper.querySelector('[data-custom-color]');
+ const input=wrapper.querySelector('#'+kind+'-color'),hint=wrapper.querySelector('.hint');
  wrapper.dataset.customColor=String(custom);
  const select=wrapper.querySelector('[data-color-select]'),selection=wrapper.querySelector('[data-color-selection]');
- selection.hidden=!palette;select.value=palette?.colors.includes(input.value)?input.value:input.value?'__custom__':'';
+ selection.hidden=!palette;select.value=custom?'__custom__':palette?.colors.includes(input.value)?input.value:input.value?'__custom__':'';
  input.closest('.field').hidden=Boolean(palette&&!custom);
 
  if(custom)input.removeAttribute('list');else input.setAttribute('list',kind+'-colors');
  wrapper.querySelector('label[for="'+kind+'-color"]').textContent=custom?'Anderer Farbton':'Farbton / Farbnummer';
  input.placeholder=custom?'z. B. RAL 9001, NCS oder eigene Farbbezeichnung':'Farbton wählen oder eingeben';
- hint.textContent=palette?palette.name+(custom?' · Eigenen Farbton, RAL- oder NCS-Code eingeben.':' · auswählen oder eigenen Farbton eingeben.'):'';
+ hint.textContent=palette?palette.name+(custom?' · Eigenen Farbton, RAL- oder NCS-Code eingeben.':' · Sonderfarben über „Anderer Farbton / Sonderfarbe“. '):'';
  hint.hidden=!palette;
- if(button){button.hidden=!palette;button.textContent=custom?'Standardfarbtöne anzeigen':'Anderer Farbton';button.setAttribute('aria-pressed',String(custom));}
 }
 export function colorField(kind,product){
  if(!['surface','silicone'].includes(kind))return field('Farbton',kind+'-color',product.color);
  const palette=paletteFor(kind,product.manufacturer,product.name);
- return `<div data-color-palette="${palette?.id||''}"><div class="field" data-color-selection ${palette?'':'hidden'}><label for="${kind}-color-select">Farbton auswählen</label><select id="${kind}-color-select" data-color-select></select></div>${field('Farbton / Farbnummer',kind+'-color',product.color,'text',`list="${kind}-colors" aria-describedby="${kind}-color-hint" placeholder="Farbton wählen oder eingeben" autocomplete="off"`)}<datalist id="${kind}-colors">${options(palette)}</datalist>${kind==='surface'?`<button class="btn text" type="button" data-custom-color="${kind}" aria-controls="${kind}-color" aria-pressed="false" ${palette?'':'hidden'}>Anderer Farbton</button>`:''}<p class="hint" id="${kind}-color-hint" ${palette?'':'hidden'}>${palette?esc(palette.name)+' · auswählen oder eigenen Farbton eingeben.':''}</p></div>`;
+ return `<div data-color-palette="${palette?.id||''}"><div class="field" data-color-selection ${palette?'':'hidden'}><label for="${kind}-color-select">Farbton auswählen</label><select id="${kind}-color-select" data-color-select></select></div>${field('Farbton / Farbnummer',kind+'-color',product.color,'text',`list="${kind}-colors" aria-describedby="${kind}-color-hint" placeholder="Farbton wählen oder eingeben" autocomplete="off"`)}<datalist id="${kind}-colors">${options(palette)}</datalist><p class="hint" id="${kind}-color-hint" ${palette?'':'hidden'}>${palette?esc(palette.name)+' · Sonderfarben über „Anderer Farbton / Sonderfarbe“. ':''}</p></div>`;
 }
 export function bindColorOptions(card,kind){
  const wrapper=card.querySelector('[data-color-palette]');if(!wrapper)return;
@@ -297,19 +296,13 @@ export function bindColorOptions(card,kind){
   input.value=select.value;setColorMode(wrapper,kind,palette,false);
   input.dispatchEvent(new input.ownerDocument.defaultView.Event('input',{bubbles:true}));
  };
- const button=wrapper.querySelector('[data-custom-color]');
- if(button)button.onclick=()=>{
-  const palette=paletteFor(kind,card.querySelector('#'+kind+'-manufacturer').value,card.querySelector('#'+kind+'-name').value);
-  const custom=wrapper.dataset.customColor!=='true';setColorMode(wrapper,kind,palette,custom);
-  const input=wrapper.querySelector('#'+kind+'-color');input.focus();if(custom)input.select();
- };
  refreshColorOptions(card,kind,{reset:true});
 }
 export function refreshColorOptions(card,kind,{reset=false}={}){
  const wrapper=card.querySelector('[data-color-palette]');if(!wrapper)return;
  const palette=paletteFor(kind,card.querySelector('#'+kind+'-manufacturer').value,card.querySelector('#'+kind+'-name').value);
  const id=palette?.id||'';if(wrapper.dataset.colorPalette===id&&!reset){
- const input=wrapper.querySelector('#'+kind+'-color');wrapper.querySelector('[data-color-select]').value=palette?.colors.includes(input.value)?input.value:input.value?'__custom__':'';return;
+ const input=wrapper.querySelector('#'+kind+'-color');wrapper.querySelector('[data-color-select]').value=wrapper.dataset.customColor==='true'?'__custom__':palette?.colors.includes(input.value)?input.value:input.value?'__custom__':'';return;
  }
  wrapper.dataset.colorPalette=id;
  wrapper.querySelector('datalist').innerHTML=options(palette);
