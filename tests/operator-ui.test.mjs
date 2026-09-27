@@ -71,7 +71,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="testanbieter-test-pro"]').click();assert.equal($('#documents').value,firstDocs);
    $('[data-open-catalog="primer"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="zweiter-test-primer"]').click();assert.equal($('#primer-name').value,'Test Primer');assert.ok(!$('#documents').value.includes('unconfirmed.pdf'));
    assert.equal($('.project-steps [aria-current]').textContent,'2. Bauphase');
-   input('#surface-system_type','MicroTec');input('#application_area','Wand und Boden');input('#substrate','Vorbereiteter Estrich');
+   input('#surface-system_type','MicroTec');input('#application_area','Wände & Boden');input('#substrate','Vorbereiteter Estrich');
    input('#primer-name','Grundierung 1');input('#waterproofing-name','Abdichtung 2');input('#finish-name','Versiegelung 3');input('#finish-sheen','Matt');input('#silicone-name','Anschlussfuge 4');input('#customer_name','INTERNER KUNDE');
    $('[data-save-library="surface"]').click();await wait(()=>$('#modal').open&&$('#library-product'));
    input('#library-url','https://example.test/project-product.pdf');input('#library-document-name','Passendes Produktblatt');submit('#library-product');
