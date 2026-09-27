@@ -76,7 +76,7 @@ function activate(id){
 function favoriteButtons(kind,favorites=[]){
  const preferred=new Set((dashboard?.company?.preferred_manufacturers||[]).map(m=>m.toLocaleLowerCase('de'))),indexed=favorites.map((v,i)=>({v,i}));
  const mine=indexed.filter(({v})=>preferred.has((v.manufacturer||'').toLocaleLowerCase('de'))),shown=(mine.length?mine:indexed).slice(0,3);
- return shown.length?`<div class="chips">${shown.map(({v,i})=>`<button class="chip" type="button" data-favorite="${kind}:${i}">${esc([v.manufacturer,v.name,kind==='waterproofing'?'':v.color].filter(Boolean).join(' · '))}</button>`).join('')}</div>`:'';
+ return shown.length?`<div class="favorite-shortcuts"><p class="hint">Schnellwahl aus Ihrem Betrieb</p><div class="chips">${shown.map(({v,i})=>`<button class="chip" type="button" data-favorite="${kind}:${i}">${esc([v.manufacturer,v.name,kind==='waterproofing'?'':v.color].filter(Boolean).join(' · '))}</button>`).join('')}</div></div>`:'';
 }
 function productForm(kind,p,favorites=[],primary='tile',details={},nested=false,systemFinish=''){
  const selected=hasProduct(p),title=nested&&kind==='grout'?'Fugenmaterial':names[kind];
@@ -166,7 +166,7 @@ async function edit(id){
   const careCount=trade.care.filter(k=>$('#care-'+k)?.value.trim()).length;
   set('handover',[$('#usage').value?'Nutzungszeitpunkt hinterlegt':'',careCount?`${careCount} Pflegehinweise`:''].filter(Boolean).join(' · ')||'Nutzung, Pflege und Ersatzmaterial – optional');
  }
- form.oninput=e=>{changed();const kind=e.target.closest('[data-material]')?.dataset.material;if(kind==='finish')finishMode='manual';if(kind)refreshMaterial(kind);else refreshOverview();};
+ form.oninput=e=>{if(e.target.matches('[data-color-select]'))return;changed();const kind=e.target.closest('[data-material]')?.dataset.material;if(kind==='finish')finishMode='manual';if(kind)refreshMaterial(kind);else refreshOverview();};
  if(primary==='surface'){
   for(const key of ['manufacturer','name'])$('#surface-'+key).addEventListener('change',syncSurface);
   $('#reset-finish').onclick=()=>{const item=defaultFinish(readProduct('surface'));if(!item)return;try{applyProduct('finish',item,item.documents||[]);finishMode='system';refreshMaterial('finish',true);}catch(e){notify(e.message);}};

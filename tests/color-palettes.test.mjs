@@ -34,3 +34,15 @@ test('Silcofug E colours are product-specific and include official colour number
   ['silicone','OTTO','Silcofug E'],['grout','PCI','Silcofug E'],['surface','PCI','Silcofug E'],
  ])assert.equal(paletteFor(...args),null);
 });
+
+test('native colour selector supports standard and custom colours across product changes',async()=>{
+ const {Window}=await import('happy-dom');const {colorField,bindColorOptions,refreshColorOptions}=await import('../public/color-palettes.mjs');
+ const w=new Window(),d=w.document;
+ d.body.innerHTML='<section><input id="silicone-manufacturer" value="PCI"><input id="silicone-name" value="Silcofug E">'+colorField('silicone',{manufacturer:'PCI',name:'Silcofug E',color:'Mein Sonderton'})+'</section>';
+ const card=d.querySelector('section'),input=d.querySelector('#silicone-color'),select=d.querySelector('[data-color-select]');bindColorOptions(card,'silicone');
+ assert.equal(select.value,'__custom__');assert.equal(input.closest('.field').hidden,false);
+ select.value='16 · Silbergrau';select.dispatchEvent(new w.Event('change'));assert.equal(input.value,'16 · Silbergrau');assert.equal(input.closest('.field').hidden,true);
+ select.value='__custom__';select.dispatchEvent(new w.Event('change'));assert.equal(input.closest('.field').hidden,false);assert.equal(input.value,'16 · Silbergrau');
+ d.querySelector('#silicone-name').value='Unbekannt';refreshColorOptions(card,'silicone');assert.equal(d.querySelector('[data-color-selection]').hidden,true);assert.equal(input.closest('.field').hidden,false);assert.equal(input.value,'16 · Silbergrau');
+ await w.happyDOM.abort();w.close();
+});

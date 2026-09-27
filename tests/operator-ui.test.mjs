@@ -162,6 +162,16 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('#finish-sheen').value,'');assert.ok($('#documents').value.includes('Lamurista_GoodLack_wb_TM-Neu.pdf'));
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='München'));assert.equal($('#surface-color').value,'');
    assert.equal($('#surface-system_type').value,'1K-MicroTEC-Putz');
+   assert.ok($('#summary-surface').textContent.includes('Lamurista'));
+   assert.ok($('[data-favorite="surface:0"]').closest('.favorite-shortcuts').textContent.includes('Schnellwahl'));
+   $('#surface-color-select').value='München';$('#surface-color-select').dispatchEvent(new win.Event('input',{bubbles:true}));
+   assert.equal($('#surface-color-select').value,'München');
+   $('#surface-color-select').dispatchEvent(new win.Event('change',{bubbles:true}));
+   assert.equal($('#surface-color').value,'München');assert.ok($('#summary-surface').textContent.includes('München'));
+   submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
+   win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
+   assert.equal($('#surface-color-select').value,'München');assert.equal($('#surface-color').value,'München');
+
    assert.equal($('#surface-color').getAttribute('list'),'surface-colors');
    $('[data-custom-color="surface"]').click();input('#surface-color','NCS S 1502-Y / Sonderton');
    submit('#edit');await wait(()=>$('.form-message').textContent.includes('Auf dem Server gespeichert'));
