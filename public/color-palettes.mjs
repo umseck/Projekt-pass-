@@ -1,6 +1,6 @@
 import {esc,field} from './ui.mjs';
 
-// Colour references only; product records remain in each business's own catalogue.
+// Manufacturer colour references. Custom project colours remain freely editable.
 // Quartz R uses the Corestone collection at the project owner's request (2026-09-27).
 export const colorPalettes = {
   "corestone": {
@@ -109,6 +109,108 @@ export const colorPalettes = {
       "MF WHEAT · D117",
       "MF WHITE · B00"
     ]
+  },
+  "lamurista": {
+    "id": "lamurista",
+    "name": "Lamurista HardRock-Hausfarben",
+    "source": "https://lamurista.de/hardrock-farbenkatalog/",
+    "checked_at": "2026-09-27",
+    "colors": [
+      "Atlanta",
+      "Bangkok",
+      "Barcelona",
+      "Berlin",
+      "Bohol",
+      "Havanna",
+      "Helsinki",
+      "Hongkong",
+      "Kapstadt",
+      "Las Vegas",
+      "London",
+      "Madrid",
+      "Maitland",
+      "Marrakesch",
+      "Melbourne",
+      "Miami",
+      "Monte Carlo",
+      "Moskau",
+      "München",
+      "New York",
+      "Nizza",
+      "Orlando",
+      "Paris",
+      "Rio",
+      "Rom",
+      "San Francisco",
+      "St. Tropez",
+      "Sydney",
+      "Sylt",
+      "Tokio"
+    ]
+  },
+  "artstucco-artstucco": {
+    "id": "artstucco-artstucco",
+    "name": "ArtStucco-Farbkollektion",
+    "source": "https://artstucco.de/uber-uns/farbpalette/",
+    "checked_at": "2026-09-27",
+    "colors": [
+      "Alesio",
+      "Alessandro",
+      "Carlo",
+      "Claudio",
+      "Danilo",
+      "Enrico",
+      "Francesco",
+      "Gino",
+      "Giorgio",
+      "Giuliano",
+      "Givano",
+      "Leonardo",
+      "Livio",
+      "Lorenzo",
+      "Luciano",
+      "Matteo",
+      "Mauro",
+      "Renzo",
+      "Rocco",
+      "Romano",
+      "Santino",
+      "Sergio",
+      "Silvano",
+      "Stefano",
+      "Tomasso"
+    ]
+  },
+  "artstucco-lavastein": {
+    "id": "artstucco-lavastein",
+    "name": "ArtStucco Lavastein-Farbkollektion",
+    "source": "https://artstucco.de/uber-uns/farbpalette/",
+    "checked_at": "2026-09-27",
+    "colors": [
+      "Bari",
+      "Bellagio",
+      "Bergamo",
+      "Florence",
+      "Fungi",
+      "Genua",
+      "Lago di garda",
+      "Lago maggiore",
+      "Lasize",
+      "Mantova",
+      "Milaan",
+      "Monza",
+      "Muro",
+      "Padua",
+      "Palermo",
+      "Pisa",
+      "Puglia",
+      "Rimini",
+      "Rome",
+      "Siena",
+      "Siena 2",
+      "Treviso",
+      "Tropea"
+    ]
   }
 };
 
@@ -117,7 +219,12 @@ export function paletteFor(kind,manufacturer,product){
  if(kind!=='surface'||!String(product??'').trim())return null;
  const maker=normalized(manufacturer),system=normalized(product).replace(/^epi/,'');
  if(['epi','byepi','epifloors','epigroup','epigroupbv'].includes(maker)&&['quartzr','quarzr','corestone','corestonenature'].includes(system))return colorPalettes.corestone;
- if(['murface','murfacegmbh'].includes(maker))return colorPalettes.murface;
+ if(['murface','murfacegmbh'].includes(maker)&&['mono','mfmono','industrial','mfindustrial'].includes(system))return colorPalettes.murface;
+ if(['lamurista','lamuristagmbh'].includes(maker)&&['hardrock','hardrockpro','lamuristahardrock','lamuristahardrockpro'].includes(system))return colorPalettes.lamurista;
+ if(['artstucco','artstuccogmbh'].includes(maker)){
+  if(['artstucco','artstuccowand','artstuccowandspachtel','wandspachtel','spachtelbeton'].includes(system))return colorPalettes['artstucco-artstucco'];
+  if(['lava','lavastein','lavasteinboden','artstuccolava','artstuccolavasteinboden'].includes(system))return colorPalettes['artstucco-lavastein'];
+ }
  return null;
 }
 const options=palette=>(palette?.colors||[]).map(value=>`<option value="${esc(value)}"></option>`).join('');

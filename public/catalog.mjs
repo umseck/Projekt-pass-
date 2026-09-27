@@ -1,17 +1,30 @@
 import {esc,safeLink} from './ui.mjs';
 export const categories={tile:'Fliese',grout:'Fugenmörtel',surface:'Oberflächensystem',primer:'Grundierung',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
-let cached,companyProducts=[];
+let cached,companyProducts=[],preferredManufacturers=[];
+const makerKey=value=>String(value||'').trim().toLocaleLowerCase('de');
 export function setCompanyCatalog(company){
+ preferredManufacturers=company?.preferred_manufacturers||[];
  companyProducts=Object.entries(company?.favorites||{}).flatMap(([kind,items])=>(items||[]).filter(p=>p.manufacturer&&p.name).map((p,i)=>({...p,id:'own-'+kind+'-'+i,manufacturer_id:'own-'+p.manufacturer,manufacturer:p.manufacturer,kinds:[kind],source_url:'',note:'Von Ihrem Betrieb hinterlegt. Produktvariante und Unterlagen bitte vor Verwendung prüfen.',documents:(p.documents||[]).map(d=>({...d,verification:'business'}))})));
 }
 
 export async function loadCatalog(){
  if(!cached)cached=fetch('/catalog.json',{credentials:'omit'}).then(async r=>{if(!r.ok)throw Error('Der Produktkatalog ist gerade nicht erreichbar. Bitte erneut versuchen.');const c=await r.json();if(c.version!==1||!Array.isArray(c.products))throw Error('Der Produktkatalog konnte nicht geladen werden.');return c;}).catch(e=>{cached=null;throw e;});
- const base=await cached;const manufacturers=[...base.manufacturers];for(const p of companyProducts)if(!manufacturers.some(m=>m.id===p.manufacturer_id))manufacturers.push({id:p.manufacturer_id,name:p.manufacturer,note:'Eigene Produkte Ihres Betriebs.',documents:[]});return {...base,manufacturers,products:[...base.products,...companyProducts]};
+ const base=await cached,manufacturers=[...base.manufacturers];
+ const own=companyProducts.map(p=>{
+  let maker=manufacturers.find(m=>makerKey(m.name)===makerKey(p.manufacturer));
+  if(!maker){maker={id:p.manufacturer_id,name:p.manufacturer,note:'Eigene Produkte Ihres Betriebs.',documents:[]};manufacturers.push(maker);}
+  return {...p,manufacturer_id:maker.id};
+ });
+ const shared=base.products.filter(p=>!own.some(x=>x.manufacturer_id===p.manufacturer_id&&makerKey(x.name)===makerKey(p.name)&&makerKey(x.article_number)===makerKey(p.article_number)&&p.kinds.every(k=>x.kinds.includes(k))));
+ return {...base,manufacturers,preferred_manufacturers:[...preferredManufacturers],products:[...own,...shared]};
 }
 export function matchingProducts(c,{manufacturer='',query='',kind=''}={}){
  const q=query.trim().toLocaleLowerCase('de');
- return c.products.filter(p=>(!manufacturer||p.manufacturer_id===manufacturer)&&(!kind||p.kinds.includes(kind))&&(!q||[p.name,c.manufacturers.find(m=>m.id===p.manufacturer_id)?.name,p.note].join(' ').toLocaleLowerCase('de').includes(q)));
+ const preferred=new Set((c.preferred_manufacturers||[]).map(makerKey));
+ return c.products.filter(p=>{
+  const maker=c.manufacturers.find(m=>m.id===p.manufacturer_id);
+  return (!manufacturer||(manufacturer==='__preferred'?preferred.has(makerKey(maker?.name)):p.manufacturer_id===manufacturer))&&(!kind||p.kinds.includes(kind))&&(!q||[p.name,maker?.name,p.note].join(' ').toLocaleLowerCase('de').includes(q));
+ });
 }
 export function mergeDocuments(existing,added){
  const merged=existing.map(d=>({...d})),urls=new Set(merged.map(d=>d.url));
@@ -20,13 +33,19 @@ export function mergeDocuments(existing,added){
  return merged;
 }
 const link=(url,label)=>safeLink(url)?`<a href="${esc(safeLink(url))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';
-function controls(c,kind,picking){return `<p class="hint">Ihr Betriebskatalog. Gespeicherte Produkte sind nur für Ihren Betrieb sichtbar. Produktvariante und Unterlagen bitte prüfen.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer"><option value="">Alle Hersteller</option>${c.manufacturers.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Primer"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Zugeordnete Produktunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div><div id="catalog-manufacturer-info"></div><p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
+function controls(c,kind,picking){
+ const makers=c.manufacturers.filter(m=>c.products.some(p=>p.manufacturer_id===m.id&&(!kind||p.kinds.includes(kind))));
+ const preferred=new Set((c.preferred_manufacturers||[]).map(makerKey)),mine=makers.filter(m=>preferred.has(makerKey(m.name))),others=makers.filter(m=>!preferred.has(makerKey(m.name)));
+ const options=ms=>ms.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('');
+ const manufacturerOptions=mine.length?`<option value="__preferred" selected>Meine Hersteller</option><option value="">Alle Hersteller</option><optgroup label="Meine Hersteller">${options(mine)}</optgroup>${others.length?`<optgroup label="Weitere Hersteller">${options(others)}</optgroup>`:''}`:`<option value="">Alle Hersteller</option>${options(makers)}`;
+ return `<p class="hint">Vorbereitete Herstellerauswahl und Ihre eigenen Produkte. Selbst gespeicherte Produkte bleiben in Ihrem Betrieb.</p><div class="form-grid"><div class="field"><label for="catalog-manufacturer">Hersteller / Anbieter</label><select id="catalog-manufacturer">${manufacturerOptions}</select></div><div class="field"><label for="catalog-query">Produkt suchen</label><input type="search" id="catalog-query" placeholder="z. B. HardRock, Quartz oder Primer"></div>${kind?'':`<div class="field"><label for="catalog-kind">Bereich</label><select id="catalog-kind"><option value="">Alle Bereiche</option>${Object.entries(categories).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>`}</div>${picking?'<p><label><input type="checkbox" id="catalog-include-docs" checked> Zugeordnete Produktunterlagen in den Projektpass übernehmen</label></p><p class="hint">Vorhandene Unterlagen bleiben erhalten. Nach einem Produktwechsel bitte nicht mehr zugehörige Links aus der Liste entfernen.</p>':''}<div id="catalog-message" role="status"></div><div id="catalog-manufacturer-info"></div><p class="small muted" id="catalog-count" aria-live="polite"></p><div id="catalog-results"></div>`;}
 function bindCatalog(root,c,{kind='',onPick}={}){
  const $=s=>root.querySelector(s);
  function render(){
   const manufacturer=$('#catalog-manufacturer').value;
   const found=matchingProducts(c,{manufacturer,query:$('#catalog-query').value,kind:kind||$('#catalog-kind')?.value});
-  const ms=c.manufacturers.filter(m=>!manufacturer||m.id===manufacturer);
+  const preferred=new Set((c.preferred_manufacturers||[]).map(makerKey));
+  const ms=c.manufacturers.filter(m=>!manufacturer||(manufacturer==='__preferred'?preferred.has(makerKey(m.name)):m.id===manufacturer));
   $('#catalog-manufacturer-info').innerHTML=ms.map(m=>`<details class="catalog-source"><summary>${esc(m.name)} · Quellen & weitere Unterlagen</summary><p class="hint">${esc(m.note||'')}</p><p>${link(m.url,'Offizielle Website')}</p>${(m.documents||[]).map(d=>`<p>${link(d.url,d.name)}</p>`).join('')}</details>`).join('');
   $('#catalog-count').textContent=found.length+' Produkte / Systeme'+(kind?' · '+categories[kind]:'');
   $('#catalog-results').innerHTML=found.map(p=>{
@@ -47,6 +66,6 @@ export async function openCatalogPicker(kind,{modal,onPick,isCurrent=()=>true}){
 }
 export async function catalogPage({shell,isCurrent=()=>true}){
  const c=await loadCatalog();if(!isCurrent())return;
- shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Produkte im Projekt eintragen und dort „Im Betriebskatalog speichern“ wählen. So wächst Ihr Katalog mit Ihren echten Projekten.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
+ shell(`<section class="admin-title"><span class="eyebrow">Materialien für Ihr Bad</span><h1>Produkte & Unterlagen.</h1><p class="intro">Wählen Sie aus den vorbereiteten Produkten. Eigene Produkte ergänzen Sie direkt im Projekt über „Im Betriebskatalog speichern“.</p><div id="catalog-browser">${controls(c,'',false)}</div></section>`);
  bindCatalog(document.querySelector('#catalog-browser'),c);
 }

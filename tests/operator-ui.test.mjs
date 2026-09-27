@@ -26,8 +26,9 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    catch(e){return json({message:e.message},400);}
  });
  const win=new Window({url:origin+'/#login'});win.document.body.innerHTML='<div id="app"></div><dialog id="modal"></dialog><div id="notice"></div>';
+ const baseCatalog=JSON.parse(await readFile(new URL('../public/catalog.json',import.meta.url),'utf8'));
  globalThis.window=win;globalThis.document=win.document;globalThis.location=win.location;globalThis.history=win.history;globalThis.FormData=win.FormData;globalThis.confirm=()=>true;
- let cookie='';globalThis.fetch=async(path,opts)=>{if(path==='/catalog.json')return json({version:1,checked_at:'2026-09-26',manufacturers:[{id:'testanbieter',name:'Testanbieter'},{id:'zweiter',name:'Zweiter Testanbieter'}],products:[{id:'testanbieter-test-pro',manufacturer_id:'testanbieter',name:'Testoberfläche Pro',kinds:['surface'],documents:[{name:'Testblatt',type:'Technisches Merkblatt',url:'https://example.test/TestPRO_TM.pdf',verification:'pdf'}]},{id:'testanbieter-test-ultra',manufacturer_id:'testanbieter',name:'Testoberfläche Ultra',kinds:['surface'],documents:[]},{id:'zweiter-test-primer',manufacturer_id:'zweiter',name:'Test Primer',kinds:['primer'],documents:[{url:'https://example.test/unconfirmed.pdf',verification:'source_link'}]}]});const r=await handle(new Request(origin+path,{...opts,headers:{...opts.headers,origin,cookie}}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'test_secret',SUPABASE_PUBLISHABLE_KEY:'test_public'});if(r.headers.has('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];return r;};
+ let cookie='';globalThis.fetch=async(path,opts)=>{if(path==='/catalog.json')return json({version:1,checked_at:'2026-09-26',manufacturers:[...baseCatalog.manufacturers,{id:'testanbieter',name:'Testanbieter'},{id:'zweiter',name:'Zweiter Testanbieter'}],products:[...baseCatalog.products,{id:'testanbieter-test-pro',manufacturer_id:'testanbieter',name:'Testoberfläche Pro',kinds:['surface'],documents:[{name:'Testblatt',type:'Technisches Merkblatt',url:'https://example.test/TestPRO_TM.pdf',verification:'pdf'}]},{id:'testanbieter-test-ultra',manufacturer_id:'testanbieter',name:'Testoberfläche Ultra',kinds:['surface'],documents:[]},{id:'zweiter-test-primer',manufacturer_id:'zweiter',name:'Test Primer',kinds:['primer'],documents:[{url:'https://example.test/unconfirmed.pdf',verification:'source_link'}]}]});const r=await handle(new Request(origin+path,{...opts,headers:{...opts.headers,origin,cookie}}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'test_secret',SUPABASE_PUBLISHABLE_KEY:'test_public'});if(r.headers.has('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];return r;};
  const $=s=>win.document.querySelector(s),input=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new win.Event('input',{bubbles:true}));},submit=s=>$(s).dispatchEvent(new win.Event('submit',{bubbles:true,cancelable:true}));
  try{
    await import('../public/app.mjs?operator-integration');await wait(()=>$('#login'));
@@ -51,9 +52,11 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    assert.equal($('#trade').value,'');
    input('#trade','seamless');$('#trade').dispatchEvent(new win.Event('change'));
    assert.equal($('[data-care-kind="surface"]').hidden,false);assert.equal($('[data-care-kind="tile"]').hidden,true);
+   $('input[name="preferred-manufacturer"][value="Testanbieter"]').checked=true;
    input('#care-surface','Nur freigegebene Pflegemittel verwenden.');
    input('#favorite-surface','EPI | Quartz R | Sand |');submit('#settings');await wait(()=>$('#search'));
    assert.equal((await db.query('select profile from pp_private.companies')).rows[0].profile.trade,'seamless');
+   assert.deepEqual((await db.query('select profile from pp_private.companies')).rows[0].profile.preferred_manufacturers,['Testanbieter']);
    assert.ok($('#app').textContent.includes('Testbetrieb <A>'));
    win.location.hash='passes';await wait(()=>$('#add-passes'));
    $('#add-passes').click();input('#quantity','100');submit('#add-passes-form');
@@ -67,11 +70,17 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    input('#surface-manufacturer','EPI');input('#surface-name','Quartz R');
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='Concrete (Blend)'));
    assert.equal($('#surface-color').value,'');
-   input('#surface-color','Sonderton <Sand> 123');input('#surface-manufacturer','.murface');
+   input('#surface-color','Sonderton <Sand> 123');input('#surface-manufacturer','.murface');input('#surface-name','MF Industrial');
    assert.ok([...$('#surface-colors').children].some(o=>o.value==='MF WHITE · B00'));
    assert.equal($('#surface-color').value,'Sonderton <Sand> 123');
    $('[data-favorite="surface:0"]').click();
    assert.ok($('#surface-color-hint').textContent.includes('Corestone'));assert.equal($('#surface-color').value,'Sand');
+   $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));
+   assert.equal($('#catalog-manufacturer').value,'__preferred');
+   input('#catalog-manufacturer','lamurista');$('#catalog-manufacturer').dispatchEvent(new win.Event('change'));
+   $('[data-catalog-pick="lamurista-hardrock-pro"]').click();
+   assert.ok([...$('#surface-colors').children].some(o=>o.value==='München'));assert.equal($('#surface-color').value,'');
+   assert.equal($('#surface-system_type').value,'1K-MicroTEC-Putz');
    $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));
    input('#catalog-manufacturer','testanbieter');$('#catalog-manufacturer').dispatchEvent(new win.Event('change'));input('#catalog-query','Testoberfläche');
    assert.equal(win.document.querySelectorAll('[data-catalog-pick]').length,2);

@@ -38,6 +38,8 @@ test('public cannot mint keys; owner key hashed before storage',async()=>{
  assert.equal(r.status,200);assert.equal(calls[0].args.key_hash,await hash(key));assert.equal(calls[0].args.key,undefined);
 });
 test('validation drops forged fields and rejects unsafe links/photos',()=>{
+ assert.deepEqual(company({name:'Test',preferred_manufacturers:[' EPI ','Murface','EPI']}).preferred_manufacturers,['EPI','Murface']);
+ assert.throws(()=>company({name:'Test',preferred_manufacturers:['x'.repeat(101)]}));
  const v=content({tile:{name:'Stein',internal_price:99},internal_address:'Geheim',photos:[],care_notes:{}});
  assert.equal(v.internal_address,undefined);assert.equal(v.tile.internal_price,undefined);
  assert.throws(()=>content({photos:['https://tracking.example/a.jpg']}));assert.throws(()=>content({documents:[{url:'javascript:alert(1)'}]}));

@@ -1,7 +1,169 @@
 {
   "version": 1,
-  "checked_at": "2026-09-26",
-  "scope": "Der Katalog wird gemeinsam anhand realer Projekte aufgebaut.",
-  "manufacturers": [],
-  "products": []
+  "checked_at": "2026-09-27",
+  "scope": "Vom Nutzer ausgewählte Oberflächensysteme für den Bad-Piloten. Betriebseigene Produkte bleiben ergänzbar.",
+  "manufacturers": [
+    {
+      "id": "epi",
+      "name": "EPI",
+      "url": "https://epifloors.com/de/",
+      "note": "Quartz R mit Corestone-Farbauswahl auf Wunsch des Pilotbetriebs.",
+      "documents": []
+    },
+    {
+      "id": "murface",
+      "name": "Murface",
+      "url": "https://murface.com/de/",
+      "note": "Auswahl für den Start: MF Industrial und MF Mono.",
+      "documents": []
+    },
+    {
+      "id": "lamurista",
+      "name": "Lamurista",
+      "url": "https://lamurista.de/",
+      "note": "HardRock und HardRock PRO mit den 30 Hausfarben.",
+      "documents": []
+    },
+    {
+      "id": "artstucco",
+      "name": "ArtStucco",
+      "url": "https://artstucco.de/",
+      "note": "Anbieter von Wand- und Lavasteinoberflächen. Farben getrennt nach Produktlinie.",
+      "documents": []
+    }
+  ],
+  "products": [
+    {
+      "id": "epi-quartz-r",
+      "manufacturer_id": "epi",
+      "name": "Quartz R",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "Wand- und Bodenbeschichtung",
+      "source_url": "https://epifloors.com/de/unsere-boden/quartz-r/",
+      "note": "Für Wand und Boden. Corestone-Farbkollektion als vereinbarte Auswahlhilfe.",
+      "documents": [
+        {
+          "name": "EPI Quartz R – Produktinformationen",
+          "type": "Produktinformationen",
+          "url": "https://epifloors.com/de/unsere-boden/quartz-r/",
+          "language": "de",
+          "verification": "page"
+        }
+      ]
+    },
+    {
+      "id": "murface-industrial",
+      "manufacturer_id": "murface",
+      "name": "MF Industrial",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "2K-Spachtel auf Epoxidharzbasis",
+      "source_url": "https://murface.cdn.prismic.io/murface/ZmbZNJm069VX1mAc_Portfolio_Broschuere_WEB.pdf",
+      "note": "Für Wand, Boden, Bad und Dusche im vorgesehenen Systemaufbau.",
+      "documents": [
+        {
+          "name": "Murface Portfolio – Mono & Industrial, S. 26–27",
+          "type": "Produktbroschüre",
+          "url": "https://murface.cdn.prismic.io/murface/ZmbZNJm069VX1mAc_Portfolio_Broschuere_WEB.pdf",
+          "language": "de",
+          "verification": "pdf"
+        }
+      ]
+    },
+    {
+      "id": "murface-mono",
+      "manufacturer_id": "murface",
+      "name": "MF Mono",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "1K-Spachtel auf Acrylbasis",
+      "source_url": "https://murface.cdn.prismic.io/murface/ZmbZNJm069VX1mAc_Portfolio_Broschuere_WEB.pdf",
+      "note": "Für Wand, Boden, Bad und Dusche im vorgesehenen Systemaufbau.",
+      "documents": [
+        {
+          "name": "Murface Portfolio – Mono & Industrial, S. 26–27",
+          "type": "Produktbroschüre",
+          "url": "https://murface.cdn.prismic.io/murface/ZmbZNJm069VX1mAc_Portfolio_Broschuere_WEB.pdf",
+          "language": "de",
+          "verification": "pdf"
+        }
+      ]
+    },
+    {
+      "id": "lamurista-hardrock",
+      "manufacturer_id": "lamurista",
+      "name": "HardRock",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "Oberflächensystem",
+      "source_url": "https://lamurista.de/hardrock/",
+      "note": "Allgemeine HardRock-Bezeichnung. Genaue Variante laut Gebinde ergänzen. Unterlagen für PRO oder ULTRA werden nicht automatisch zugeordnet.",
+      "documents": []
+    },
+    {
+      "id": "lamurista-hardrock-pro",
+      "manufacturer_id": "lamurista",
+      "name": "HardRock PRO",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "1K-MicroTEC-Putz",
+      "source_url": "https://lamurista.de/hardrock/",
+      "note": "Verarbeitungsfertiger Oberflächenspachtel für Wände, Böden und Bäder.",
+      "documents": [
+        {
+          "name": "Lamurista HardRock – Produktinformationen und Downloads",
+          "type": "Produktinformationen",
+          "url": "https://lamurista.de/hardrock/",
+          "language": "de",
+          "verification": "page"
+        }
+      ]
+    },
+    {
+      "id": "artstucco-wand",
+      "manufacturer_id": "artstucco",
+      "name": "ArtStucco (Wand)",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "Spachtelbeton",
+      "source_url": "https://artstucco.de/produktauswahl/wande/",
+      "note": "Wandoberfläche auch für Badezimmer. Produktlinie ArtStucco; Ausführungsvariante laut Gebinde ergänzen.",
+      "documents": [
+        {
+          "name": "ArtStucco – Wandoberflächen",
+          "type": "Produktinformationen",
+          "url": "https://artstucco.de/produktauswahl/wande/",
+          "language": "de",
+          "verification": "page"
+        }
+      ]
+    },
+    {
+      "id": "artstucco-lavastein",
+      "manufacturer_id": "artstucco",
+      "name": "Lavasteinboden",
+      "kinds": [
+        "surface"
+      ],
+      "system_type": "Kunstharz mit Lavasteingrus",
+      "source_url": "https://artstucco.de/produktauswahl/boden/",
+      "note": "Bodenoberfläche der Produktlinie Lavastein. Den tatsächlichen Aufbau im Projekt dokumentieren.",
+      "documents": [
+        {
+          "name": "ArtStucco – Lavasteinboden",
+          "type": "Produktinformationen",
+          "url": "https://artstucco.de/produktauswahl/boden/",
+          "language": "de",
+          "verification": "page"
+        }
+      ]
+    }
+  ]
 }
