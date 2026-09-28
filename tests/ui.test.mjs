@@ -53,6 +53,7 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   assert.equal(savedContent.tile.label_photo,'');assert.equal(savedContent.spare_materials.length,2);assert.equal(savedContent.spare_materials[1].location,'Garage');
   $('[data-panel="tiles"]').click();assert.equal($('#panel-tiles').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));assert.equal($('#panel-joints h2').textContent,'Silikon & Fugenmaterialien');assert.ok($('#panel-joints').textContent.includes('16 · Silbergrau'));assert.ok($('#panel-joints').textContent.includes('Silcofug E'));
   $('#handover').click();await wait(()=>$('#copy-link'));assert.ok($('#app').textContent.includes('Bereit für'));
+  $('#handover-card').click();await wait(()=>$('#print-handover-card'));assert.ok($('#modal .takeaway-qr svg'));assert.ok(!$('#modal').textContent.includes('PRIVATE ADDRESS'));assert.ok($('#download-handover-qr'));$('#modal .close').click();
   win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));
   assert.ok(!$('#app').textContent.includes('PRIVATE CUSTOMER'));assert.equal($('#handover'),null);
   assert.equal($('#panel-journal').hidden,true);$('[data-panel=journal]').click();assert.equal($('#panel-journal').hidden,false);$('[data-panel=tiles]').click();assert.equal($('#panel-journal').hidden,true);assert.equal($('#panel-tiles').hidden,false);
