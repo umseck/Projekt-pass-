@@ -1,6 +1,7 @@
 import {productKeys} from '../public/trades.mjs';
 import {preparationAreas,substrateTypes,preparationTypes,preparationActors} from '../public/preparation-data.mjs';
 import {waterClasses,waterproofingTypes,projectPhotoLimit} from '../public/waterproofing-data.mjs';
+import {bathKinds,areaConfirmed,careValid} from '../public/bath-model.mjs';
 export class HttpError extends Error {
   constructor(status,message){super(message);this.status=status;}
 }
@@ -46,8 +47,9 @@ export function company(value){
 }
 export function standard(value,kind){
  const v=obj(value);
- const keys=kind==='seamless'?['surface','waterproofing','finish','silicone']:['tile','grout','silicone'];
+ const keys=bathKinds[kind];
  return {...Object.fromEntries(keys.map(k=>{const p=product(v[k]);return [k,{...p,color:'',batch:'',label_photo:''}];})),
+  area_templates:list(v.area_templates,8,t=>({name:text(t.name,100),position:['walls','floor','both','other'].includes(t.position)?t.position:'walls',trade:trade(t.trade),products:Object.fromEntries(bathKinds[trade(t.trade)].map(k=>{const p=product(t.products?.[k]);return [k,{...p,color:'',batch:'',label_photo:''}];}))})),
   documents:list(v.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))};
 }
 export function content(value){
@@ -58,10 +60,30 @@ export function content(value){
   return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,{...product(v[k]),...(k==='waterproofing'?{color:''}:{})}])),
     ...(details===undefined?{}:{waterproofing_details:details}),
     ...(v.finish_selection===undefined?{}:{finish_selection:['manual','system',''].includes(v.finish_selection)?v.finish_selection:fail('Bitte die Versiegelung erneut auswählen.')}),
+    ...(v.areas===undefined?{}:{areas:bathAreas(v.areas)}),
     usage_available_at:usage,care_notes:care(v.care_notes),
     photos,
     spare_materials:list(v.spare_materials,5,s=>({...fields(s,['material','quantity','location']),photo:photo(s.photo)})),
     documents:list(v.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))};
+}
+export function bathDocument(v){
+ obj(v);const data=text(v.data,1400000);
+ if(data&&!/^data:application\/pdf;base64,JVBER[A-Za-z0-9+/]*={0,2}$/.test(data))fail('Bitte eine PDF-Datei wählen (höchstens 1 MB).');
+ return {name:text(v.name,200),type:text(v.type,100),url:url(v.url),source:text(v.source,300),document_date:text(v.document_date,80),data};
+}
+export function bathAreas(value){
+ const seen=new Set();let totalPhotos=0;
+ return list(value,8,v=>{
+  obj(v);const id=uuid(v.id);if(seen.has(id))fail('Flächen müssen unterschiedliche Kennungen haben.');seen.add(id);
+  const kind=trade(v.trade);if(!['walls','floor','both','other'].includes(v.position))fail('Bitte die Lage der Fläche wählen.');
+  const a={id,name:text(v.name,100),position:v.position,trade:kind,products:Object.fromEntries(bathKinds[kind].map(k=>[k,{...product(v.products?.[k]),documents:list(v.products?.[k]?.documents,6,bathDocument)}])),
+   preparation:preparation(v.preparation),note:text(v.note,2000),spares:text(v.spares,1000),photos:list(v.photos,8,photo),
+   care:{text:text(v.care?.text,2000),source:text(v.care?.source,300),url:url(v.care?.url),document_date:text(v.care?.document_date,80),basis:text(v.care?.basis,20000),confirmed:v.care?.confirmed===true},confirmation:text(v.confirmation,2000000)};
+  totalPhotos+=a.photos.length;if(totalPhotos>8)fail('Bitte höchstens 8 flächenbezogene Fotos wählen.');
+  if(!careValid(a))a.care.confirmed=false;
+  if(!areaConfirmed(a))a.confirmation='';
+  return a;
+ });
 }
 export function waterproofingDetails(value){
  const v=obj(value),waterClass=text(v.water_class,10),type=text(v.type,20);

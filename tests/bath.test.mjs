@@ -1,0 +1,72 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
+import {PGlite} from '@electric-sql/pglite';
+import {readFile} from 'node:fs/promises';
+import {newArea,materialBasis,areaBasis,areaConfirmed,careValid,replaceProduct,answerRows,areaIssues} from '../public/bath-model.mjs';
+import {content,standard} from '../server/validation.mjs';
+import {customerCopy,offlineHTML} from '../public/bath-customer.mjs';
+import {createHandler} from '../server/api.mjs';
+const confirmed=()=>{const a=newArea('seamless',{surface:{manufacturer:'EPI',name:'Quartz R'},finish:{manufacturer:'EPI',name:'Corestone Sealer'}},'Duschwand');a.products.surface.color='Canvas';a.care={text:'TESTHINWEIS – keine reale Pflegeempfehlung.',source:'Testquelle',document_date:'2026-09-28',url:'',basis:materialBasis(a),confirmed:true};a.confirmation=areaBasis(a);return a;};
+test('two surfaces, missing care, changed system, server normalization and clean standards',()=>{
+ const wall=confirmed(),floor=newArea('seamless',{surface:{manufacturer:'Lamurista',name:'HardRock'}},'Boden','floor');floor.confirmation=areaBasis(floor);
+ let saved=content({trade:'seamless',areas:[wall,floor]}).areas;
+ assert.equal(areaConfirmed(saved[0]),true);assert.equal(careValid(saved[0]),true);assert.equal(areaConfirmed(saved[1]),true);
+ assert.match(answerRows(saved[0])[0].answer,/Quartz R/);assert.match(answerRows(saved[1])[0].answer,/HardRock/);assert.equal(answerRows(saved[1])[1].answer,'Noch nicht dokumentiert');
+ saved[0].products.surface.documents=[{name:'Old PDF',url:'https://example.test/old.pdf'}];
+ replaceProduct(saved[0],'surface',{manufacturer:'Murface',name:'Mono',documents:[]});
+ assert.equal(careValid(saved[0]),false);assert.equal(areaConfirmed(saved[0]),false);assert.equal(saved[0].products.surface.documents.length,0);
+ assert.equal(answerRows(saved[0])[1].answer,'Noch nicht dokumentiert');
+ // A stale browser cannot keep its previous confirmation by changing only the name.
+ wall.products.surface.name='Other';assert.equal(content({trade:'seamless',areas:[wall]}).areas[0].confirmation,'');
+ const before=structuredClone(floor);floor.products.surface.batch='PROJECT-ONLY';floor.photos=['data:image/jpeg;base64,/9j/AA=='];
+ const s=standard({surface:floor.products.surface,area_templates:[{...floor,customer_name:'SECRET'}]},'seamless');
+ assert.equal(s.surface.batch,'');assert.equal(s.area_templates[0].products.surface.batch,'');assert.equal(s.area_templates[0].photos,undefined);assert.equal(s.area_templates[0].care,undefined);assert.equal(s.area_templates[0].confirmation,undefined);
+ s.surface.name='NEW STANDARD';assert.deepEqual(before.products.surface.name,'HardRock');
+ const tile=newArea('tile',{tile:{name:'Tile'},adhesive:{name:'Glue'},waterproofing:{name:'Seal'}},'Fliesenboden','floor');tile.confirmation=areaBasis(tile);
+ assert.equal(content({trade:'tile',areas:[tile]}).areas[0].products.adhesive.name,'Glue');assert.deepEqual(areaIssues(tile),[]);
+});
+test('customer copy and selective service package survive offline without exposing access/internal data',()=>{
+ const a=confirmed();a.photos=['data:image/jpeg;base64,/9j/AA=='];a.products.surface.documents=[{name:'Embedded',type:'PDF',data:'data:application/pdf;base64,JVBERi0xLjQK',source:'Test',document_date:'2026-09-28'},{name:'Link only',url:'https://example.test/file.pdf'}];a.confirmation=areaBasis(a);
+ const b=newArea('seamless',{surface:{name:'OTHER-AREA-SECRET'}},'Other');
+ const p={title:'<script>alert(1)</script>',pass_number:1,internal:{address:'PRIVATE ADDRESS'},token:'SECRET-TOKEN',owner_key:'SECRET-KEY',company:{name:'Business',favorites:{secret:'CATALOG'}},content:{areas:[a,b],photos:[],documents:[]},journal:[]};
+ const subset=customerCopy(p,[a.id]),html=offlineHTML(subset,{recipient:'other@example.test',message:'Reparatur'});
+ for(const secret of ['PRIVATE ADDRESS','SECRET-TOKEN','SECRET-KEY','CATALOG','OTHER-AREA-SECRET','<script>'])assert.ok(!html.includes(secret));
+ assert.match(html,/data:image\/jpeg;base64/);assert.match(html,/data:application\/pdf;base64/);assert.match(html,/Nur verlinkt/);assert.match(html,/keine rechtliche Abnahme/);
+ const all=customerCopy(p);p.content={};p.company={};assert.equal(all.areas.length,2);assert.match(offlineHTML(all),/Quartz R/);
+});
+const actor='11111111-1111-4111-8111-111111111111',cid='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',pass='33333333-3333-4333-8333-333333333333',token='a'.repeat(64);
+test('new editor → real API/SQL → handover; tenant isolation, immutable snapshot and closure export',async()=>{
+ const db=new PGlite();await db.exec('create role anon;create role authenticated;create role service_role bypassrls;');
+ for(const file of ['schema.sql','workflow.sql'])await db.exec(await readFile(new URL('../database/'+file,import.meta.url),'utf8'));
+ const profile={name:'Test',email:'test@example.test',trade:'seamless',standards:{seamless:{surface:{manufacturer:'EPI',name:'Quartz R'},finish:{manufacturer:'EPI',name:'Corestone Sealer'}}}};
+ await db.query('insert into pp_private.companies(id,profile) values($1,$2)',[cid,JSON.stringify(profile)]);await db.query('insert into pp_private.members(user_id,company_id) values($1,$2)',[actor,cid]);await db.query('insert into pp_private.passes(id,company_id,number,token) values($1,$2,1,$3)',[pass,cid,token]);
+ const rpc=async(op,who,args)=>(await db.query('select public.pp_api($1,$2,$3) result',[op,who,JSON.stringify(args)])).rows[0].result;
+ let p=await rpc('activate',actor,{pass_id:pass,title:'Musterbad'});
+ const origin='https://projektpass.example',env={APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'secret',SUPABASE_PUBLISHABLE_KEY:'public'};
+ let activeActor=actor;
+ const handle=createHandler(async(url,opts)=>{if(url.endsWith('/user'))return Response.json({id:activeActor});const b=JSON.parse(opts.body);try{return Response.json(await rpc(b.op,b.actor,b.args));}catch(e){return Response.json({message:e.message},{status:400});}});
+ const api=async(op,args)=>{const r=await handle(new Request(origin+'/api/'+op,{method:'POST',headers:{origin,cookie:'__Host-pp_session=jwt','Content-Type':'application/json'},body:JSON.stringify(args)}),env);const data=await r.json();if(!r.ok){const error=Error(data.error);error.status=r.status;throw error;}return data;};
+ const win=new Window({url:origin});win.document.body.innerHTML='<div id="app"></div><dialog id="modal"></dialog>';
+ globalThis.window=win;globalThis.document=win.document;globalThis.location=win.location;globalThis.confirm=()=>true;globalThis.FileReader=win.FileReader;
+ let session;const $=s=>win.document.querySelector(s);const wait=async fn=>{for(let i=0;i<120;i++){if(fn())return;await new Promise(r=>setTimeout(r,10));}throw Error('UI timeout: '+$('#app').textContent);};
+ try{
+  const {bathEditor}=await import('../public/bath-editor.mjs');let destination;
+  session=await bathEditor(p.id,{api,shell:html=>$('#app').innerHTML=html,modal:()=>{},dashboard:{company:profile,company_version:1},go:value=>destination=value});
+  $('#bath-next').click();await wait(()=>$('#bath-area-name'));
+  assert.match($('#bath-body').textContent,/Quartz R/);assert.match($('#bath-body').textContent,/vorgeschlagen/);
+  $('#bath-area-name').value='Duschwand';$('#bath-area-name').dispatchEvent(new win.Event('input'));
+  $('#bath-palette-surface').value='Canvas';$('#bath-palette-surface').dispatchEvent(new win.Event('change'));
+  $('#bath-next').click();await wait(()=>$('[data-confirm-area]'));
+  $('[data-confirm-area]').click();await session.flush();p=await api('project',{id:p.id});
+  assert.equal(areaConfirmed(p.content.areas[0]),true);assert.equal(p.content.areas[0].products.surface.color,'Canvas');
+  activeActor='22222222-2222-4222-8222-222222222222';await assert.rejects(api('project',{id:p.id}));await assert.rejects(api('handover',{id:p.id,version:p.version}));activeActor=actor;
+  $('#bath-next').click();await wait(()=>destination?.startsWith('ready/'));
+  const scanned=await api('scan',{token});assert.equal(scanned.content.areas[0].name,'Duschwand');assert.equal(scanned.internal,undefined);
+  const copy=customerCopy(scanned);await db.query('update pp_private.companies set profile=$1 where id=$2',[JSON.stringify({...profile,standards:{seamless:{surface:{name:'CHANGED'}}}}),cid]);
+  assert.equal((await api('scan',{token})).content.areas[0].products.surface.name,'Quartz R');
+  const current=await api('project',{id:p.id});await assert.rejects(api('save',{id:p.id,version:current.version,title:'Changed',content:current.content,internal:{}}));
+  await api('visibility',{id:p.id,version:current.version,disabled:true});await assert.rejects(api('scan',{token}));
+  assert.match(offlineHTML(copy),/Quartz R/);assert.match(offlineHTML(copy),/Duschwand/);
+ }finally{session?.dispose();win.happyDOM.abort();await db.close();}
+});

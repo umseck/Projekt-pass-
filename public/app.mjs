@@ -100,6 +100,7 @@ function parseDocs(value){return JSON.parse(value||'[]');}
 function localDate(value){if(!value)return '';const d=new Date(value);return new Date(+d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
 async function edit(id){
  let p=await api('project',{id});if(location.hash!=='#edit/'+id)return;if(p.handover_snapshot){go('work/'+id);return;}
+ if(p.content?.areas?.length){go('bath/'+id);return;}
  const c=structuredClone(p.content),trade=tradeFor(c.trade),primary=trade.primary,sp=c.spare_materials?.[0]||{};let photos=c.photos||[],waterproofingPhotos=c.waterproofing_details?.photos||[],label=c[primary]?.label_photo||'',sparePhoto=sp.photo||'',busyPhotos=0;
  let previousSurface={...c.surface},finishMode=c.finish_selection||'',autosaver;
  function changed(){if(autosaver&&!form.isConnected)return;dirty=true;if(autosaver)$('.form-message',form).textContent='';autosaver?.changed();}
@@ -306,6 +307,7 @@ async function customer(id,preview=false){
  modal('Ihr Projektpass bleibt bei Ihnen',`<p>Speichern Sie die Informationen zu Ihrem Bad zum Aufheben oder Weitergeben.</p><button class="btn olive wide spaced" id="print-pass">Drucken / als PDF speichern</button><button class="btn light wide spaced" id="download-pass">Daten mit Fotos speichern</button><p class="hint">Im Druckdialog können Sie „Als PDF speichern“ wählen.</p>`);
  $('#print-pass').onclick=()=>{$('#modal').close();window.print();};$('#download-pass').onclick=()=>download('Projektpass-'+num(p.pass_number)+'.json',p);
  };
+ if(c.areas?.length){const {mountBathCustomer}=await import('./bath-customer.mjs');if(location.hash===expected)mountBathCustomer(p,{modal});}
  if($('#owner-edit'))$('#owner-edit').onclick=()=>ownerEditor(p,id);
  if(preview){
   $$('[data-review-edit]').forEach(a=>a.onclick=()=>{reviewEditTarget=a.dataset.reviewEdit;});
@@ -372,6 +374,7 @@ async function render(){
   if(route==='catalog'){await catalogPage({shell,isCurrent:()=>runId===routeVersion});return;}
   if(dashboard.role==='operator'&&!dashboard.company){if(route==='home'){await operatorPage('admin',null,operatorContext());return;}go('admin');return;}
   if(dashboard.company?.onboarding_complete===false&&route!=='settings'){go('settings');return;}
+  if(route==='bath'){const {bathEditor}=await import('./bath-editor.mjs');editorSession=await bathEditor(arg,{...flowContext,go,dashboard});return;}
   if(route==='work')await workflowPage(arg,flowContext);else if(route==='home')home();else if(route==='passes')passes();else if(route==='activate')activate(arg);else if(route==='edit')await edit(arg);else if(route==='preview')await customer(arg,true);else if(route==='settings')await settings();else if(route==='ready'){const p=await api('project',{id:arg});if(p.status!=='handed_over')throw Error('Bitte das Projekt zuerst übergeben.');handoverReady(p);}else throw Error('Diese Seite wurde nicht gefunden.');
   window.scrollTo(0,0);
   if(route==='edit'&&reviewEditTarget){const target=reviewEditTarget;reviewEditTarget=null;const section=$('[data-editor-section="'+(['project','files','handover'].includes(target)?target:'materials')+'"]');section?.querySelector(':scope > summary').click();if(['project','files','handover'].includes(target))return;const card=$('[data-material="'+(target==='finish'?'surface':target)+'"]')||$('[data-material="surface"]');if(target==='finish')$('[data-material="finish"] .material-edit').open=true;if(card){if(!card.open)card.querySelector(':scope > summary').click();card.scrollIntoView?.({block:'start',behavior:'auto'});card.querySelector('summary').focus();}}

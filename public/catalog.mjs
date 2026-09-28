@@ -1,6 +1,6 @@
 import {esc,safeLink} from './ui.mjs';
 import {systemFinishes} from './system-finish.mjs';
-export const categories={tile:'Fliese',grout:'Fugenmörtel',surface:'Oberflächensystem',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
+export const categories={tile:'Fliese',adhesive:'Fliesenkleber',grout:'Fugenmörtel',surface:'Oberflächensystem',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
 let cached,companyProducts=[],preferredManufacturers=[];
 const makerKey=value=>String(value||'').trim().toLocaleLowerCase('de');
 export function setCompanyCatalog(company){

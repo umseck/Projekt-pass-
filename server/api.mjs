@@ -1,5 +1,6 @@
 import {dispatchMail,mailReady} from './mail.mjs';
 import {HttpError,validate,text,email,fail} from './validation.mjs';
+import {areaIssues} from '../public/bath-model.mjs';
 
 const COOKIE='__Host-pp_session';
 const publicOps=new Set(['flow_portal','flow_reply','flow_owner_entry','scan','owner_save','access_info','access_activate']);
@@ -99,6 +100,14 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      let accessToken;
      if(op==='operator_invite'){accessToken=randomToken();args.token_hash=await hash(accessToken);}
      if(flowOps.has(op)){args.origin=env.APP_ORIGIN;if(op==='flow_participant')args.access_token=randomToken();}
+     if(op==='handover'){
+      const current=await rpc('project',actor,{id:args.id});
+      if(current.content?.areas){
+       if(!current.content.areas.length)fail('Bitte mindestens eine Fläche dokumentieren.');
+       const missing=current.content.areas.flatMap(a=>areaIssues(a).map(message=>(a.name||'Fläche')+': '+message));
+       if(missing.length)fail(missing.join(' · '));
+      }
+     }
      result=await rpc(op,actor,args);
      if(op==='flow_reply'&&result.dispatch_actor){const deliveryActor=result.dispatch_actor,deliveryProject=result.dispatch_project;delete result.dispatch_actor;delete result.dispatch_project;
       if(ctx?.waitUntil&&mailReady(env)){ctx.waitUntil(dispatchMail(env,rpc,deliveryActor,deliveryProject,upstream).catch(()=>{}));result.delivery={configured:true,queued:true};}else result.delivery=await dispatchMail(env,rpc,deliveryActor,deliveryProject,upstream);
