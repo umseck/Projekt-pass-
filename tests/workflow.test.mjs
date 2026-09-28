@@ -87,3 +87,28 @@ test('real workflow UI adds participant, posts a scoped message, opens private p
  const customer=await rpc('scan',null,{token:'a'.repeat(64)});assert.equal(customer.journal.length,1);assert.equal(customer.journal[0].body,'Keine Auffälligkeiten');
  }finally{await win.happyDOM.abort();win.close();await db.close();}
 });
+
+test('shared replies preserve audience, track open requests, notify privately and freeze on handover',async()=>{
+ const {db,rpc,p,request,env,sends}=await setup();
+ try{
+ const ids=[crypto.randomUUID(),crypto.randomUUID()],tokens=[];
+ for(let i=0;i<2;i++){const r=await request('flow_participant',{project_id:p.id,id:ids[i],name:'Gewerk '+i,email:'trade'+i+'@example.test',role:'trade'});tokens.push(r.body.access_link.split('/').pop());}
+ const privateId=crypto.randomUUID();await request('flow_post',{project_id:p.id,id:privateId,body:'Nur eins',recipients:[ids[0]]});
+ assert.equal((await request('flow_reply',{token:tokens[1],id:crypto.randomUUID(),body:'Unbefugt',reply_to:privateId,shared:true},null)).status,403);
+ const shared=crypto.randomUUID();env.RESEND_API_KEY='test';env.MAIL_FROM='test@example.test';
+ const posted=await request('flow_reply',{token:tokens[0],id:shared,body:'Bitte Fläche freigeben',shared:true,needs_reply:true,notify:true},null);
+ assert.equal(posted.status,200);assert.equal(posted.body.dispatch_actor,undefined);assert.equal(posted.body.dispatch_project,undefined);assert.ok(sends.some(m=>m.to[0]==='betrieb@example.test'));assert.ok(sends.some(m=>m.to[0]==='trade1@example.test'));
+ assert.ok((await request('flow_portal',{token:tokens[1]},null)).body.messages.some(m=>m.id===shared&&m.needs_reply&&!m.resolved));
+ const answer=crypto.randomUUID();await request('flow_reply',{token:tokens[1],id:answer,body:'Freigegeben',reply_to:shared},null);
+ assert.ok((await request('flow_portal',{token:tokens[0]},null)).body.messages.some(m=>m.id===answer&&m.reply_to===shared));
+ const scoped=crypto.randomUUID();await request('flow_reply',{token:tokens[0],id:scoped,body:'Privat bleibt privat',reply_to:privateId,shared:true},null);
+ assert.ok(!(await request('flow_portal',{token:tokens[1]},null)).body.messages.some(m=>m.id===scoped));
+ assert.equal((await request('flow_resolve',{project_id:p.id,id:shared,resolved:true},other)).status,404);
+ assert.equal((await request('flow_resolve',{project_id:p.id,id:shared,resolved:true})).status,200);
+ assert.ok((await request('flow_portal',{token:tokens[0]},null)).body.messages.find(m=>m.id===shared).resolved);
+ await rpc('handover',actor,{id:p.id,version:p.version});
+ assert.equal((await request('flow_reply',{token:tokens[0],id:crypto.randomUUID(),body:'Zu spät'},null)).status,409);
+ assert.equal((await request('flow_resolve',{project_id:p.id,id:shared,resolved:false})).status,409);
+ assert.equal((await request('flow_portal',{token:tokens[0]},null)).status,200);
+ }finally{await db.close();}
+});

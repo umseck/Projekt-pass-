@@ -95,7 +95,7 @@ export function validate(op,b){
     const publicFlow=['flow_portal','flow_reply','flow_owner_entry'].includes(op);
     const out=publicFlow?{token:token(b.token)}:{project_id:uuid(b.project_id)};
     if(op==='flow_owner_entry')out.key=token(b.key);
-    if(['flow_link','flow_participant','flow_revoke','flow_post','flow_reply','flow_entry','flow_owner_entry'].includes(op))out.id=uuid(b.id);
+    if(['flow_link','flow_participant','flow_revoke','flow_resolve','flow_post','flow_reply','flow_entry','flow_owner_entry'].includes(op))out.id=uuid(b.id);
     if(op==='flow_participant'){
       out.name=text(b.name,100);if(!out.name)fail('Bitte einen Namen eingeben.');out.email=email(b.email);
       if(!['customer','trade'].includes(b.role))fail();out.role=b.role;
@@ -104,13 +104,16 @@ export function validate(op,b){
       out.body=text(b.body,4000);out.photos=list(b.photos,3,photo);out.documents=list(b.documents,3,d=>({...fields(d,['name','type']),url:url(d.url)}));
       if(['flow_post','flow_reply'].includes(op)&&!out.body)fail('Bitte eine Mitteilung eingeben.');
     }
+    if(op==='flow_resolve')out.resolved=b.resolved===true;
+    if(['flow_post','flow_reply'].includes(op)){out.needs_reply=b.needs_reply===true;out.notify=b.notify===true;if(b.reply_to)out.reply_to=uuid(b.reply_to);}
+    if(op==='flow_reply')out.shared=b.shared===true;
     if(op==='flow_post'){out.recipients=[...new Set(list(b.recipients,20,uuid))];out.internal=b.internal===true;out.notify=b.notify===true;}
     if(['flow_entry','flow_owner_entry'].includes(op)){
       if(!['Wartung','Reparatur','Ergänzung','Korrektur'].includes(b.kind))fail();out.kind=b.kind;
       out.title=text(b.title,150);if(!out.title)fail('Bitte einen Titel eingeben.');
       for(const k of ['performed_on','next_due']){const d=text(b[k],10);if((k==='performed_on'||d)&&(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d))||new Date(d).toISOString().slice(0,10)!==d))fail('Bitte ein gültiges Datum eingeben.');out[k]=d;}
     }
-    if(!['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_post','flow_entry','flow_owner_entry','flow_dispatch'].includes(op))fail();
+    if(!['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_resolve','flow_post','flow_entry','flow_owner_entry','flow_dispatch'].includes(op))fail();
     return out;
   }
   if(op==='access_info')return {token:token(b.token)};

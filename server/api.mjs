@@ -4,7 +4,7 @@ import {HttpError,validate,text,email,fail} from './validation.mjs';
 const COOKIE='__Host-pp_session';
 const publicOps=new Set(['flow_portal','flow_reply','flow_owner_entry','scan','owner_save','access_info','access_activate']);
 const controlOps=new Set(['bootstrap','passes_add','operator_list','operator_company','operator_create','operator_save','operator_invite','access_info','access_begin','access_redeem']);
-const flowOps=new Set(['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_post','flow_entry','flow_owner_entry','flow_dispatch']);
+const flowOps=new Set(['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_resolve','flow_post','flow_entry','flow_owner_entry','flow_dispatch']);
 const operations=new Set([...flowOps,'company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...controlOps,...publicOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
@@ -100,6 +100,11 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      if(op==='operator_invite'){accessToken=randomToken();args.token_hash=await hash(accessToken);}
      if(flowOps.has(op)){args.origin=env.APP_ORIGIN;if(op==='flow_participant')args.access_token=randomToken();}
      result=await rpc(op,actor,args);
+     if(op==='flow_reply'&&result.dispatch_actor){const deliveryActor=result.dispatch_actor,deliveryProject=result.dispatch_project;delete result.dispatch_actor;delete result.dispatch_project;
+      if(ctx?.waitUntil&&mailReady(env)){ctx.waitUntil(dispatchMail(env,rpc,deliveryActor,deliveryProject,upstream).catch(()=>{}));result.delivery={configured:true,queued:true};}else result.delivery=await dispatchMail(env,rpc,deliveryActor,deliveryProject,upstream);
+     }
+     delete result.dispatch_actor;delete result.dispatch_project;
+     if(op==='flow_portal')result.mail_configured=mailReady(env);
      if(flowOps.has(op)&&actor){result={...result,mail_configured:mailReady(env)};if(['flow_participant','flow_post','flow_dispatch'].includes(op)){if(ctx?.waitUntil&&mailReady(env)){ctx.waitUntil(dispatchMail(env,rpc,actor,args.project_id,upstream).catch(()=>{}));result.delivery={configured:true,queued:true};}else result.delivery=await dispatchMail(env,rpc,actor,args.project_id,upstream);}}
      if(ownerKey)result={...result,owner_key:ownerKey};
      if(accessToken)result={...result,access_link:env.APP_ORIGIN+'/#access/'+accessToken};

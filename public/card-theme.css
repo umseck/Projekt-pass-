@@ -21,3 +21,5 @@
 @media(max-width:360px){.customer-dossier .action{padding:16px 12px}.customer-dossier .action strong{font-size:16px}}
 
 .guided-editor .standard-save{margin-top:22px;padding:18px;background:var(--pale);border-radius:12px}.standard-save .btn{margin-top:10px}.standard-save #standard-summary{overflow-wrap:anywhere}.standard-save #standard-feedback{font-size:13px;color:var(--olive);margin-top:10px}.review-color-missing{color:#8a541d}.handover-review-body>.btn{margin:12px 0}.handover-usage .btn{margin-top:12px}
+
+.message-open{border-left:3px solid #ba8c40;padding-left:16px}.reply-context{margin:12px 0;padding:12px 16px;background:var(--pale);border-radius:10px;font-size:14px}.journal-entry .pill{display:inline-block;margin:8px 6px 0 0}.recipient{display:flex;align-items:center;gap:10px;min-height:44px}.recipient input{flex-shrink:0}fieldset[disabled]{opacity:.65}
