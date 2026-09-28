@@ -214,6 +214,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('#nfc-link').click();assert.equal($('#nfc-url').value,origin+'/#p/'+pass.token);$('#modal').close();
    input('#surface-color','Sonderton <Sand> 123');
    $('#remember-standard').click();await wait(()=>$('#notice').textContent.startsWith('Standard gespeichert'));
+   assert.ok($('#standard-summary').textContent.includes('Testoberfläche Pro'));assert.ok($('#standard-feedback').textContent.includes('Gespeichert'));
    const savedStandard=(await db.query('select profile from pp_private.companies')).rows[0].profile.standards.seamless;
    assert.equal(savedStandard.primer,undefined);assert.equal(savedStandard.finish.name,'Versiegelung 3');
    // Applying the usual build to an older incomplete project fills only the missing product.
@@ -221,11 +222,14 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+active;await wait(()=>$('#edit'));
    assert.equal($('#waterproofing-name').value,'');assert.ok($('#use-standard'));
    $('#use-standard').click();await wait(()=>$('#waterproofing-name').value==='Abdichtung 2');
-   assert.equal($('#surface-color').value,'Sonderton <Sand> 123');assert.equal($('#finish-name').value,'Versiegelung 3');
+   assert.equal($('#surface-color').value,'Sonderton <Sand> 123');assert.equal($('#finish-name').value,'Versiegelung 3');assert.equal($('#use-standard').hidden,true);
    assert.equal($('#waterproofing-water-class').value,'W2-I');assert.equal(win.document.querySelectorAll('#waterproofing-photos img').length,1);
    assert.equal(savedStandard.preparation,undefined);assert.equal(savedStandard.waterproofing_details,undefined);assert.equal(savedStandard.waterproofing.color,'');
    assert.equal(savedStandard.surface.name,'Testoberfläche Pro');assert.equal(savedStandard.surface.color,'');assert.equal(savedStandard.surface.batch,'');assert.equal(savedStandard.photos,undefined);assert.ok(savedStandard.documents.length>0);
    assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.surface.color,'Sonderton <Sand> 123');
+   $('#preview').click();await wait(()=>$('#handover'));
+   assert.ok($('#handover-review').textContent.includes('Vorbereiteter Estrich'));
+   $('[data-review-edit=project]').click();await wait(()=>$('#edit'));assert.equal($('#edit').dataset.editorView,'detail');assert.equal($('#edit').dataset.activeStep,'project');assert.equal($('#surface-color').value,'Sonderton <Sand> 123');
    $('#preview').click();await wait(()=>$('#handover'));
    assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');assert.ok($('#handover-review').textContent.includes('Versiegelung 3'));assert.equal($('#customer-preview').open,false);
    assert.ok($('#panel-care .care-documents a[href$="Clean-Clear-01-25_WEB.pdf"]'));
