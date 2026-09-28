@@ -17,7 +17,10 @@ test('preparation keeps walls, floor and each executor distinct through editing 
   set('prep-walls-base-by','other');set('prep-walls-base-company','Trockenbau Beispiel');
   $('[data-prep-add="walls"]').click();set('prep-walls-0-kind','filled');set('prep-walls-0-by','own');
   $('[data-prep-add="walls"]').click();set('prep-walls-1-kind','primed');set('prep-walls-1-by','other');set('prep-walls-1-company','Grundierer Beispiel');
-  set('prep-floor-base-kind','screed');set('prep-floor-base-by','unknown');
+  $('[data-prep-choice="prep-floor-base-kind"][data-value="screed"]').click();
+  assert.equal($('#prep-floor-base-kind').value,'screed');
+  assert.equal($('[data-prep-choice="prep-floor-base-kind"][data-value="screed"]').getAttribute('aria-pressed'),'true');
+  $('[data-prep-choice="prep-floor-base-by"][data-value="unknown"]').click();
   const saved=content({trade:'seamless',preparation:editor.read()}).preparation;
   assert.equal(saved[0].substrate.company,'Trockenbau Beispiel');
   assert.deepEqual(saved[0].steps.map(s=>s.by),['own','other']);

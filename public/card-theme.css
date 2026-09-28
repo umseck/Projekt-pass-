@@ -46,3 +46,21 @@ input,select,textarea{border-color:#c6d0c5;border-radius:10px;background:#fff;pa
 @media(max-width:600px){.benefit-grid{grid-template-columns:1fr;gap:24px}.product-promise{padding:24px 20px}.takeaway-card{padding:20px 16px}.takeaway-card h2{font-size:25px}.takeaway-scan{grid-template-columns:1fr;gap:12px}.takeaway-qr svg{margin:auto;width:165px;height:165px}}
 @media print{body.printing-handover-card>*:not(#handover-print){display:none!important}body.printing-handover-card #handover-print{display:block!important;width:148mm;max-width:100%;margin:0 auto}body.printing-handover-card .takeaway-card{border:1px solid #bbb;border-radius:0;padding:12mm;break-inside:avoid}body.printing-handover-card .takeaway-scan{grid-template-columns:42mm 1fr;gap:5mm}body.printing-handover-card .takeaway-qr svg{width:42mm;height:42mm}body.printing-handover-card .takeaway-card h2{font-size:22pt}body.printing-handover-card .takeaway-card p{font-size:10pt}}
 @page handover-card{size:A5 portrait;margin:8mm}@media print{body.printing-handover-card #handover-print{page:handover-card}}
+
+/* Focused tradesperson choices; customer panels remain unchanged. */
+#preparation-editor .preparation-row>.form-grid{display:block}
+#preparation-editor .prep-choice{border:0;padding:0;margin:0 0 20px;min-width:0}
+#preparation-editor .prep-choice legend{font-size:15px;font-weight:650;margin-bottom:10px}
+#preparation-editor .prep-options{display:flex;flex-wrap:wrap;gap:8px}
+#preparation-editor .prep-options button{font:inherit;font-size:15px;min-height:48px;padding:10px 14px;border:1px solid #cdd5cf;border-radius:10px;background:#fff;color:#23382e;cursor:pointer}
+#preparation-editor .prep-options button[aria-pressed="true"]{background:#28533e;border-color:#28533e;color:#fff;box-shadow:inset 0 0 0 1px #fff}
+#preparation-editor .prep-options button:focus-visible,#catalog-picker .catalog-product-option:focus-visible{outline:3px solid #8aab94;outline-offset:3px}
+#preparation-editor .preparation-group{padding:18px;background:#f4f5f1;border-radius:12px;margin:16px 0}
+#preparation-editor .preparation-details{font-size:14px;margin:12px 0}
+#preparation-editor .preparation-remove{font-size:13px}
+#catalog-picker .catalog-product-option{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:68px;padding:14px 16px;margin:8px 0;border:1px solid #d6ded8;border-radius:10px;background:#fff;color:#23382e;text-align:left;font:inherit;cursor:pointer}
+#catalog-picker .catalog-product-option:hover{background:#eef4ef;border-color:#28533e}
+#catalog-picker .catalog-product-option small{display:block;color:#626e66;font-size:13px;margin-bottom:3px}
+#catalog-picker .catalog-product-option strong{font-size:17px}
+#catalog-picker .catalog-document-options,#catalog-picker .catalog-sources{font-size:13px;margin:12px 0}
+@media(max-width:600px){#catalog-picker .form-grid{grid-template-columns:1fr}#preparation-editor .preparation-group{padding:14px}#preparation-editor .prep-options button{flex:1 1 auto}}

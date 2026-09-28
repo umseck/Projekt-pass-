@@ -3,7 +3,7 @@ import {preparationAreas,substrateTypes,substrateTypesFor,preparationTypes,prepa
 
 const emptyItem=()=>({kind:'',by:'',custom:'',company:'',note:''});
 const areaKeys=choice=>choice==='Wände & Boden'?['walls','floor']:choice==='Wände'?['walls']:choice==='Boden'?['floor']:choice?['other']:[];
-const select=(label,id,key,options,value)=>`<div class="field"><label for="${id}">${label}</label><select id="${id}" data-prep-field="${key}" data-current="${esc(value)}"><option value="">Bitte auswählen</option>${Object.entries(options).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')}</select></div>`;
+const select=(label,id,key,options,value)=>`<fieldset class="prep-choice"><legend>${label}</legend><select id="${id}" data-prep-field="${key}" data-current="${esc(value)}" hidden aria-label="${label}"><option value="">Bitte auswählen</option>${Object.entries(options).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')}</select><div class="prep-options">${Object.entries(options).map(([k,v])=>`<button type="button" data-prep-choice="${id}" data-value="${k}" aria-pressed="${k===value}">${esc(v)}</button>`).join('')}</div></fieldset>`;
 
 export function createPreparationEditor(root,initial=[],{choice='',customLabel='',onChange=()=>{}}={}){
  const groups=new Map(initial.map(group=>[group.area,structuredClone(group)]));
@@ -12,13 +12,13 @@ export function createPreparationEditor(root,initial=[],{choice='',customLabel='
  const itemAt=row=>{const group=groups.get(row.dataset.prepArea);return row.dataset.prepStep==='base'?group.substrate:group.steps[Number(row.dataset.prepStep)];};
  function rowHTML(group,item,index){
   const base=index==='base',id=`prep-${group.area}-${index}`,types=base?substrateTypesFor(group.area):preparationTypes;
-  return `<div class="preparation-row" data-prep-area="${group.area}" data-prep-step="${index}"><div class="form-grid">${select(base?'Welcher Untergrund?':'Was wurde gemacht?',id+'-kind','kind',types,item.kind)}${select(base?'Untergrund erstellt von':'Ausgeführt von',id+'-by','by',preparationActors,item.by)}</div><div class="preparation-custom" ${item.kind==='other'?'':'hidden'}>${field(base?'Welcher Untergrund?':'Welche Arbeit?',id+'-custom',item.custom,'text','maxlength="200" data-prep-field="custom"')}</div><details class="preparation-details" ${item.company||item.note?'open':''}><summary>${item.by==='other'?'Firma / Details ergänzen':'Details ergänzen'}</summary><div ${item.by==='other'?'':'hidden'}>${field('Firma (optional)',id+'-company',item.company,'text','maxlength="200" data-prep-field="company"')}</div>${area('Kurze Beschreibung (optional)',id+'-note',item.note,'data-prep-field="note"',500)}</details>${!base||hasPreparationItem(item)?`<button class="btn text preparation-remove" type="button" data-prep-remove="${index}" data-prep-area="${group.area}" aria-label="${base?'Untergrund':`Vorbereitung ${Number(index)+1}`} für ${esc(title(group))} entfernen">${base?'Untergrund zurücksetzen':'Arbeit entfernen'}</button>`:''}</div>`;
+  return `<div class="preparation-row" data-prep-area="${group.area}" data-prep-step="${index}"><div class="form-grid">${select(base?'Welcher Untergrund?':'Was wurde gemacht?',id+'-kind','kind',types,item.kind)}<div ${item.kind?'':'hidden'}>${select(base?'Wer hat den Untergrund erstellt?':'Wer hat die Arbeit ausgeführt?',id+'-by','by',preparationActors,item.by)}</div></div><div class="preparation-custom" ${item.kind==='other'?'':'hidden'}>${field(base?'Welcher Untergrund?':'Welche Arbeit?',id+'-custom',item.custom,'text','maxlength="200" data-prep-field="custom"')}</div><details class="preparation-details" ${item.company||item.note?'open':''}><summary>${item.by==='other'?'Firma / Details ergänzen':'Details ergänzen'}</summary><div ${item.by==='other'?'':'hidden'}>${field('Firma (optional)',id+'-company',item.company,'text','maxlength="200" data-prep-field="company"')}</div>${area('Kurze Beschreibung (optional)',id+'-note',item.note,'data-prep-field="note"',500)}</details>${!base||hasPreparationItem(item)?`<button class="btn text preparation-remove" type="button" data-prep-remove="${index}" data-prep-area="${group.area}" aria-label="${base?'Untergrund':`Vorbereitung ${Number(index)+1}`} für ${esc(title(group))} entfernen">${base?'Untergrund zurücksetzen':'Arbeit entfernen'}</button>`:''}</div>`;
  }
  function render(){
   const visible=active;
-  root.innerHTML=visible.length?`<p class="hint">Wählen Sie den Untergrund und wer ihn erstellt hat. Ergänzen Sie weitere Arbeiten nur bei Bedarf.</p>${visible.map(key=>{
+  root.innerHTML=visible.length?`<p class="hint">Was war vorhanden? Wer hat es erstellt? Antippen genügt.</p>${visible.map(key=>{
    const group=groups.get(key);
-   return `<section class="preparation-group" data-prep-group="${key}"><h3>${esc(title(group))}</h3>${rowHTML(group,group.substrate,'base')}${group.steps.map((item,i)=>rowHTML(group,item,i)).join('')}<button type="button" class="btn light" data-prep-add="${key}" ${group.steps.length>=20?'disabled':''}>+ Vorbereitung hinzufügen</button></section>`;
+   return `<section class="preparation-group" data-prep-group="${key}"><h3>${esc(title(group))}</h3>${rowHTML(group,group.substrate,'base')}${group.steps.map((item,i)=>rowHTML(group,item,i)).join('')}<button type="button" class="btn light" data-prep-add="${key}" ${group.steps.length>=20?'disabled':''}>+ Weitere Vorbereitung dokumentieren</button></section>`;
   }).join('')}`:'<p class="hint">Wählen Sie zuerst den Anwendungsbereich oben aus.</p>';
   root.querySelectorAll('select[data-current]').forEach(el=>{el.value=el.dataset.current;});
   root.querySelectorAll('[data-prep-field]').forEach(el=>{
@@ -26,6 +26,12 @@ export function createPreparationEditor(root,initial=[],{choice='',customLabel='
    const update=()=>{item[key]=el.value;onChange();};
    el.oninput=update;
    if(el.tagName==='SELECT')el.onchange=()=>{update();const id=el.id;render();root.querySelector('#'+id)?.focus();};
+  });
+  root.querySelectorAll('[data-prep-choice]').forEach(button=>button.onclick=()=>{
+   const input=root.querySelector('#'+button.dataset.prepChoice);input.value=button.dataset.value;
+   const row=input.closest('[data-prep-step]');itemAt(row)[input.dataset.prepField]=input.value;
+   const id=button.dataset.prepChoice,value=button.dataset.value;onChange();render();
+   root.querySelector(`[data-prep-choice="${id}"][data-value="${value}"]`)?.focus({preventScroll:true});
   });
   root.querySelectorAll('[data-prep-add]').forEach(button=>button.onclick=()=>{const group=groups.get(button.dataset.prepAdd);if(group.steps.length>=20)return;group.steps.push(emptyItem());onChange();render();root.querySelector(`#prep-${group.area}-${group.steps.length-1}-kind`)?.focus();});
   root.querySelectorAll('[data-prep-remove]').forEach(button=>button.onclick=()=>{const group=groups.get(button.dataset.prepArea);if(button.dataset.prepRemove==='base')group.substrate=emptyItem();else group.steps.splice(Number(button.dataset.prepRemove),1);onChange();render();root.querySelector(`[data-prep-add="${group.area}"]`)?.focus();});
