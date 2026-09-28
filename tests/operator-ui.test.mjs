@@ -229,14 +229,18 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    $('#preview').click();await wait(()=>$('#handover'));
    assert.equal($('.project-steps [aria-current]').textContent,'3. Übergabe');assert.ok($('#handover-review').textContent.includes('Versiegelung 3'));assert.equal($('#customer-preview').open,false);
    assert.ok($('#panel-care .care-documents a[href$="Clean-Clear-01-25_WEB.pdf"]'));
-   assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
-   $('[data-panel="joints"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));assert.ok($('#panel-joints').textContent.includes('W2-I'));assert.ok($('#panel-joints').textContent.includes('Dichtmasse'));assert.equal($('#panel-joints img').getAttribute('src'),photo);
+   assert.equal($('[data-panel=tiles] strong').textContent,'Materialien');
+   $('[data-panel=documents]').click();assert.equal($('#panel-documents').hidden,false);assert.ok($('#panel-documents a'));
+   $('[data-panel=care]').click();assert.equal($('#panel-documents').hidden,true);assert.equal($('#panel-care').hidden,false);assert.ok(!$('#app').textContent.includes('Meine Fliesen'));assert.ok(!$('#app').textContent.includes('INTERNER KUNDE'));
+   $('[data-panel="tiles"]').click();assert.ok($('#panel-joints').textContent.includes('Abdichtung 2'));assert.ok($('#panel-joints').textContent.includes('Matt'));assert.ok($('#panel-joints').textContent.includes('W2-I'));assert.ok($('#panel-joints').textContent.includes('Dichtmasse'));assert.equal($('#panel-joints img').getAttribute('src'),photo);
    $('#handover').click();await wait(()=>$('#copy-link'));
    // Changing the business default only affects future projects.
    win.location.hash='settings';await wait(()=>$('#settings'));input('#trade','tile');submit('#settings');await wait(()=>$('#search'));
    input('#search','Testoberfläche');assert.ok($('#projects').textContent.includes('Fugenloses Testbad'));
    win.location.hash='p/'+pass.token;await wait(()=>$('#owner-edit'));
-   assert.ok($('#app').textContent.includes('Meine Oberfläche'));assert.ok($('#panel-tiles').textContent.includes('Vorbereiteter Estrich'));
+   assert.equal($('[data-panel=tiles] strong').textContent,'Materialien');
+   $('[data-panel=documents]').click();assert.equal($('#panel-documents').hidden,false);assert.ok($('#panel-documents a'));
+   $('[data-panel=care]').click();assert.equal($('#panel-documents').hidden,true);assert.equal($('#panel-care').hidden,false);assert.ok($('#panel-tiles').textContent.includes('Vorbereiteter Estrich'));
    assert.ok($('#panel-tiles').textContent.includes('Sonderton <Sand> 123'));
    assert.ok($('#panel-tiles').textContent.includes('Trockenbau Beispiel'));assert.ok($('#panel-tiles').textContent.includes('Ausgeführt durch: Testbetrieb <A>'));
    const handoverPreparation=(await db.query('select handover_snapshot from pp_private.projects')).rows[0].handover_snapshot.content.preparation;

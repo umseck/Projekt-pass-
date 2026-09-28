@@ -51,10 +51,11 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   const savedContent=(await db.query('select content from pp_private.projects')).rows[0].content;
   assert.equal(savedContent.silicone.name,'Silcofug E');assert.equal(savedContent.silicone.color,'16 · Silbergrau');assert.equal(savedContent.grout.color,'Basalt');
   assert.equal(savedContent.tile.label_photo,'');assert.equal(savedContent.spare_materials.length,2);assert.equal(savedContent.spare_materials[1].location,'Garage');
-  $('[data-panel="joints"]').click();assert.equal($('#panel-joints').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));assert.equal($('#panel-joints h2').textContent,'Silikon & Fugenmaterialien');assert.ok($('#panel-joints').textContent.includes('16 · Silbergrau'));assert.ok($('#panel-joints').textContent.includes('Silcofug E'));
+  $('[data-panel="tiles"]').click();assert.equal($('#panel-tiles').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));assert.equal($('#panel-joints h2').textContent,'Silikon & Fugenmaterialien');assert.ok($('#panel-joints').textContent.includes('16 · Silbergrau'));assert.ok($('#panel-joints').textContent.includes('Silcofug E'));
   $('#handover').click();await wait(()=>$('#copy-link'));assert.ok($('#app').textContent.includes('Bereit für'));
   win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));
   assert.ok(!$('#app').textContent.includes('PRIVATE CUSTOMER'));assert.equal($('#handover'),null);
+  assert.equal($('#panel-journal').hidden,true);$('[data-panel=journal]').click();assert.equal($('#panel-journal').hidden,false);$('[data-panel=tiles]').click();assert.equal($('#panel-journal').hidden,true);assert.equal($('#panel-tiles').hidden,false);
   const row=(await db.query('select id,version from pp_private.projects')).rows[0];
   const minted=await handle(new Request(origin+'/api/owner_key',{method:'POST',headers:{origin,cookie,'Content-Type':'application/json'},body:JSON.stringify({id:row.id,version:row.version})}),env);const key=(await minted.json()).owner_key;
   $('#owner-edit').click();$('#add-entry').click();input('#key',key);input('#owner-company-0','Huber Sanitär');input('#owner-name-0-0','Grohe Armatur');submit('#owner');await wait(()=>!$('#modal').open);
