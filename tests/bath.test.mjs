@@ -40,7 +40,9 @@ test('new editor → real API/SQL → handover; tenant isolation, immutable snap
  const db=new PGlite();await db.exec('create role anon;create role authenticated;create role service_role bypassrls;');
  for(const file of ['schema.sql','workflow.sql'])await db.exec(await readFile(new URL('../database/'+file,import.meta.url),'utf8'));
  const profile={name:'Test',email:'test@example.test',trade:'seamless',standards:{seamless:{surface:{manufacturer:'EPI',name:'Quartz R'},finish:{manufacturer:'EPI',name:'Corestone Sealer'}}}};
+ profile.standards.seamless.area_templates=[{name:'Duschwand',position:'walls',trade:'seamless',products:profile.standards.seamless},{name:'Badezimmerboden',position:'floor',trade:'seamless',products:{surface:{manufacturer:'Lamurista',name:'HardRock'},finish:{manufacturer:'Lamurista',name:'GoodLack wb'}}}].map(a=>({...a,products:structuredClone(a.products)}));
  await db.query('insert into pp_private.companies(id,profile) values($1,$2)',[cid,JSON.stringify(profile)]);await db.query('insert into pp_private.members(user_id,company_id) values($1,$2)',[actor,cid]);await db.query('insert into pp_private.passes(id,company_id,number,token) values($1,$2,1,$3)',[pass,cid,token]);
+ await db.exec("insert into pp_private.companies(id,profile) values('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','{\"name\":\"Foreign business\"}');insert into pp_private.members(user_id,company_id) values('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');");
  const rpc=async(op,who,args)=>(await db.query('select public.pp_api($1,$2,$3) result',[op,who,JSON.stringify(args)])).rows[0].result;
  let p=await rpc('activate',actor,{pass_id:pass,title:'Musterbad'});
  const origin='https://projektpass.example',env={APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'secret',SUPABASE_PUBLISHABLE_KEY:'public'};
@@ -52,16 +54,21 @@ test('new editor → real API/SQL → handover; tenant isolation, immutable snap
  let session;const $=s=>win.document.querySelector(s);const wait=async fn=>{for(let i=0;i<120;i++){if(fn())return;await new Promise(r=>setTimeout(r,10));}throw Error('UI timeout: '+$('#app').textContent);};
  try{
   const {bathEditor}=await import('../public/bath-editor.mjs');let destination;
+  const started=performance.now();
   session=await bathEditor(p.id,{api,shell:html=>$('#app').innerHTML=html,modal:()=>{},dashboard:{company:profile,company_version:1},go:value=>destination=value});
   $('#bath-next').click();await wait(()=>$('#bath-area-name'));
   assert.match($('#bath-body').textContent,/Quartz R/);assert.match($('#bath-body').textContent,/vorgeschlagen/);
   $('#bath-area-name').value='Duschwand';$('#bath-area-name').dispatchEvent(new win.Event('input'));
   $('#bath-palette-surface').value='Canvas';$('#bath-palette-surface').dispatchEvent(new win.Event('change'));
+  $('#bath-area').value='1';$('#bath-area').dispatchEvent(new win.Event('change'));
+  assert.match($('#bath-body').textContent,/HardRock/);
+  $('#bath-palette-surface').value='__custom__';$('#bath-palette-surface').dispatchEvent(new win.Event('change'));$('#bath-color-surface').value='Sonderfarbe Test';$('#bath-color-surface').dispatchEvent(new win.Event('input'));
   $('#bath-next').click();await wait(()=>$('[data-confirm-area]'));
-  $('[data-confirm-area]').click();await session.flush();p=await api('project',{id:p.id});
+  $('[data-confirm-area="0"]').click();$('[data-confirm-area="1"]').click();await session.flush();p=await api('project',{id:p.id});
   assert.equal(areaConfirmed(p.content.areas[0]),true);assert.equal(p.content.areas[0].products.surface.color,'Canvas');
   activeActor='22222222-2222-4222-8222-222222222222';await assert.rejects(api('project',{id:p.id}));await assert.rejects(api('handover',{id:p.id,version:p.version}));activeActor=actor;
   $('#bath-next').click();await wait(()=>destination?.startsWith('ready/'));
+  console.log('SIMULATION: prepared two-area bath, 10 UI actions, 0 backtracks, '+Math.round(performance.now()-started)+' ms incl. API/SQL and security checks; no human reading/typing time, no photo capture.');
   const scanned=await api('scan',{token});assert.equal(scanned.content.areas[0].name,'Duschwand');assert.equal(scanned.internal,undefined);
   const copy=customerCopy(scanned);await db.query('update pp_private.companies set profile=$1 where id=$2',[JSON.stringify({...profile,standards:{seamless:{surface:{name:'CHANGED'}}}}),cid]);
   assert.equal((await api('scan',{token})).content.areas[0].products.surface.name,'Quartz R');

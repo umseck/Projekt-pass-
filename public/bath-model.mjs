@@ -4,12 +4,14 @@ export const bathNames={surface:'Oberflächensystem',finish:'Versiegelung',water
 export const primaryFor=trade=>trade==='tile'?'tile':'surface';
 export const productFields=['manufacturer','name','color','format','article_number','batch','system_type','sheen'];
 export const productLabel=p=>[p?.manufacturer,p?.name].filter(Boolean).join(' ');
-export const productIdentity=p=>JSON.stringify(productFields.map(k=>p?.[k]||''));
+const clean=v=>String(v||'').trim();
+const canonicalURL=v=>{try{return v?new URL(clean(v)).href:'';}catch{return clean(v);}};
+export const productIdentity=p=>JSON.stringify(productFields.map(k=>clean(p?.[k])));
 export const materialBasis=a=>JSON.stringify((bathKinds[a.trade]||[]).map(k=>[k,productIdentity(a.products?.[k])]));
 export const careValid=a=>Boolean(a.care?.confirmed&&a.care.text&&a.care.source&&a.care.basis===materialBasis(a));
 // Change detector, not an access token or digital signature. Stable across validation.
 function revision(value){let x=2166136261,y=5381;for(const c of value){x=Math.imul(x^c.charCodeAt(0),16777619);y=Math.imul(y,33)^c.charCodeAt(0);}return (x>>>0).toString(16)+(y>>>0).toString(16);}
-export function areaBasis(a){return revision(JSON.stringify([a.name||'',a.position,a.trade,materialBasis(a),a.preparation||[],a.note||'',a.spares||'',a.photos||[],bathKinds[a.trade].map(k=>[k,(a.products?.[k]?.documents||[]).map(d=>['name','type','url','source','document_date','data'].map(f=>d[f]||''))]),['text','source','url','document_date','basis'].map(k=>a.care?.[k]||''),a.care?.confirmed===true]));}
+export function areaBasis(a){return revision(JSON.stringify([clean(a.name),a.position,a.trade,materialBasis(a),a.preparation||[],clean(a.note),clean(a.spares),a.photos||[],bathKinds[a.trade].map(k=>[k,(a.products?.[k]?.documents||[]).map(d=>['name','type','url','source','document_date','data'].map(f=>f==='url'?canonicalURL(d[f]):clean(d[f])))]),['text','source','url','document_date','basis'].map(k=>k==='url'?canonicalURL(a.care?.[k]):clean(a.care?.[k])),a.care?.confirmed===true]));}
 export const areaConfirmed=a=>Boolean(a.confirmation&&a.confirmation===areaBasis(a));
 export function newArea(trade='seamless',template={},name='Badezimmer',position='walls'){
  const products=Object.fromEntries(bathKinds[trade].map(k=>[k,{...structuredClone(template[k]||{}),color:'',batch:'',label_photo:''}]));

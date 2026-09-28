@@ -49,7 +49,7 @@ export function standard(value,kind){
  const v=obj(value);
  const keys=bathKinds[kind];
  return {...Object.fromEntries(keys.map(k=>{const p=product(v[k]);return [k,{...p,color:'',batch:'',label_photo:''}];})),
-  area_templates:list(v.area_templates,8,t=>({name:text(t.name,100),position:['walls','floor','both','other'].includes(t.position)?t.position:'walls',trade:trade(t.trade),products:Object.fromEntries(bathKinds[trade(t.trade)].map(k=>{const p=product(t.products?.[k]);return [k,{...p,color:'',batch:'',label_photo:''}];}))})),
+  area_templates:list(v.area_templates,8,t=>({name:text(t.name,100),position:['walls','floor','both','other'].includes(t.position)?t.position:'walls',trade:trade(t.trade),products:Object.fromEntries(bathKinds[trade(t.trade)].map(k=>{const p=product(t.products?.[k]);return [k,{...p,color:'',batch:'',label_photo:''}];})),care_template:{text:text(t.care_template?.text,2000),source:text(t.care_template?.source,300),url:url(t.care_template?.url),document_date:text(t.care_template?.document_date,80)}})),
   documents:list(v.documents,20,d=>({...fields(d,['name','type']),url:url(d.url)}))};
 }
 export function content(value){
