@@ -159,7 +159,7 @@ async function edit(id){
   bindForm('#project-document',async dialogForm=>{const v=fields(dialogForm);if(!safeLink(v['document-url']))throw Error('Bitte einen vollständigen http- oder https-Link eingeben.');$('#documents').value=docsText(mergeDocuments(parseDocs($('#documents').value),[{name:v['document-name'],type:'Unterlage',url:v['document-url']}]));changed();refreshOverview();$('#modal').close();});
  };
  function refreshOverview(){
-  const set=(key,value)=>$('[data-editor-summary="'+key+'"]').textContent=value;
+  const set=(key,value)=>{$('[data-editor-summary="'+key+'"]').textContent=value;const status=$('[data-step-status="'+key+'"]');if(status)status.textContent=value;};
   const area=$('#application_area')?.value;
   set('project',[$('#title').value,area==='other'?$('#application_area_custom').value:area].filter(Boolean).join(' · ')||'Projekt benennen');
   const products=trade.products.map(k=>[$('#'+k+'-manufacturer')?.value,$('#'+k+'-name')?.value].filter(Boolean).join(' ')).filter(Boolean);

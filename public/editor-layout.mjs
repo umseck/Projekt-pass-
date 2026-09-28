@@ -10,7 +10,9 @@ export function bindEditorSections(form){
  const sections=[...form.querySelectorAll('[data-editor-section]')],next=form.querySelector('#editor-next'),preview=form.querySelector('#preview'),progress=form.querySelector('#editor-progress');
  const materials=[...form.querySelectorAll('details[data-material]')];
  const rail=form.ownerDocument.createElement('nav');rail.className='editor-rail';rail.setAttribute('aria-label','Projektdokumentation');
- rail.innerHTML=steps.map((key,i)=>`<button type="button" data-editor-go="${key}"><span>${i+1}</span>${['Projekt','Material','Fotos','Übergabe'][i]}</button>`).join('');form.prepend(rail);
+ const icons=['<path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/>','<path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/>','<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/>','<path d="M8 5H5v16h14V5h-3"/><rect x="8" y="3" width="8" height="4" rx="1"/><path d="m8 14 3 3 5-6"/>'];
+ const descriptions=['Fläche, Untergrund & Vorbereitung','Oberfläche, Abdichtung & Fugen','Bilder, Merkblätter & Pflege','Nutzung prüfen & übergeben'];
+ rail.innerHTML=steps.map((key,i)=>`<button type="button" data-editor-go="${key}"><span class="step-card-top"><span class="step-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${icons[i]}</svg></span><span class="step-card-number">${i+1} / 4</span></span><strong>${['Projekt','Materialien','Fotos & Unterlagen','Übergabe'][i]}</strong><span class="step-card-description">${descriptions[i]}</span><span class="step-card-status" data-step-status="${key}">Noch offen</span></button>`).join('');form.prepend(rail);
  const overview=form.querySelector('.material-overview');if(overview)sections[1].querySelector('.editor-section-body').prepend(overview);
  const back=form.ownerDocument.createElement('button');back.type='button';back.id='editor-back';back.className='btn light';back.textContent='← Zurück';if(next)next.before(back);
  form.classList.add('guided-editor');
