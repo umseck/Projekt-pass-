@@ -16,10 +16,14 @@ export function bindEditorSections(form){
  const overview=form.querySelector('.material-overview');if(overview)sections[1].querySelector('.editor-section-body').prepend(overview);
  const back=form.ownerDocument.createElement('button');back.type='button';back.id='editor-back';back.className='btn light';back.textContent='← Zurück';if(next)next.before(back);
  form.classList.add('guided-editor');
+ const overviewBack=form.ownerDocument.createElement('button');overviewBack.type='button';overviewBack.className='btn text editor-overview-back';overviewBack.textContent='← Zur Übersicht';rail.after(overviewBack);
+ function showOverview(){form.dataset.editorView='overview';const current=rail.querySelector('[aria-current=step]');current?.focus({preventScroll:true});rail.scrollIntoView?.({block:'start',behavior:'auto'});}
+ overviewBack.onclick=showOverview;if(progress)progress.onclick=showOverview;
  let active=0;
  const nextMaterial=()=>{const i=materials.findIndex(m=>m.open);return materials[i+1]||null;};
  function controls(){form.dataset.activeStep=steps[active];back.hidden=active===0;rail.querySelectorAll('button').forEach((b,i)=>{if(i===active)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});materials.forEach(m=>{const button=form.querySelector('[data-material-jump="'+m.dataset.material+'"]');if(button)button.setAttribute('aria-current',String(active===1&&m.open));});if(progress)progress.textContent=`Schritt ${active+1} von 4 · ${labels[active]}`;if(next){next.hidden=active===3;next.textContent='Weiter: '+(active===1&&nextMaterial()?(nextMaterial().querySelector(':scope > summary strong')||nextMaterial().querySelector(':scope > summary')).textContent:labels[active+1])+' →';}if(preview)preview.hidden=active!==3;}
  function activate(section,move=false){
+  form.dataset.editorView='detail';
   active=sections.indexOf(section);sections.forEach(other=>other.open=other===section);
   if(active===1&&!section.querySelector('details[data-material][open]')){const first=section.querySelector('details[data-material]');if(first)first.open=true;}
   controls();if(move){const summary=section.querySelector(':scope > summary');summary.focus();section.scrollIntoView?.({block:'start',behavior:'auto'});}
@@ -30,5 +34,5 @@ export function bindEditorSections(form){
  if(next)next.onclick=()=>{const invalid=[...sections[active].querySelectorAll('input,select,textarea')].find(el=>!el.checkValidity());if(invalid){invalid.reportValidity();return;}if(active===1&&nextMaterial()){nextMaterial().querySelector(':scope > summary').click();return;}if(active<3)activate(sections[active+1],true);};
  for(const section of materials){const closeOthers=()=>materials.forEach(other=>{if(other!==section)other.open=false;});section.querySelector(':scope > summary').addEventListener('click',event=>{event.preventDefault();const opening=!section.open;if(opening)closeOthers();section.open=opening;controls();if(opening){section.querySelector(':scope > summary').focus();section.scrollIntoView?.({block:'start',behavior:'auto'});}});section.addEventListener('toggle',()=>{if(section.open)closeOthers();controls();});}
  form.addEventListener('invalid',event=>{const section=event.target.closest('[data-editor-section]');if(section)activate(section);for(let parent=event.target.parentElement;parent&&parent!==form;parent=parent.parentElement){if(parent.tagName==='DETAILS')parent.open=true;}},true);
- if(sections.length)activate(sections[0]);
+ if(sections.length)activate(sections[0]);form.dataset.editorView='overview';
 }

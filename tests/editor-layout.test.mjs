@@ -9,7 +9,11 @@ test('compact sections keep entered data and reveal invalid fields without openi
  const $=s=>win.document.querySelector(s),form=$('form');bindEditorSections(form);
  try{
   const sections=[...form.querySelectorAll('[data-editor-section]')];let scrolled=null;for(const section of sections)section.scrollIntoView=()=>scrolled=section;assert.equal(sections.length,4);assert.equal(sections[0].open,true);assert.ok(sections.slice(1).every(s=>!s.open));
+  assert.equal(form.dataset.editorView,'overview');
   $('[data-editor-section="project"] > summary').click();assert.equal(sections[0].open,true);
+  $('[data-editor-go="project"]').click();assert.equal(form.dataset.editorView,'detail');
+  $('.editor-overview-back').click();assert.equal(form.dataset.editorView,'overview');
+  $('[data-editor-go="project"]').click();
   $('#title').value='Bad Klement';
   $('#editor-next').click();assert.equal(sections[0].open,false);assert.equal(sections[1].open,true);assert.equal(scrolled,sections[1]);
   assert.equal($('[data-material="surface"]').open,true);
