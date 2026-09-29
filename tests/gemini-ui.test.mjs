@@ -27,7 +27,7 @@ test('390px DOM simulation: login, capture text/PDF, real persistence, edited pr
   await import('../public/ai-test.mjs?dom-test');assert.ok($('#test-login'));
   $('#login-email').value='developer@example.test';$('#login-password').value='testpassword';$('#test-login').dispatchEvent(new win.Event('submit',{cancelable:true}));await wait(()=>$('#test-create'));
   $('#test-trade').value='tile';$('#test-create').dispatchEvent(new win.Event('submit',{cancelable:true}));await wait(()=>$('#capture'));
-  await new Promise(r=>setTimeout(r,30));$('#capture-text').value='Zwei Kartons im Keller';$('#capture').dispatchEvent(new win.Event('submit',{cancelable:true}));await wait(()=>$('[data-review]'));
+  await wait(()=>$('#input-list')?.textContent.includes('Noch keine Eingaben'));await new Promise(r=>setTimeout(r,0));$('#capture-text').value='Zwei Kartons im Keller';$('#capture').dispatchEvent(new win.Event('submit',{cancelable:true}));await wait(()=>$('[data-review]'));
   assert.equal(memory.size,0);assert.equal(Object.values((await store.read()).inputs)[0].state,'review');
   await new Promise(r=>setTimeout(r,30));$('[data-text]').value='Drei Kartons im Keller';$('[data-confirm]').checked=true;$('[data-review]').dispatchEvent(new win.Event('submit',{cancelable:true}));await wait(()=>win.document.body.textContent.includes('Ausdrücklich übernommen'));
   await new Promise(r=>setTimeout(r,20));click('#test-customer');await wait(()=>$('.customer-dossier'));
@@ -35,7 +35,7 @@ test('390px DOM simulation: login, capture text/PDF, real persistence, edited pr
   await new Promise(r=>setTimeout(r,20));click('#test-intake');await wait(()=>$('#capture-file'));
   await new Promise(r=>setTimeout(r,30));const pdf=new win.File(['%PDF-1.4\n%%EOF'],'Etikett.pdf',{type:'application/pdf'});Object.defineProperty($('#capture-file'),'files',{value:[pdf]});$('#capture-file').dispatchEvent(new win.Event('change'));await wait(()=>$('#capture-files').textContent.includes('Etikett.pdf'));
   $('#capture-internal').checked=true;$('#capture-text').value='INTERNAL-PDF';await new Promise(r=>setTimeout(r,20));$('#capture').dispatchEvent(new win.Event('submit',{cancelable:true}));await wait(()=>win.document.body.textContent.includes('Intern – keine KI'));
-  await new Promise(r=>setTimeout(r,20));click('#test-manual');await wait(()=>$('#bath-next'));click('#bath-next');await wait(()=>$('#bath-area'));
+  await new Promise(r=>setTimeout(r,20));click('#test-manual');await wait(()=>$('#bath-area'));
   assert.equal($('#bath-area').options.length,2);assert.ok($('[data-bath-product="tile"]'));
   console.log('SIMULATION: 390×844 DOM, text capture → stubbed Gemini → human edit → persisted customer view; PDF internal upload; no visual layout or microphone proof.');
  }finally{globalThis.fetch=originalFetch;globalThis.indexedDB=originalIDB;for(const [key,descriptor] of Object.entries(savedGlobals)){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else delete globalThis[key];}await win.happyDOM.close();}

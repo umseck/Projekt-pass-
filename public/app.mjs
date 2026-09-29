@@ -1,3 +1,4 @@
+import {attachAIEntry as mountAIEntry} from './ai-entry.mjs';
 import {createFavoritesEditor} from './favorites-editor.mjs';
 import {createAutosave} from './autosave.mjs';
 import {handoverReview,missingColors} from './handover-review.mjs';
@@ -62,7 +63,7 @@ function home(){
  }).join('')||'<p class="empty">Hier erscheinen Ihre Projekte. Beginnen Sie mit einem freien Pass.</p>';};render('');$('#search').oninput=e=>render(e.target.value);
 }
 function passes(){
- shell(`<section class="admin-title"><a href="#home" class="btn text">← Meine Projekte</a><h1>Ihre Projektpässe.</h1><p class="muted">Wählen Sie einen Pass zum Aktivieren oder Verwalten. Weitere Pässe können Sie jederzeit hinzufügen.</p><button class="btn olive spaced" id="add-passes">+ Pässe hinzufügen</button><div class="pass-grid spaced">${dashboard.passes.map(p=>p.disabled?`<span class="pass-card used" aria-disabled="true"><strong>${num(p.number)}</strong><small>Stillgelegt</small></span>`:`<a class="pass-card ${p.project_id?'used':''}" href="${p.project_id?'#edit/'+p.project_id:'#activate/'+p.id}"><strong>${num(p.number)}</strong><small>${p.project_id?'Aktiviert':'Frei'}</small></a>`).join('')}</div><section class="section"><button class="btn light" id="export-pass-links">NFC-Links herunterladen</button><p class="hint">Schreiben Sie den jeweiligen Link auf den passenden NFC-Tag oder verwenden Sie ihn für Ihren QR-Code. Der Kundenlink zeigt Projektdaten erst nach der Übergabe.</p></section></section>`);
+ shell(`<section class="admin-title"><a href="#home" class="btn text">← Meine Projekte</a><h1>Ihre Projektpässe.</h1><p class="muted">Wählen Sie einen Pass zum Aktivieren oder Verwalten. Weitere Pässe können Sie jederzeit hinzufügen.</p><button class="btn olive spaced" id="add-passes">+ Pässe hinzufügen</button><div class="pass-grid spaced">${dashboard.passes.map(p=>p.disabled?`<span class="pass-card used" aria-disabled="true"><strong>${num(p.number)}</strong><small>Stillgelegt</small></span>`:`<a class="pass-card ${p.project_id?'used':''}" href="${p.project_id?'#bath/'+p.project_id:'#activate/'+p.id}"><strong>${num(p.number)}</strong><small>${p.project_id?'Aktiviert':'Frei'}</small></a>`).join('')}</div><section class="section"><button class="btn light" id="export-pass-links">NFC-Links herunterladen</button><p class="hint">Schreiben Sie den jeweiligen Link auf den passenden NFC-Tag oder verwenden Sie ihn für Ihren QR-Code. Der Kundenlink zeigt Projektdaten erst nach der Übergabe.</p></section></section>`);
  $('#export-pass-links').onclick=()=>download('Projektpass-NFC-Links.json',dashboard.passes.filter(p=>!p.disabled).map(p=>({nummer:p.number,link:location.origin+'/#p/'+p.token})));
  $('#add-passes').onclick=()=>{
   const requestId=crypto.randomUUID();
@@ -72,9 +73,9 @@ function passes(){
 }
 function activate(id){
  const pass=dashboard.passes.find(p=>p.id===id||p.token===id);if(!pass)throw Error('Dieser Pass gehört nicht zu Ihrem Betrieb.');
- if(pass.project_id){go('edit/'+pass.project_id);return;}if(pass.disabled)throw Error('Dieser Pass wurde stillgelegt. Bitte einen freien Pass wählen.');
+ if(pass.project_id){go('bath/'+pass.project_id);return;}if(pass.disabled)throw Error('Dieser Pass wurde stillgelegt. Bitte einen freien Pass wählen.');
  shell(`<section class="admin-title"><a class="btn text" href="#passes">← Ihre Pässe</a>${steps(0)}<span class="eyebrow">Aktivieren</span><h1>Projektpass ${num(pass.number)}</h1><p class="intro">Was soll Ihr Kunde später noch wissen?</p><form id="activate" class="spaced">${dashboard.company.standards?.[dashboard.company.trade||'tile']?`<aside class="standard-start"><strong>Mit meinem üblichen Aufbau starten</strong><p>${tradeFor(dashboard.company.trade).products.map(k=>dashboard.company.standards[dashboard.company.trade||'tile'][k]).filter(hasProduct).map(p=>esc([p.manufacturer,p.name].filter(Boolean).join(' '))).join(' · ')}</p><span class="hint">Wird vorausgefüllt. Fläche und Farbtöne ergänzen Sie im nächsten Schritt.</span></aside>`:''}${field('Wie heißt das Projekt?','title','','text','required maxlength="150" placeholder="Bad Familie Müller"')}${message}<button class="btn olive wide" type="submit">Aktivieren →</button></form></section>`);
- bindForm('#activate',async form=>{const p=await api('activate',{pass_id:pass.id,title:fields(form).title});dirty=false;go('edit/'+p.id);});
+ bindForm('#activate',async form=>{const p=await api('activate',{pass_id:pass.id,title:fields(form).title});dirty=false;go('bath/'+p.id);});
 }
 function favoriteButtons(kind,favorites=[]){
  const preferred=new Set((dashboard?.company?.preferred_manufacturers||[]).map(m=>m.toLocaleLowerCase('de'))),indexed=favorites.map((v,i)=>({v,i}));
@@ -358,7 +359,7 @@ async function settings(){
  const saved=await api('company_save',{profile,version:dashboard.company_version});Object.assign(dashboard,saved);dirty=false;notify('Betriebsprofil gespeichert.');go('home');});
 }
 let previousHash=location.hash,allowNavigation=false,reviewEditTarget=null;
-function attachAIEntry(id,runId){fetch('/api/ai/capability',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(r=>r.ok?r.json():null).then(v=>{if(!v?.allowed||runId!==routeVersion)return;const tidet=$('.admin-title')||$('#bath-editor');if(tidet){const a=document.createElement('a');a.className='btn olive wide spaced';a.href='#ai/'+id;a.textContent='Foto, Sprachnotiz oder Nachricht hinzufügen …';tidet.append(a);}}).catch(()=>{});}
+function attachAIEntry(id,runId){mountAIEntry(id,{root:$('#bath-editor')||$('.admin-title'),isCurrent:()=>runId===routeVersion});}
 async function render(){
  editorSession?.dispose();editorSession=null;
  const runId=++routeVersion;const loading=document.querySelector('#route-status');if(loading){loading.textContent='Seite wird geladen …';loading.hidden=false;}const [route,arg]=location.hash.slice(1).split('/');if($('#modal').open)$('#modal').close();

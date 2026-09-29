@@ -24,7 +24,8 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
  try{
   await import('../public/app.mjs?integration');await wait(()=>$('#login'));
   input('#email','installer@example.test');input('#password','pass');submit('#login');await wait(()=>$('#search'));
-  win.location.hash='activate/'+pid;await wait(()=>$('#activate'));input('#title','Bad Maier');submit('#activate');await wait(()=>$('#edit'));
+  win.location.hash='activate/'+pid;await wait(()=>$('#activate'));// Exercise the retained legacy editor with a fresh project fixture; new UI activations now open the compact editor.
+   const activated=await (await globalThis.fetch('/api/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pass_id:pid,title:'Bad Maier'})})).json();win.location.hash='edit/'+activated.id;await wait(()=>$('#edit'));
   const initial=(await db.query('select id from pp_private.projects')).rows[0];
   await db.query('update pp_private.projects set content=content || $1::jsonb where id=$2',[JSON.stringify({tile:{name:'Altes Material',article_number:'ALT-123',batch:'ALT-CHARGE',label_photo:'data:image/jpeg;base64,/9j/AA=='},spare_materials:[{material:'Fliesen',quantity:'2',location:'Keller',photo:''},{material:'Reservefuge',quantity:'1 kg',location:'Garage',photo:''}]}),initial.id]);
   win.location.hash='home';await wait(()=>$('#search'));win.location.hash='edit/'+initial.id;await wait(()=>$('#edit'));
