@@ -1,3 +1,5 @@
+> **Aktueller Online-Weg:** Die KI ist jetzt in den bestehenden Projektpass integriert. Einrichtung und neue Tests stehen in `GEMINI_INTEGRATION.md`. Die folgende Anleitung beschreibt den weiterhin verfügbaren lokalen Entwicklungsserver.
+
 # PROJEKTPASS – privater Gemini-Entwicklungstest
 
 Stand: 29.09.2026. Branch: `feature/gemini-private-test`.

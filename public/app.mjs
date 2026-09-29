@@ -358,6 +358,7 @@ async function settings(){
  const saved=await api('company_save',{profile,version:dashboard.company_version});Object.assign(dashboard,saved);dirty=false;notify('Betriebsprofil gespeichert.');go('home');});
 }
 let previousHash=location.hash,allowNavigation=false,reviewEditTarget=null;
+function attachAIEntry(id,runId){fetch('/api/ai/capability',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(r=>r.ok?r.json():null).then(v=>{if(!v?.allowed||runId!==routeVersion)return;const tidet=$('.admin-title')||$('#bath-editor');if(tidet){const a=document.createElement('a');a.className='btn olive wide spaced';a.href='#ai/'+id;a.textContent='Foto, Sprachnotiz oder Nachricht hinzufügen …';tidet.append(a);}}).catch(()=>{});}
 async function render(){
  editorSession?.dispose();editorSession=null;
  const runId=++routeVersion;const loading=document.querySelector('#route-status');if(loading){loading.textContent='Seite wird geladen …';loading.hidden=false;}const [route,arg]=location.hash.slice(1).split('/');if($('#modal').open)$('#modal').close();
@@ -374,9 +375,11 @@ async function render(){
   if(route==='catalog'){await catalogPage({shell,isCurrent:()=>runId===routeVersion});return;}
   if(dashboard.role==='operator'&&!dashboard.company){if(route==='home'){await operatorPage('admin',null,operatorContext());return;}go('admin');return;}
   if(dashboard.company?.onboarding_complete===false&&route!=='settings'){go('settings');return;}
-  if(route==='bath'){const {bathEditor}=await import('./bath-editor.mjs');editorSession=await bathEditor(arg,{...flowContext,go,dashboard});return;}
+  if(route==='ai'){const {mountAIProject}=await import('./ai-project.mjs');editorSession=await mountAIProject(arg,{...flowContext,go,dashboard});return;}
+  if(route==='bath'){const {bathEditor}=await import('./bath-editor.mjs');editorSession=await bathEditor(arg,{...flowContext,go,dashboard});attachAIEntry(arg,runId);return;}
   if(route==='work')await workflowPage(arg,flowContext);else if(route==='home')home();else if(route==='passes')passes();else if(route==='activate')activate(arg);else if(route==='edit')await edit(arg);else if(route==='preview')await customer(arg,true);else if(route==='settings')await settings();else if(route==='ready'){const p=await api('project',{id:arg});if(p.status!=='handed_over')throw Error('Bitte das Projekt zuerst übergeben.');handoverReady(p);}else throw Error('Diese Seite wurde nicht gefunden.');
   window.scrollTo(0,0);
+  if(['work','edit'].includes(route))attachAIEntry(arg,runId);
   if(route==='edit'&&$('#edit')){const link=document.createElement('a');link.className='btn light spaced';link.href='#bath/'+arg;link.textContent='Flächenbezogenen Bad-Ablauf öffnen →';$('#edit').before(link);}
   if(route==='edit'&&reviewEditTarget){const target=reviewEditTarget;reviewEditTarget=null;const section=$('[data-editor-section="'+(['project','files','handover'].includes(target)?target:'materials')+'"]');section?.querySelector(':scope > summary').click();if(['project','files','handover'].includes(target))return;const card=$('[data-material="'+(target==='finish'?'surface':target)+'"]')||$('[data-material="surface"]');if(target==='finish')$('[data-material="finish"] .material-edit').open=true;if(card){if(!card.open)card.querySelector(':scope > summary').click();card.scrollIntoView?.({block:'start',behavior:'auto'});card.querySelector('summary').focus();}}
  }catch(e){
