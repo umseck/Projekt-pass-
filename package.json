@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:setup": "node scripts/private-test-setup.mjs",
+    "test:private": "node scripts/private-test.mjs",
     "test": "node --test tests/*.test.mjs",
     "check": "node scripts/preflight.mjs"
   },

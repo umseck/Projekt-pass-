@@ -3,3 +3,6 @@ generated/
 launch.local.json
 node_modules/
 supabase/.temp/
+.env*
+!.env.example
+.private-test/
