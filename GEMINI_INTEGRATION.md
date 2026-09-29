@@ -4,7 +4,9 @@ Die neue Eingabe liegt unter `/#ai/PROJEKT-ID` innerhalb der bestehenden Anwendu
 
 ## Bereitstellungsstatus
 
-Der Code ist vorbereitet und automatisiert geprüft. Die automatische Freigabeprüfung hat die additive Migration auf `PROJEKTPASS Pilot` abgelehnt und verlangt eine ausdrückliche Zustimmung zur Änderung dieses konkreten Datenbankschemas und seiner Zugriffsrechte. Die Migration wurde **nicht ausgeführt**, eine Entwicklerfreigabe wurde **nicht angelegt** und die Liveversion wurde **nicht aktualisiert**. Erst nach dieser Freigabe folgen Migration, überprüfte Konto-Freigabe und Veröffentlichung. Das Secret allein aktiviert die Integration vorher nicht.
+Nach ausdrücklicher Nutzerfreigabe am 29.09.2026: Migration `projectpass_private_ai_integration` im Projekt PROJEKTPASS Pilot erfolgreich ausgeführt. Ausschließlich der verifizierte Klement-Account wurde freigeschaltet. Datenbankprüfung bestätigt: anderer Account nicht freigeschaltet; anon und authenticated können die RPC nicht aufrufen. Die beiden privaten Tabellen haben bewusst keine Browser-RLS-Policies; nur der serverseitige service_role-Zugang darf darauf zugreifen. Der Advisor nennt außerdem die bereits bestehende deaktivierte Prüfung kompromittierter Passwörter.
+
+Der geprüfte Codecommit `5eae2ab30113097cdc4a509d04a69e29efbc5712` wurde ohne Force auf main veröffentlicht. Die Liveadresse liefert die neue HTML-Version mit `ai-project.css` aus. Ein echter Gemini-Aufruf und der angemeldete Liveablauf sind noch nicht nachgewiesen; dafür fehlt weiterhin das serverseitige Secret GEMINI_API_KEY.
 
 ## Zugang und Einrichtung
 
