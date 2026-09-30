@@ -11,6 +11,8 @@ begin
   select * into person from pp_private.participants where token=args->>'token' and not revoked;
   if person.id is null then raise exception 'PP_NOT_FOUND'; end if;
   select * into p from pp_private.projects where id=person.project_id;
+ -- Legacy owner-journal lookup retained for existing database compatibility;
+ -- no current application operation routes here.
  elsif op='flow_owner_entry' then
   select p0.* into p from pp_private.projects p0 join pp_private.passes s on s.id=p0.pass_id where s.token=args->>'token' and not s.disabled and p0.status='handed_over';
   if p.id is null then raise exception 'PP_NOT_FOUND'; end if;
@@ -77,6 +79,8 @@ begin
     'Im Projekt „'||p.title||'“ gibt es eine Rückmeldung. Ansehen und antworten: '||(args->>'origin')||'/#work/'||p.id) on conflict(event_id,email) do nothing;
   end if;
   return jsonb_build_object('ok',true,'dispatch_project',p.id,'dispatch_actor',(select user_id from pp_private.members where company_id=p.company_id limit 1));
+ -- Legacy journal write branch retained for existing database compatibility.
+ -- The application server no longer accepts these operations.
  elsif op in ('flow_entry','flow_owner_entry') then
   if p.status<>'handed_over' then raise exception 'PP_NOT_HANDED_OVER'; end if;
   if (select count(*) from pp_private.journal where project_id=p.id and created_at>now()-interval '1 hour')>=30 then raise exception 'PP_RATE_LIMIT'; end if;
@@ -106,7 +110,6 @@ begin
  return jsonb_build_object('id',p.id,'title',p.title,'status',p.status,'snapshot',p.handover_snapshot,
   'participants',coalesce((select jsonb_agg(to_jsonb(x)-'token'-'project_id' order by x.created_at) from pp_private.participants x where x.project_id=p.id),'[]'),
   'messages',coalesce((select jsonb_agg(to_jsonb(m)-'project_id' order by m.created_at desc) from pp_private.messages m where m.project_id=p.id),'[]'),
-  'journal',coalesce((select jsonb_agg(to_jsonb(j)-'project_id' order by j.performed_on desc,j.created_at desc) from pp_private.journal j where j.project_id=p.id),'[]'),
   'mail',coalesce((select jsonb_agg(jsonb_build_object('id',o.id,'email',o.email,'status',o.status,'attempts',o.attempts,'created_at',o.created_at) order by o.created_at desc) from pp_private.mail_outbox o where o.project_id=p.id),'[]'));
 end;$$;
 revoke all on function public.pp_flow(text,uuid,jsonb) from public,anon,authenticated;

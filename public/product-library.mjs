@@ -1,5 +1,5 @@
 import {esc,field,fields,safeLink} from './ui.mjs';
-import {mergeDocuments,setCompanyCatalog} from './catalog.mjs';
+import {mergeDocuments,setCompanyCatalog} from './catalog.mjs?v=20260930-materials2';
 const key=p=>[p.manufacturer,p.name,p.article_number].map(x=>(x||'').trim().toLocaleLowerCase('de')).join('|');
 export function upsertProduct(favorites,kind,item){
  const result=structuredClone(favorites||{}),items=result[kind]||[],index=items.findIndex(p=>key(p)===key(item));
@@ -21,6 +21,6 @@ export function saveProductDialog(kind,item,documents,ctx){
   ctx.includeDocuments(chosen);
   await ctx.saveProject();
   const result=await ctx.api('company_save',{profile:{...ctx.dashboard.company,favorites},version:ctx.dashboard.company_version});
-  Object.assign(ctx.dashboard,result);setCompanyCatalog(ctx.dashboard.company);document.querySelector('#modal').close();ctx.notify('Produkt im Betriebskatalog gespeichert. Das Projekt ist ebenfalls gespeichert.');
+  Object.assign(ctx.dashboard,result);setCompanyCatalog({...ctx.dashboard.company,favorites});document.querySelector('#modal').close();ctx.notify('Produkt im Betriebskatalog gespeichert. Das Projekt ist ebenfalls gespeichert.');
  });
 }

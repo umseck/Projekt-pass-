@@ -63,7 +63,8 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    await wait(()=>win.document.querySelectorAll('.pass-card').length===120);
    assert.ok($('#export-pass-links'));assert.equal((await db.query('select count(*)::int n from pp_private.passes')).rows[0].n,120);
    const pass=(await db.query('select id,token from pp_private.passes where number=120')).rows[0];
-   win.location.hash='activate/'+pass.id;await wait(()=>$('#activate'));input('#title','Fugenloses Testbad');submit('#activate');await wait(()=>$('#edit'));
+   win.location.hash='activate/'+pass.id;await wait(()=>$('#activate'));// Exercise the retained legacy editor with a fresh project fixture; new UI activations now open the compact editor.
+   const activated=await (await globalThis.fetch('/api/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pass_id:pass.id,title:'Fugenloses Testbad'})})).json();win.location.hash='edit/'+activated.id;await wait(()=>$('#edit'));
    assert.equal(win.document.querySelectorAll('[data-editor-section]').length,4);
    assert.equal($('#primer-name'),null);
    assert.equal(win.document.querySelectorAll('details[data-material]').length,3);

@@ -66,3 +66,11 @@
 .favorite-shortcuts .chip{color:var(--ink)}
 
 @media screen and (max-width:600px){.autosave-bar #editor-progress{grid-column:1 / -1;grid-row:1}.autosave-bar #save-status{grid-column:1;grid-row:2}.autosave-bar #preview,.autosave-bar #editor-next{grid-column:2;grid-row:2;min-width:0;padding-inline:10px}.autosave-bar #save:not([hidden]){grid-row:3}}
+/* iPhone: the fixed editor footer must never squeeze action labels into one character per line. */
+@media screen and (max-width:600px){
+ .autosave-bar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.8fr)!important;grid-auto-flow:row;align-items:center;gap:8px!important;overflow:visible!important}
+ .autosave-bar #editor-progress{grid-column:1 / -1!important;grid-row:1!important;width:100%;white-space:normal;overflow-wrap:normal;word-break:normal}
+ .autosave-bar #save-status{grid-column:1!important;grid-row:2!important;min-width:0;white-space:normal;overflow-wrap:normal;word-break:normal}
+ .autosave-bar #editor-next,.autosave-bar #preview{grid-column:2!important;grid-row:2!important;width:100%!important;min-width:0!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;writing-mode:horizontal-tb!important;line-height:1.25;padding:10px 8px!important}
+ .autosave-bar #save:not([hidden]){grid-column:1 / -1!important;grid-row:3!important;width:100%!important}
+}

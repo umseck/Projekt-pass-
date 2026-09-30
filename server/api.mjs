@@ -3,9 +3,9 @@ import {HttpError,validate,text,email,fail} from './validation.mjs';
 import {areaIssues} from '../public/bath-model.mjs';
 
 const COOKIE='__Host-pp_session';
-const publicOps=new Set(['flow_portal','flow_reply','flow_owner_entry','scan','owner_save','access_info','access_activate']);
+const publicOps=new Set(['flow_portal','flow_reply','scan','owner_save','access_info','access_activate']);
 const controlOps=new Set(['bootstrap','passes_add','operator_list','operator_company','operator_create','operator_save','operator_invite','access_info','access_begin','access_redeem']);
-const flowOps=new Set(['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_resolve','flow_post','flow_entry','flow_owner_entry','flow_dispatch']);
+const flowOps=new Set(['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_resolve','flow_post','flow_dispatch']);
 const operations=new Set([...flowOps,'company_save','activate','project','preview','save','handover','owner_key','visibility','delete',...controlOps,...publicOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
@@ -93,7 +93,7 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        if(!actor)throw new HttpError(401,'Bitte erneut anmelden.');
      }
      let ownerKey;
-     if(op==='owner_save'||op==='flow_owner_entry'){args.key_hash=await hash(args.key);delete args.key;}
+     if(op==='owner_save'){args.key_hash=await hash(args.key);delete args.key;}
      if(op==='owner_key'){ownerKey=randomToken();args.key_hash=await hash(ownerKey);}
      if(op==='operator_create')args.tokens=Array.from({length:20},()=>randomToken());
      if(op==='passes_add')args.tokens=Array.from({length:args.quantity},()=>randomToken());
@@ -130,10 +130,9 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        if(code.includes('PP_RATE_LIMIT'))throw new HttpError(429,'Zu viele Versuche. Bitte in 15 Minuten erneut versuchen.');
        if(code.includes('PP_ACCOUNT_IN_USE'))throw new HttpError(409,'Dieser Zugang gehört bereits zu einem anderen Betrieb. Bitte eine andere E-Mail-Adresse verwenden.');
        if(code.includes('PP_ALREADY_ACTIVE'))throw new HttpError(409,'Für diesen Betrieb ist bereits ein Zugang eingerichtet.');
-       if(code.includes('PP_HANDOVER_LOCKED'))throw new HttpError(409,'Die Übergabe ist abgeschlossen. Bitte eine Ergänzung oder Korrektur im Scheckheft eintragen.');
+       if(code.includes('PP_HANDOVER_LOCKED'))throw new HttpError(409,'Die Übergabe ist abgeschlossen. Der Kundenpass bleibt unverändert.');
        if(code.includes('PP_PARTICIPANT_EXISTS'))throw new HttpError(409,'Diese E-Mail-Adresse ist bereits beteiligt.');
        if(code.includes('PP_LIMIT'))throw new HttpError(400,'Das Limit für diesen Projektbereich ist erreicht.');
-       if(code.includes('PP_NOT_HANDED_OVER'))throw new HttpError(400,'Das Scheckheft öffnet sich nach der Übergabe.');
        if(code.includes('PP_CONFLICT'))throw new HttpError(409,'Es gibt einen neueren Stand. Ihre Eingaben sind noch hier. Kopieren Sie Änderungen und laden Sie das Projekt neu.');
        if(code.includes('PP_NOT_FOUND'))throw new HttpError(404,controlOps.has(operation)?'Dieser Betrieb wurde nicht gefunden.':'Dieser Projektpass ist noch nicht übergeben oder derzeit nicht freigegeben.');
        if(code.includes('PP_FORBIDDEN'))throw new HttpError(403,'Für diesen Bereich fehlt die Berechtigung.');

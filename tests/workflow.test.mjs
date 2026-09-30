@@ -5,7 +5,7 @@ import {PGlite} from '@electric-sql/pglite';
 import {createHandler} from '../server/api.mjs';
 import {dispatchMail} from '../server/mail.mjs';
 import {Window} from 'happy-dom';
-import {workflowPage,participantPage,ownerEntry} from '../public/workflow.mjs';
+import {workflowPage,participantPage} from '../public/workflow.mjs';
 const origin='https://projektpass.example',actor='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
 const cid='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const wait=async fn=>{for(let i=0;i<200;i++){if(fn())return;await new Promise(r=>setTimeout(r,15));}throw Error('UI state not reached');};
@@ -24,7 +24,7 @@ async function setup(){
  const api=async(op,args)=>{const r=await request(op,args);if(r.status!==200)throw Error(r.body.error);return r.body;};
  return {db,rpc,p,api,request,env,sends};
 }
-test('workflow privacy, scoped recipients, invitation retry, revocation, frozen handover and owner journal',async()=>{
+test('workflow privacy, scoped recipients, invitation retry, revocation and frozen handover',async()=>{
  const {db,rpc,p,request,env,sends}=await setup();
  try{
  const project_id=p.id,id=crypto.randomUUID();
@@ -43,16 +43,13 @@ test('workflow privacy, scoped recipients, invitation retry, revocation, frozen 
  const reply=await request('flow_reply',{token,id:crypto.randomUUID(),body:'Frage',recipients:[id],internal:true},null);assert.equal(reply.status,200);
  assert.equal((await request('flow_get',{project_id})).body.messages.length,3);
  const entry={project_id,id:crypto.randomUUID(),kind:'Wartung',title:'Kontrolle',body:'Geprüft',performed_on:'2026-09-26'};
- assert.equal((await request('flow_entry',entry)).status,400);
+ assert.equal((await request('flow_entry',entry)).status,404);
  let current=await rpc('save',actor,{id:p.id,version:p.version,title:'Testbad',content:{trade:'seamless',surface:{name:'Quartz R'}},internal:{name:'Privat'}});
  current=await rpc('handover',actor,{id:p.id,version:current.version});
  assert.equal(current.handover_snapshot.content.surface.name,'Quartz R');
  assert.equal((await request('save',{id:p.id,version:current.version,title:'Geändert',content:{surface:{name:'Anders'}},internal:{}})).status,409);
- assert.equal((await request('flow_entry',entry)).status,200);assert.equal((await request('flow_entry',entry)).status,200);
- const keyed=await request('owner_key',{id:p.id,version:current.version});assert.equal(keyed.status,200);
- assert.equal((await request('flow_owner_entry',{...entry,id:crypto.randomUUID(),token:'a'.repeat(64),key:'b'.repeat(64)},null)).status,403);
- assert.equal((await request('flow_owner_entry',{...entry,id:crypto.randomUUID(),token:'a'.repeat(64),key:keyed.body.owner_key},null)).status,200);
- const customer=(await request('scan',{token:'a'.repeat(64)},null)).body;assert.equal(customer.journal.length,2);assert.equal(customer.journal[0].source==='business'||customer.journal[0].source==='owner',true);assert.equal(customer.content.surface.name,'Quartz R');assert.ok(!JSON.stringify(customer).includes('GEHEIM'));assert.equal(customer.messages,undefined);
+ assert.equal((await request('flow_owner_entry',{...entry,id:crypto.randomUUID(),token:'a'.repeat(64),key:'b'.repeat(64)},null)).status,404);
+ const customer=(await request('scan',{token:'a'.repeat(64)},null)).body;assert.equal(customer.journal,undefined);assert.equal(customer.content.surface.name,'Quartz R');assert.ok(!JSON.stringify(customer).includes('GEHEIM'));assert.equal(customer.messages,undefined);
  env.RESEND_API_KEY='test';env.MAIL_FROM='Projektpass <noreply@example.test>';
  const sent=await request('flow_dispatch',{project_id});assert.equal(sent.status,200);assert.equal(sends.length,2);assert.ok(sends.every(x=>x.to.length===1));assert.ok(sends.every(x=>!x.text.includes('GEHEIM')));
  await request('flow_dispatch',{project_id});assert.equal(sends.length,2);
@@ -69,7 +66,7 @@ test('mailer records failures honestly and uses stable idempotency keys for retr
  const fetcher=async(url,args)=>{keys.push(args.headers['Idempotency-Key']);return Response.json({id:'provider'});};
  assert.equal((await dispatchMail(env,rpc,actor,'p',fetcher)).sent,1);assert.equal((await dispatchMail(env,rpc,actor,'p',fetcher)).sent,0);assert.equal(keys[0],'projektpass-'+job.id);
 });
-test('real workflow UI adds participant, posts a scoped message, opens private portal and publishes journal after handover',async()=>{
+test('real workflow UI adds participant, posts a scoped message and opens private portal after handover',async()=>{
  const {db,p,api,rpc}=await setup();const win=new Window({url:origin+'/#work/'+p.id});win.document.body.innerHTML='<main id="app"></main><dialog id="modal"></dialog>';
  globalThis.document=win.document;globalThis.window=win;globalThis.FormData=win.FormData;globalThis.confirm=()=>true;
  const $=(s,r=win.document)=>r.querySelector(s),input=(id,value)=>{$(id).value=value;},submit=id=>$(id).dispatchEvent(new win.Event('submit',{cancelable:true}));
@@ -82,9 +79,8 @@ test('real workflow UI adds participant, posts a scoped message, opens private p
  const token=$('#participant-link').value.split('/').pop();$('#modal').close();
  input('#entry-body','Abdichtung fertig');$('[name="recipient"]').checked=true;submit('#message-form');await wait(()=>$('#app').textContent.includes('Abdichtung fertig')&&!$('#entry-body').value);
  await participantPage(token,ctx);assert.ok($('#app').textContent.includes('Abdichtung fertig'));input('#entry-body','Danke');submit('#reply-form');await wait(()=>$('#app').textContent.includes('Danke')&&!$('#entry-body').value);
- const current=await rpc('project',actor,{id:p.id});await rpc('handover',actor,{id:p.id,version:current.version});await workflowPage(p.id,ctx);assert.ok($('#new-entry'));
- $('#new-entry').click();input('#entry-title','Silikon kontrolliert');input('#journal-body','Keine Auffälligkeiten');submit('#journal-form');await wait(()=>$('#app').textContent.includes('Silikon kontrolliert'));
- const customer=await rpc('scan',null,{token:'a'.repeat(64)});assert.equal(customer.journal.length,1);assert.equal(customer.journal[0].body,'Keine Auffälligkeiten');
+ const current=await rpc('project',actor,{id:p.id});await rpc('handover',actor,{id:p.id,version:current.version});await workflowPage(p.id,ctx);assert.equal($('#new-entry'),null);assert.equal($('#journal-section'),null);assert.ok($('#app').textContent.includes('Mitteilungen'));
+ const customer=await rpc('scan',null,{token:'a'.repeat(64)});assert.equal(customer.journal,undefined);
  }finally{await win.happyDOM.abort();win.close();await db.close();}
 });
 

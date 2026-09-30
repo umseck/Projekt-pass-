@@ -174,6 +174,6 @@ Aktuelle Primärquellen für die Umsetzung:
 
 Die Oberfläche führt durch **Aktivieren → Bauphase → Übergabe**. Im Projekt kann der Betrieb die Materialauswahl für neue Projekte speichern; Farbe, Charge, Etiketten und Projektdaten bleiben individuell. Abweichungen sind über „Produkt ändern“ möglich. Bei bestehenden Installationen aktualisiert `database/standards.sql` die beiden RPC-Funktionen, ohne Projektdaten zu ändern. Neue Installationen verwenden wie bisher `database/schema.sql` und `database/operator.sql`.
 
-### Bauphase und Scheckheft
+### Bauphase und Mitteilungen
 
-Beteiligte, gezielte Mitteilungen und interne Notizen sind unter „Mitteilungen & Beteiligte“ verfügbar. Die Übergabe sichert den ursprünglichen Stand; anschließend gibt es datierte Scheckhefteinträge. Details, Datenbank-Update und verbleibende Mailkonfiguration: [MVP_WORKFLOW.md](MVP_WORKFLOW.md).
+Beteiligte, gezielte Mitteilungen und interne Notizen sind unter „Mitteilungen & Beteiligte“ verfügbar. Die Übergabe sichert den bestätigten Projektstand; der fertige Kundenpass wird daraus erzeugt. Der frühere Scheckheft-/Bautagebuch-Bestand bleibt in der Datenbank vorerst als ungenutzter Altbestand erhalten und wird nicht mehr über die Anwendung angesprochen. Details und verbleibende Mailkonfiguration: [MVP_WORKFLOW.md](MVP_WORKFLOW.md).

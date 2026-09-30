@@ -56,7 +56,8 @@ test('new editor → real API/SQL → handover; tenant isolation, immutable snap
   const {bathEditor}=await import('../public/bath-editor.mjs');let destination;
   const started=performance.now();
   session=await bathEditor(p.id,{api,shell:html=>$('#app').innerHTML=html,modal:()=>{},dashboard:{company:profile,company_version:1},go:value=>destination=value});
-  $('#bath-next').click();await wait(()=>$('#bath-area-name'));
+  await wait(()=>$('#bath-dashboard'));assert.equal($('#bath-dashboard').querySelectorAll('[data-open-area]').length,3);assert.match($('#bath-dashboard').textContent,/Duschwand/);assert.match($('#bath-dashboard').textContent,/Badezimmerboden/);
+  $('[data-open-area="0"]').click();await wait(()=>$('#bath-area-name'));assert.ok([...win.document.querySelectorAll('[data-product-panel]')].every(el=>!el.open));
   assert.match($('#bath-body').textContent,/Quartz R/);assert.match($('#bath-body').textContent,/vorgeschlagen/);
   $('#bath-area-name').value='Duschwand';$('#bath-area-name').dispatchEvent(new win.Event('input'));
   $('#bath-palette-surface').value='Canvas';$('#bath-palette-surface').dispatchEvent(new win.Event('change'));

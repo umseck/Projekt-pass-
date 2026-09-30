@@ -1,11 +1,13 @@
 # MVP: Aktivieren → Bauphase → Übergabe
 
+Der aktuelle MVP umfasst ausschließlich Projekt, Kunde, Materialien/Systeme, Fotos & Unterlagen, Mitteilungen und Kundenpass. KI-Funktionen sowie das frühere Scheckheft/Bautagebuch sind aus Oberfläche und aktivem Serverzugriff entfernt.
+
 ## Benutzung
 
 1. Pass aktivieren, Projektname eingeben und verwendete Materialien dokumentieren. Der Katalog ist auf Nutzerwunsch leer. Produkte können frei eingetragen und als Betriebsstandard gespeichert werden.
 2. Im Projekt „Mitteilungen & Beteiligte“ öffnen. Personen mit geprüftem Namen, E-Mail und Rolle hinzufügen. Persönlichen Zugangslink kopieren oder mit angebundenem Maildienst automatisch versenden.
 3. Mitteilung schreiben, einzelne Empfänger oder alle auswählen; alternativ interne Notiz. Fotos werden im Browser komprimiert, Unterlagen als Links ergänzt. Beteiligte sehen nur zugewiesene Mitteilungen und eigene Antworten. Antworten gehen in den Verlauf des betreuenden Betriebs; dafür gibt es im MVP keine zusätzliche E-Mail an den Betrieb.
-4. Übergabe prüfen und bestätigen. Derselbe NFC-Link öffnet anschließend das Scheckheft. Der Übergabestand wird einmalig gesichert; spätere Änderungen sind datierte Wartungen, Reparaturen, Ergänzungen oder Korrekturen. Der Betrieb und der Eigentümer mit separatem Ergänzungsschlüssel können solche Einträge hinzufügen.
+4. Übergabe prüfen und bestätigen. Der Kundenpass wird aus dem bestätigten, gesicherten Projektstand erzeugt. Der NFC-Link benötigt für die Kundenansicht keinen weiteren Verarbeitungsaufruf.
 
 ## Mailversand aktivieren
 
@@ -25,11 +27,11 @@ Mailjobs werden zusammen mit Einladung/Mitteilung gespeichert. Der Pages-Server 
 
 Neue Datenbank: `database/schema.sql`, dann `database/operator.sql`, zuletzt `database/workflow.sql`. Bestehende Installation: `database/workflow.sql` zusätzlich anwenden. Nicht danach eine ältere customer_view-Definition aus standards.sql installieren.
 
-Vier neue Tabellen sind im privaten Schema, RLS eingeschaltet, keine Browserrollen haben Tabellen- oder RPC-Zugriff. Der Server prüft Mitgliedschaft; öffentliche Teilnehmeraufrufe verwenden persönliche zufällige Tokens. Gesperrte Teilnehmer sehen keine Inhalte. Die Sperre des NFC-Passes sperrt auch Teilnehmerzugänge. Projektlöschung entfernt Mitteilungen, Teilnehmer, Scheckheft und Mailwarteschlange; der physische Pass wird stillgelegt.
+Vier neue Tabellen sind im privaten Schema, RLS eingeschaltet, keine Browserrollen haben Tabellen- oder RPC-Zugriff. Der Server prüft Mitgliedschaft; öffentliche Teilnehmeraufrufe verwenden persönliche zufällige Tokens. Gesperrte Teilnehmer sehen keine Inhalte. Die Sperre des NFC-Passes sperrt auch Teilnehmerzugänge. Projektlöschung entfernt Mitteilungen, Teilnehmer und Mailwarteschlange; der physische Pass wird stillgelegt. Die bestehende Tabelle `pp_private.journal` und die zugehörigen SQL-Altzweige bleiben vorerst unverändert, damit keine Bestandsdaten oder Abhängigkeiten gefährdet werden. Sie werden vom Server nicht mehr als Operation akzeptiert und nicht mehr in Projekt- oder Kundenprojektionen ausgegeben.
 
-Grenzen des MVP: 20 aktive Beteiligte, 500 Mitteilungen pro Projekt, drei Fotos und drei Dokumentlinks je Eintrag, 20 Teilnehmerantworten pro Stunde, 30 Scheckhefteinträge pro Stunde. Keine Dateiablage für PDFs, sondern Dokumentlinks. Keine Push-Nachrichten, kein Live-Chat, keine automatische Terminerinnerung. Nächste Wartungstermine sind dokumentierte Angaben.
+Grenzen des MVP: 20 aktive Beteiligte, 500 Mitteilungen pro Projekt, drei Fotos und drei Dokumentlinks je Mitteilung, 20 Teilnehmerantworten pro Stunde. Keine Dateiablage für PDFs, sondern Dokumentlinks. Keine Push-Nachrichten, kein Live-Chat und keine automatische Terminerinnerung.
 
-Bestehende übergebene Projekte sichern den bei Einführung verfügbaren Stand und kennzeichnen ihn entsprechend; frühere Zwischenstände werden nicht erfunden. Scheckhefteinträge sind in der Oberfläche unveränderlich; fachliche Korrekturen werden angehängt. Berichtigungs-/Löschungsanfragen zu personenbezogenen Einträgen erfordern Bearbeitung durch den Plattformbetrieb.
+Bestehende übergebene Projekte sichern den bei Einführung verfügbaren Stand und kennzeichnen ihn entsprechend; frühere Zwischenstände werden nicht erfunden. Der Altbestand der Journal-Tabelle wird erst nach einer separaten Daten- und Migrationsprüfung bereinigt.
 
 ## Prüfung
 
