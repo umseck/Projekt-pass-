@@ -106,32 +106,8 @@ export function preparation(value){
   return {area,label:area==='other'?text(v.label,1000):'',substrate:v.substrate==null?null:item(v.substrate,true),steps:list(v.steps,20,v=>item(v,false))};
  });
 }
-export function additions(value){return list(value,30,v=>{
-  obj(v);const name=text(v.type,80);if(!name)fail();
-  return {id:uuid(v.id),type:name,source_type:'owner',company:fields(v.company,['name','phone']),
-    products:list(v.products,20,p=>({...fields(p,['name','manufacturer','model','note']),photo:photo(p.photo),url:url(p.url)}))};
-});}
-export function validate(op,b){
-  obj(b);
-  if(op.startsWith('flow_')){
-    const publicFlow=['flow_portal','flow_reply'].includes(op);
-    const out=publicFlow?{token:token(b.token)}:{project_id:uuid(b.project_id)};
-    if(['flow_link','flow_participant','flow_revoke','flow_resolve','flow_post','flow_reply'].includes(op))out.id=uuid(b.id);
-    if(op==='flow_participant'){
-      out.name=text(b.name,100);if(!out.name)fail('Bitte einen Namen eingeben.');out.email=email(b.email);
-      if(!['customer','trade'].includes(b.role))fail();out.role=b.role;
-    }
-    if(['flow_post','flow_reply'].includes(op)){
-      out.body=text(b.body,4000);out.photos=list(b.photos,3,photo);out.documents=list(b.documents,3,d=>({...fields(d,['name','type']),url:url(d.url)}));
-      if(['flow_post','flow_reply'].includes(op)&&!out.body)fail('Bitte eine Mitteilung eingeben.');
-    }
-    if(op==='flow_resolve')out.resolved=b.resolved===true;
-    if(['flow_post','flow_reply'].includes(op)){out.needs_reply=b.needs_reply===true;out.notify=b.notify===true;if(b.reply_to)out.reply_to=uuid(b.reply_to);}
-    if(op==='flow_reply')out.shared=b.shared===true;
-    if(op==='flow_post'){out.recipients=[...new Set(list(b.recipients,20,uuid))];out.internal=b.internal===true;out.notify=b.notify===true;}
-    if(!['flow_get','flow_link','flow_portal','flow_reply','flow_participant','flow_revoke','flow_resolve','flow_post','flow_dispatch'].includes(op))fail();
-    return out;
-  }
+export function validate(op,b={}){
+  b=obj(b);
   if(op==='access_info')return {token:token(b.token)};
   if(op==='access_activate')return {token:token(b.token),email:b.email?email(b.email):'',password:newPassword(b.password)};
   if(op==='operator_list')return {};
@@ -144,7 +120,6 @@ export function validate(op,b){
     return {id:uuid(b.id),quantity:b.quantity};
   }
   if(op==='scan')return {token:token(b.token)};
-  if(op==='owner_save')return {token:token(b.token),key:token(b.key),version:version(b.version),additions:additions(b.additions)};
   if(op==='bootstrap')return {};
   if(op==='company_save')return {profile:company(b.profile),version:version(b.version)};
   if(op==='activate'){const title=text(b.title,150);if(!title)fail('Wie heißt das Projekt?');return {pass_id:uuid(b.pass_id),title};}
@@ -156,6 +131,6 @@ export function validate(op,b){
     args.content=content(b.content);args.internal=fields(b.internal,['customer_name','address']);
   }else if(op==='visibility'){
     if(typeof b.disabled!=='boolean')fail();args.disabled=b.disabled;
-  }else if(!['handover','owner_key','delete'].includes(op))fail();
+  }else if(!['handover','delete'].includes(op))fail();
   return args;
 }
