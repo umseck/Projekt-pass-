@@ -1,4 +1,6 @@
--- Additive MVP workflow. Existing projects and NFC tokens remain valid.
+-- LEGACY/DORMANT: retained only for database compatibility with older installs.
+-- The active MVP server no longer exposes this RPC or any participant/message UI.
+-- Remove only after a separate data/dependency migration review.
 begin;
 alter table pp_private.projects add column if not exists handover_snapshot jsonb;
 create table if not exists pp_private.participants (
