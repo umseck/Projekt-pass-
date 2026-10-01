@@ -199,7 +199,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    const firstDocs=$('#documents').value;
    $('[data-open-catalog="surface"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));$('[data-catalog-pick="testanbieter-test-pro"]').click();assert.equal($('#documents').value,firstDocs);
    $('[data-open-catalog="finish"]').click();await wait(()=>$('#modal').open&&$('#catalog-picker'));input('#catalog-manufacturer','zweiter');$('#catalog-manufacturer').dispatchEvent(new win.Event('change'));$('[data-catalog-pick="zweiter-test-finish"]').click();assert.equal($('#finish-name').value,'Test Versiegelung');assert.ok(!$('#documents').value.includes('unconfirmed.pdf'));
-   assert.equal($('.project-steps [aria-current]').textContent,'2. Bauphase');
+   assert.equal($('.project-steps [aria-current]').textContent,'2. Dokumentieren');
    input('#surface-system_type','MicroTec');input('#application_area','Wände & Boden');$('#application_area').dispatchEvent(new win.Event('change'));input('#substrate','Vorbereiteter Estrich');
    const selectPreparation=(id,value)=>{input(id,value);$(id).dispatchEvent(new win.Event('change'));};
    selectPreparation('#prep-walls-base-kind','drywall');selectPreparation('#prep-walls-base-by','other');input('#prep-walls-base-company','Trockenbau Beispiel');
@@ -242,7 +242,7 @@ test('operator → business onboarding → seamless handover; unlimited batches 
    // Changing the business default only affects future projects.
    win.location.hash='settings';await wait(()=>$('#settings'));input('#trade','tile');submit('#settings');await wait(()=>$('#search'));
    input('#search','Testoberfläche');assert.ok($('#projects').textContent.includes('Fugenloses Testbad'));
-   win.location.hash='p/'+pass.token;await wait(()=>$('#owner-edit'));
+   win.location.hash='p/'+pass.token;await wait(()=>$('#export'));assert.equal($('#owner-edit'),null);
    assert.equal($('[data-panel=tiles] strong').textContent,'Materialien');
    $('[data-panel=documents]').click();assert.equal($('#panel-documents').hidden,false);assert.ok($('#panel-documents a'));
    $('[data-panel=care]').click();assert.equal($('#panel-documents').hidden,true);assert.equal($('#panel-care').hidden,false);assert.ok($('#panel-tiles').textContent.includes('Vorbereiteter Estrich'));

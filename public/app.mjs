@@ -98,7 +98,7 @@ function docsText(docs=[]){return JSON.stringify(docs);}
 function parseDocs(value){return JSON.parse(value||'[]');}
 function localDate(value){if(!value)return '';const d=new Date(value);return new Date(+d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
 async function edit(id){
- let p=await api('project',{id});if(location.hash!=='#edit/'+id)return;if(p.handover_snapshot){go('work/'+id);return;}
+ let p=await api('project',{id});if(location.hash!=='#edit/'+id)return;if(p.handover_snapshot){go('p/'+p.token);return;}
  if(p.content?.areas?.length){go('bath/'+id);return;}
  const c=structuredClone(p.content),trade=tradeFor(c.trade),primary=trade.primary,sp=c.spare_materials?.[0]||{};let photos=c.photos||[],waterproofingPhotos=c.waterproofing_details?.photos||[],label=c[primary]?.label_photo||'',sparePhoto=sp.photo||'',busyPhotos=0;
  let previousSurface={...c.surface},finishMode=c.finish_selection||'',autosaver;
@@ -294,7 +294,8 @@ async function customer(id,preview=false){
  ${contact(company)}
  <section class="section no-print"><button class="btn light" id="export">Projektpass speichern</button><p class="hint">Wer diesen Kundenlink besitzt, kann die freigegebenen Informationen lesen. Teilen Sie ihn bewusst.</p></section>
  </div>${preview?`</div></details><div class="sticky"><button class="btn olive wide" id="handover">Angaben geprüft – übergeben →</button></div>${message}`:''}`,{customer:true,company});
- $('[data-panel]').forEach(b=>b.onclick=()=>{const target=$('#panel-'+b.dataset.panel),open=target.hidden;$$('.customer-panel').forEach(el=>el.hidden=true);$$('[data-panel]').forEach(el=>el.setAttribute('aria-expanded','false'));target.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open){target.focus({preventScroll:true});target.scrollIntoView({behavior:'smooth',block:'start'});}});$('#export').onclick=()=>{
+ $$('[data-panel]').forEach(b=>b.onclick=()=>{const target=$('#panel-'+b.dataset.panel),open=target.hidden;$$('.customer-panel').forEach(el=>el.hidden=true);$$('[data-panel]').forEach(el=>el.setAttribute('aria-expanded','false'));target.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open){target.focus({preventScroll:true});target.scrollIntoView({behavior:'smooth',block:'start'});}});
+ $('#export').onclick=()=>{
  modal('Ihr Projektpass bleibt bei Ihnen',`<p>Speichern Sie die Informationen zu Ihrem Bad zum Aufheben oder Weitergeben.</p><button class="btn olive wide spaced" id="print-pass">Drucken / als PDF speichern</button><button class="btn light wide spaced" id="download-pass">Daten mit Fotos speichern</button><p class="hint">Im Druckdialog können Sie „Als PDF speichern“ wählen.</p>`);
  $('#print-pass').onclick=()=>{$('#modal').close();window.print();};$('#download-pass').onclick=()=>download('Projektpass-'+num(p.pass_number)+'.json',p);
  };

@@ -90,6 +90,8 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        actor=(await r.json()).id;
        if(!actor)throw new HttpError(401,'Bitte erneut anmelden.');
      }
+     if(op==='operator_create')args.tokens=Array.from({length:20},()=>randomToken());
+     if(op==='passes_add')args.tokens=Array.from({length:args.quantity},()=>randomToken());
      let accessToken;
      if(op==='operator_invite'){accessToken=randomToken();args.token_hash=await hash(accessToken);}
      if(op==='handover'){

@@ -17,7 +17,9 @@ Login und Betriebsprofil, Projektaktivierung, Materialkarten und Katalog, gespei
 
 ## Datenbank-Altbestand
 
-Die früheren Tabellen und SQL-Zweige für `participants`, `messages`, `journal`, `mail_outbox` sowie `owner_key_hash`/`owner_additions` bleiben vorerst aus Kompatibilitätsgründen bestehen. Sie werden vom aktuellen Server nicht mehr als Operation akzeptiert, nicht aus der aktiven UI angesprochen und nicht in den Kundenprojektionen ausgegeben. Eine endgültige Migration oder Löschung erfolgt erst nach separater Bestands- und Abhängigkeitsprüfung.
+Die früheren Tabellen und SQL-Zweige für `participants`, `messages`, `journal`, `mail_outbox`, `ai_access`, `ai_state` sowie `owner_key_hash`/`owner_additions` bleiben vorerst aus Kompatibilitätsgründen bestehen. Sie werden vom aktuellen Server nicht mehr als Operation akzeptiert, nicht aus der aktiven UI angesprochen und nicht in den Kundenprojektionen ausgegeben. Eine endgültige Migration oder Löschung erfolgt erst nach separater Bestands- und Abhängigkeitsprüfung.
+
+`database/workflow.sql` enthält außerdem den weiterhin benötigten Übergabe-Snapshot und dessen Trigger. Diese Datei daher nicht pauschal löschen oder durch eine leere Migration ersetzen. Der aktuelle Infrastruktur-Prüfstand ist in [INFRASTRUCTURE_STATUS.md](INFRASTRUCTURE_STATUS.md) dokumentiert.
 
 ## Betriebshinweis
 

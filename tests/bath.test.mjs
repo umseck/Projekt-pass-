@@ -26,14 +26,14 @@ test('two surfaces, missing care, changed system, server normalization and clean
  const tile=newArea('tile',{tile:{name:'Tile'},adhesive:{name:'Glue'},waterproofing:{name:'Seal'}},'Fliesenboden','floor');tile.confirmation=areaBasis(tile);
  assert.equal(content({trade:'tile',areas:[tile]}).areas[0].products.adhesive.name,'Glue');assert.deepEqual(areaIssues(tile),[]);
 });
-test('customer copy and selective service package survive offline without exposing access/internal data',()=>{
+test('customer copy and read-only offline export exclude legacy owner and internal data',()=>{
  const a=confirmed();a.photos=['data:image/jpeg;base64,/9j/AA=='];a.products.surface.documents=[{name:'Embedded',type:'PDF',data:'data:application/pdf;base64,JVBERi0xLjQK',source:'Test',document_date:'2026-09-28'},{name:'Link only',url:'https://example.test/file.pdf'}];a.confirmation=areaBasis(a);
  const b=newArea('seamless',{surface:{name:'OTHER-AREA-SECRET'}},'Other');
- const p={title:'<script>alert(1)</script>',pass_number:1,internal:{address:'PRIVATE ADDRESS'},token:'SECRET-TOKEN',owner_key:'SECRET-KEY',company:{name:'Business',favorites:{secret:'CATALOG'}},content:{areas:[a,b],photos:[],documents:[]},journal:[]};
- const subset=customerCopy(p,[a.id]),html=offlineHTML(subset,{recipient:'other@example.test',message:'Reparatur'});
+  const p={title:'<script>alert(1)</script>',pass_number:1,internal:{address:'PRIVATE ADDRESS'},token:'SECRET-TOKEN',owner_key:'SECRET-KEY',owner_additions:[{note:'LEGACY-OWNER-SECRET'}],company:{name:'Business',favorites:{secret:'CATALOG'}},content:{areas:[a,b],photos:[],documents:[]},journal:[]};
+ const subset=customerCopy(p,[a.id]),html=offlineHTML(subset);
  for(const secret of ['PRIVATE ADDRESS','SECRET-TOKEN','SECRET-KEY','CATALOG','OTHER-AREA-SECRET','<script>'])assert.ok(!html.includes(secret));
  assert.match(html,/data:image\/jpeg;base64/);assert.match(html,/data:application\/pdf;base64/);assert.match(html,/Nur verlinkt/);assert.match(html,/keine rechtliche Abnahme/);
- const all=customerCopy(p);p.content={};p.company={};assert.equal(all.areas.length,2);assert.match(offlineHTML(all),/Quartz R/);
+ const all=customerCopy(p);assert.equal(all.general.owner_additions,undefined);assert.ok(!offlineHTML(all).includes('LEGACY-OWNER-SECRET'));p.content={};p.company={};assert.equal(all.areas.length,2);assert.match(offlineHTML(all),/Quartz R/);
 });
 const actor='11111111-1111-4111-8111-111111111111',cid='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',pass='33333333-3333-4333-8333-333333333333',token='a'.repeat(64);
 test('new editor → real API/SQL → handover; tenant isolation, immutable snapshot and closure export',async()=>{
