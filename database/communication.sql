@@ -1,3 +1,4 @@
+-- LEGACY/DORMANT: retained for compatibility; no active MVP server route calls this workflow.
 begin;
 alter table pp_private.messages add column if not exists needs_reply boolean not null default false;
 alter table pp_private.messages add column if not exists resolved boolean not null default false;
