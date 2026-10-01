@@ -1,44 +1,24 @@
-# MVP: Aktivieren → Bauphase → Übergabe
+# Verbindlicher MVP: Aktivieren → Dokumentieren → Übergabe
 
-Der aktuelle MVP umfasst ausschließlich Projekt, Kunde, Materialien/Systeme, Fotos & Unterlagen, Mitteilungen und Kundenpass. KI-Funktionen sowie das frühere Scheckheft/Bautagebuch sind aus Oberfläche und aktivem Serverzugriff entfernt.
+Der Projektpass-MVP hat genau einen Arbeitsablauf:
 
-## Benutzung
+1. Der Fachbetrieb aktiviert einen freien Projektpass und erfasst Kunde/Projekt.
+2. Materialien und Systeme werden im bestehenden Material-Dashboard dokumentiert. Standardmaterialien, Katalog, Favoriten und Autosave bleiben erhalten.
+3. Fotos sowie technische und projektbezogene Unterlagen werden ergänzt.
+4. Die Abschlussprüfung zeigt Pflichtangaben, Fehlendes und Optionals verständlich an.
+5. Der geprüfte Projektstand wird übergeben. Daraus entsteht der Kundenpass.
+6. Der Kunde öffnet den freigegebenen Stand über den dauerhaften QR-/NFC-Link ohne App und ohne Kundenkonto.
 
-1. Pass aktivieren, Projektname eingeben und verwendete Materialien dokumentieren. Der Katalog ist auf Nutzerwunsch leer. Produkte können frei eingetragen und als Betriebsstandard gespeichert werden.
-2. Im Projekt „Mitteilungen & Beteiligte“ öffnen. Personen mit geprüftem Namen, E-Mail und Rolle hinzufügen. Persönlichen Zugangslink kopieren oder mit angebundenem Maildienst automatisch versenden.
-3. Mitteilung schreiben, einzelne Empfänger oder alle auswählen; alternativ interne Notiz. Fotos werden im Browser komprimiert, Unterlagen als Links ergänzt. Beteiligte sehen nur zugewiesene Mitteilungen und eigene Antworten. Antworten gehen in den Verlauf des betreuenden Betriebs; dafür gibt es im MVP keine zusätzliche E-Mail an den Betrieb.
-4. Übergabe prüfen und bestätigen. Der Kundenpass wird aus dem bestätigten, gesicherten Projektstand erzeugt. Der NFC-Link benötigt für die Kundenansicht keinen weiteren Verarbeitungsaufruf.
+Der Kunde hat im MVP ausschließlich Lesezugriff. Es gibt keine KI, kein Bautagebuch, keine Mitteilungen, keinen Chat, keine internen Notizen, keine Beteiligten- oder weiteren-Handwerker-Zugänge und keine Eigentümer-Ergänzungen.
 
-## Mailversand aktivieren
+## Bewusst beibehalten
 
-Die Integration verwendet die offizielle Resend Email API. Im aktuellen Deployment fehlen die Versandkonfiguration und ein echter Zustelltest. Ohne Konfiguration wird nichts als gesendet angezeigt. Persönliche Links funktionieren unabhängig davon.
+Login und Betriebsprofil, Projektaktivierung, Materialkarten und Katalog, gespeicherte Standards, Fotos, Dokumente, Pflegehinweise, Autosave, Vollständigkeitsprüfung, Übergabe-Snapshot, Kundenansicht und QR/NFC bleiben aktive Kernfunktionen.
 
-In Cloudflare Pages → projekt-pass → Settings → Variables and Secrets, **Production**:
+## Datenbank-Altbestand
 
-- `RESEND_API_KEY`: als verschlüsseltes Secret; Schlüssel eines Resend-Kontos mit bestätigter Absenderdomain.
-- `MAIL_FROM`: freigegebener Absender, z. B. `PROJEKTPASS <projektpass@eigene-domain.de>`.
-- `APP_ORIGIN`: bleibt `https://projekt-pass.pages.dev`.
+Die früheren Tabellen und SQL-Zweige für `participants`, `messages`, `journal`, `mail_outbox` sowie `owner_key_hash`/`owner_additions` bleiben vorerst aus Kompatibilitätsgründen bestehen. Sie werden vom aktuellen Server nicht mehr als Operation akzeptiert, nicht aus der aktiven UI angesprochen und nicht in den Kundenprojektionen ausgegeben. Eine endgültige Migration oder Löschung erfolgt erst nach separater Bestands- und Abhängigkeitsprüfung.
 
-Danach neu bereitstellen. Vor Freigabe des Mailversands Providervereinbarung und Datenschutzhinweise anhand des tatsächlich eingerichteten Kontos abschließen. Ein eigenes Testpostfach ausdrücklich als Beteiligten hinzufügen, Einladung empfangen, Link öffnen, Mitteilung gezielt senden und Eingang prüfen. Keine Schlüssel in Chat, Repository oder Browsercode eintragen.
+## Betriebshinweis
 
-Mailjobs werden zusammen mit Einladung/Mitteilung gespeichert. Der Pages-Server verarbeitet sie im Hintergrund. Einzelmails vermeiden das Offenlegen weiterer Empfänger. Stabile Resend-Idempotenzschlüssel verhindern doppelte Annahme innerhalb des Providerfensters (24 Stunden). Unter „E-Mail-Benachrichtigungen“ stehen ausstehende und fehlgeschlagene Versuche; Wiederholung erfolgt über den dortigen Button. Ein abgebrochener Versand wird nach fünf Minuten wieder freigegeben. Maximal fünf Versuche; danach technische Prüfung. „An Maildienst übermittelt“ ist keine Zustell- oder Lesebestätigung. Nach Ablauf des Providerfensters kann bei unklarem Versandstatus ein erneuter Versand nicht sicher dedupliziert werden.
-
-## Installation und Grenzen
-
-Neue Datenbank: `database/schema.sql`, dann `database/operator.sql`, zuletzt `database/workflow.sql`. Bestehende Installation: `database/workflow.sql` zusätzlich anwenden. Nicht danach eine ältere customer_view-Definition aus standards.sql installieren.
-
-Vier neue Tabellen sind im privaten Schema, RLS eingeschaltet, keine Browserrollen haben Tabellen- oder RPC-Zugriff. Der Server prüft Mitgliedschaft; öffentliche Teilnehmeraufrufe verwenden persönliche zufällige Tokens. Gesperrte Teilnehmer sehen keine Inhalte. Die Sperre des NFC-Passes sperrt auch Teilnehmerzugänge. Projektlöschung entfernt Mitteilungen, Teilnehmer und Mailwarteschlange; der physische Pass wird stillgelegt. Die bestehende Tabelle `pp_private.journal` und die zugehörigen SQL-Altzweige bleiben vorerst unverändert, damit keine Bestandsdaten oder Abhängigkeiten gefährdet werden. Sie werden vom Server nicht mehr als Operation akzeptiert und nicht mehr in Projekt- oder Kundenprojektionen ausgegeben.
-
-Grenzen des MVP: 20 aktive Beteiligte, 500 Mitteilungen pro Projekt, drei Fotos und drei Dokumentlinks je Mitteilung, 20 Teilnehmerantworten pro Stunde. Keine Dateiablage für PDFs, sondern Dokumentlinks. Keine Push-Nachrichten, kein Live-Chat und keine automatische Terminerinnerung.
-
-Bestehende übergebene Projekte sichern den bei Einführung verfügbaren Stand und kennzeichnen ihn entsprechend; frühere Zwischenstände werden nicht erfunden. Der Altbestand der Journal-Tabelle wird erst nach einer separaten Daten- und Migrationsprüfung bereinigt.
-
-## Prüfung
-
-Automatisiert: UI → API → SQL, Empfängerauswahl, fremde Projekte, interne Notizen, Idempotenz, Rückfragen, Zugangsperren, unveränderliche Übergabe, Eigentümerschlüssel, öffentliche Projektion und Mailfehler. Echte Mailzustellung, Smartphone/NFC sowie Wiederherstellung sind weiterhin reale Abnahmeschritte in ACCEPTANCE.md.
-
-## Reales Projekt und eigener Katalog
-
-Bei einem Produkt „Im Betriebskatalog speichern“ wählen. Hersteller und Produkt sind erforderlich; zugehörige Projektunterlagen werden ausdrücklich ausgewählt, ein zusätzlicher Datenblatt-Link kann ergänzt werden. Diese Unterlagen werden zugleich dem aktuellen Projekt zugeordnet. Farbton, Charge und Etikettenfoto werden nicht in den Katalog kopiert. Bestehende Kombinationen aus Hersteller, Produkt und Artikelnummer werden aktualisiert statt dupliziert. Der Katalog verwendet die privaten Betriebsfavoriten und ist nicht öffentlich oder für andere Betriebe sichtbar. Ganze Aufbauten bleiben getrennte Betriebsstandards. Es werden keine recherchierten Produkte automatisch nachgefüllt.
-
-Der einzelne NFC-Link ist in Materialbearbeitung und Bauphase kopierbar, auch vor der Übergabe. Schreiben auf den physischen Tag und Lesen auf dem echten Smartphone sind vor Ort zu prüfen.
+Vor einem echten Testbetrieb müssen Supabase-RPC/Schema-Stand, RLS, Authentifizierung und die Cloudflare-Testumgebung separat geprüft werden. Der Branch ist als geschützte Teständerung gedacht; die Produktionswebsite wird nicht ungeprüft veröffentlicht.
