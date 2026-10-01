@@ -37,7 +37,7 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 - Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
 - Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
-- Betriebsangaben unveränderbar für Kunden. Separater 256-Bit-Schlüssel für Eigentümerergänzungen,
+- Betriebsangaben unveränderbar für Kunden; Kundenpass ausschließlich als freigegebener Lesezugang,
   nur als SHA-256 gespeichert, im Betrieb ersetzbar. Kein Kontozwang zum Lesen oder Ergänzen.
 - Schlüsselrotation, Linksperre, Löschung, Versionsprüfung gegen Überschreiben durch parallele Geräte.
 - Fotos lokal im Browser komprimiert und ohne EXIF neu gerendert; anschließend im geschützten
@@ -131,7 +131,7 @@ anschließend auf NFC-Tags geschrieben oder als QR-Code gedruckt werden.
 6. Runtime-Variablen: `APP_ORIGIN` (exakte HTTPS-Origin), `SUPABASE_URL`,
    `SUPABASE_PUBLISHABLE_KEY`. Als verschlüsseltes Secret: `SUPABASE_SECRET_KEY` (`sb_secret_…`).
    Eigene Preview-Konfiguration ohne Produktionsdaten. Secrets ausschließlich über sichere Kontozugriffe.
-7. Cloudflare-Ratelimits insbesondere für `/api/login`, `/api/scan`, `/api/owner_save` konfigurieren
+7. Cloudflare-Ratelimits insbesondere für `/api/login` und `/api/scan` konfigurieren
    und testen; Auth-Ratelimits allein schützen die übrigen API-Endpunkte nicht. Keine API-Caches.
 8. Echte Betreiber-/Betriebsdaten, Verantwortlichkeiten, Datenschutzhinweise und Anbietervereinbarungen
    klären. Fertige `public/datenschutz.html` und `public/impressum.html` einfügen. Keine Tracking-Skripte,
@@ -172,8 +172,8 @@ Aktuelle Primärquellen für die Umsetzung:
 
 ### Einfache Projektführung
 
-Die Oberfläche führt durch **Aktivieren → Bauphase → Übergabe**. Im Projekt kann der Betrieb die Materialauswahl für neue Projekte speichern; Farbe, Charge, Etiketten und Projektdaten bleiben individuell. Abweichungen sind über „Produkt ändern“ möglich. Bei bestehenden Installationen aktualisiert `database/standards.sql` die beiden RPC-Funktionen, ohne Projektdaten zu ändern. Neue Installationen verwenden wie bisher `database/schema.sql` und `database/operator.sql`.
+Die Oberfläche führt durch **Aktivieren → Dokumentieren → Übergabe**. Im Projekt kann der Betrieb die Materialauswahl für neue Projekte speichern; Farbe, Charge, Etiketten und Projektdaten bleiben individuell. Abweichungen sind über „Produkt ändern“ möglich. Bei bestehenden Installationen aktualisiert `database/standards.sql` die beiden RPC-Funktionen, ohne Projektdaten zu ändern. Neue Installationen verwenden wie bisher `database/schema.sql` und `database/operator.sql`.
 
-### Bauphase und Mitteilungen
+### MVP-Grenze
 
-Beteiligte, gezielte Mitteilungen und interne Notizen sind unter „Mitteilungen & Beteiligte“ verfügbar. Die Übergabe sichert den bestätigten Projektstand; der fertige Kundenpass wird daraus erzeugt. Der frühere Scheckheft-/Bautagebuch-Bestand bleibt in der Datenbank vorerst als ungenutzter Altbestand erhalten und wird nicht mehr über die Anwendung angesprochen. Details und verbleibende Mailkonfiguration: [MVP_WORKFLOW.md](MVP_WORKFLOW.md).
+Der aktive MVP enthält keine KI, kein Bautagebuch, keine Mitteilungen, keine Beteiligten- oder Eigentümerzugänge. Der Kundenpass ist nach der Freigabe ein reiner Lesezugang. Die früheren Tabellen und SQL-Zweige bleiben aus Kompatibilitätsgründen als ungenutzter Datenbank-Altbestand erhalten; Details stehen in [MVP_WORKFLOW.md](MVP_WORKFLOW.md).
