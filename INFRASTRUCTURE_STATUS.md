@@ -9,8 +9,9 @@ FundKey und nicht eindeutig zugeordnete Ressourcen wurden nicht bearbeitet.
 | --- | --- | --- |
 | Quellcode | `umseck/Projekt-pass-` | GitHub-main `edd9728b1a6ef3d90ea59d51d006582c9dcbce1c` als Ausgangsstand |
 | Öffentliche Website | `https://projekt-pass.pages.dev/` | HTTP 200; ausgelieferte `app.mjs` entspricht der Datei aus diesem main-Stand |
+| Cloudflare Pages | Projekt `projekt-pass`, Konto `2666bf6723629a6acd9b501629349213` | Erfolgreicher GitHub-Check des main-Commits führt genau zu diesem Pages-Projekt |
 | Supabase | `PROJEKTPASS Pilot`, `zocgxgulpnqmchoydrxi` | `ACTIVE_HEALTHY`, Frankfurt `eu-central-1` |
-| Lokale Bereinigung | Branch `cleanup/projektpass-infrastructure` | Kein automatischer Produktions-Deploy; vor Freigabe Cloudflare-Ziel prüfen |
+| Geprüfte Bereinigung | Branch `cleanup/projektpass-infrastructure` | Getrennt geprüft; Freigabe über normalen Pull Request, ohne Force-Push |
 | Wrangler-Konfiguration | `name = "projektpass-pilot"`, Ausgabe `public` | Namensabweichung zur Website festgestellt; ohne Dashboard-Abgleich nicht umbenannt |
 
 ## Live geprüft, ohne Bestandsdaten zu verändern
@@ -83,8 +84,20 @@ geprüfte Baseline bzw. die fehlende Migrationshistorie sichern. Keinen Reset au
 
 ## Noch offener Cloudflare-Verwaltungsabgleich
 
-Kein nutzbarer Cloudflare-Verwaltungszugriff in dieser Sitzung. Daher keine
-Pages-Projekte, Deployments, Secrets, Domains, Bindings oder Access-Regeln verändert.
+Der Cloudflare-Browser blieb in einer Sicherheitsprüfung hängen, auch nach einem
+einmaligen Neuladen. Keine Umgehung und keine Änderungen im Dashboard. Kein
+nutzbarer Cloudflare-Verwaltungszugriff für Secrets, Bindings oder Access-Regeln.
+
+Die GitHub-Integration ist dagegen verfügbar. Ihr erfolgreicher Check für den
+Ausgangscommit bestätigt Konto, Pages-Projekt und Deployment eindeutig. Der
+normale Repository-Freigabeweg kann deshalb die getesteten Codekorrekturen
+veröffentlichen. Erfolgreichen neuen Check UND ausgelieferte Dateien danach
+verifizieren; ein Merge allein beweist noch keine Veröffentlichung.
+
+Die vorhandene Wrangler-Datei bleibt unverändert. Ihre Namensabweichung allein
+rechtfertigt keinen ungeprüften Wechsel der Konfigurationsquelle. Das Dashboard
+bzw. heruntergeladene Projektkonfiguration und Build-Logs müssen zuerst abgeglichen
+werden. Kein neues Pages-Projekt, keine zweite Supabase-Datenbank anlegen.
 
 Nach Verbindung ausschließlich das Projekt der obigen Website prüfen:
 
@@ -109,6 +122,37 @@ Nach Verbindung ausschließlich das Projekt der obigen Website prüfen:
 Cloudflare empfiehlt den Dashboard-Abgleich vor Änderungen einer vorhandenen
 Wrangler-Konfiguration. Deshalb bleibt `wrangler.toml` vorerst unverändert.
 [Offizielle Anleitung](https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
+
+## Verbleibende Schritte für den Kontoinhaber
+
+1. Nur `projekt-pass` unter Cloudflare **Workers & Pages** öffnen. Repository
+   `umseck/Projekt-pass-`, Produktionsbranch `main`, Ausgabe `public` und neuesten
+   erfolgreichen Produktions-Deploy prüfen. Andere Projekte nicht bearbeiten.
+2. Unter **Settings > Variables and Secrets** zuerst **Production** wählen.
+   Die vier benötigten Namen aus Punkt 2 oben erhalten. `APP_ORIGIN` muss exakt
+   `https://projekt-pass.pages.dev` sein; `SUPABASE_URL` gehört zu
+   `https://zocgxgulpnqmchoydrxi.supabase.co`. Den vorhandenen Server-Schlüssel
+   weder anzeigen noch kopieren oder veröffentlichen.
+3. Nur falls vorhanden, die neun eindeutig alten Namen aus Punkt 3 oben aus
+   diesem Pages-Projekt entfernen. Auch **Preview** separat prüfen. Keine
+   Supabase-Schlüssel oder geteilten/globalen Google-/Resend-Schlüssel löschen.
+   Nach Konfigurationsänderungen den aktuellen main-Stand erneut deployen, nicht
+   einen alten KI-Stand wiederherstellen.
+4. Unter **Settings > General** den Schutz für Preview-Deployments prüfen und
+   nötigenfalls **Enable access policy** aktivieren. Dieser Schutz betrifft die
+   Vorschauen, nicht den normalen Kundenpass. Alte Deployments erst nach Zuordnung
+   zu Quellstand, Umgebung und benötigten Rollback-Ständen entfernen.
+   [Offizielle Preview-Anleitung](https://developers.cloudflare.com/pages/configuration/preview-deployments/)
+5. Auf dem Smartphone anmelden und einen eigenen fiktiven Testpass verwenden:
+   Kunde/Projekt, Material, Standardübernahme, Foto, PDF, Autosave und Neuladen
+   testen. Danach Vollständigkeitsprüfung und Übergabe testen. Kundenlink auf
+   einem zweiten Gerät ohne Anmeldung öffnen; nur freigegebenen Lesestand und
+   QR/NFC prüfen. Keine fremden Kunden- oder Bestandsprojekte zu Tests verändern.
+6. Vor echtem Kundenbetrieb fehlende Abnahme bestätigen: Backup/Restore,
+   Ratelimits, Rechtstexte/Anbietervereinbarungen und vollständige Cloudflare-
+   Konfiguration. Ein Entwickler muss zusätzlich die fehlende Migrationshistorie
+   sichern und in einer getrennten lokalen/Testdatenbank den Wiederaufbau prüfen.
+   Keine historischen Tabellen oder Trigger löschen, keinen Produktionsreset.
 
 ## Testgrenzen und Prüfgrundlage
 
