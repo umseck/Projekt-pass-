@@ -1,5 +1,7 @@
 -- Reviewed setup draft for a NEW, dedicated Supabase project only.
 -- This is not an applied migration. All writes are atomic RPC transactions.
+-- Legacy owner-key/additions columns remain for compatibility; the active server
+-- does not expose customer editing and filters those fields from customer views.
 begin;
 create schema if not exists pp_private;
 revoke all on schema pp_private from public, anon, authenticated;
