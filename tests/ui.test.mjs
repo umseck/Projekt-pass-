@@ -6,7 +6,7 @@ import {readFile} from 'node:fs/promises';
 import {createHandler} from '../server/api.mjs';
 const actor='11111111-1111-4111-8111-111111111111',cid='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',pid='33333333-3333-4333-8333-333333333333',token='a'.repeat(64);
 const wait=async check=>{for(let i=0;i<100;i++){if(check())return;await new Promise(r=>setTimeout(r,20));}throw Error('UI did not reach expected state');};
-test('real UI → API → SQL: login, favorites, save, handover, customer, owner and reload',async()=>{
+test('real UI → API → SQL: login, favorites, save, handover and read-only customer reload',async()=>{
  const db=new PGlite();await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');await db.exec(await readFile(new URL('../database/schema.sql',import.meta.url),'utf8'));
  const profile={name:'Fliesenbetrieb',email:'test@example.test',care_notes:{tile:'Pflege vom Betrieb'},favorites:{tile:[{manufacturer:'Marazzi',name:'Mystone',color:'Beige',format:'60 × 120'}],grout:[{name:'PCI Nanofug Premium',color:'Basalt'}],silicone:[{name:'OTTOSEAL S100',color:'Anthrazit'}]}};
  await db.query('insert into pp_private.companies(id,profile) values($1,$2)',[cid,JSON.stringify(profile)]);await db.query('insert into pp_private.members(user_id,company_id) values($1,$2)',[actor,cid]);await db.query('insert into pp_private.passes(id,company_id,number,token) values($1,$2,7,$3)',[pid,cid,token]);
@@ -55,15 +55,11 @@ test('real UI → API → SQL: login, favorites, save, handover, customer, owner
   $('[data-panel="tiles"]').click();assert.equal($('#panel-tiles').hidden,false);assert.ok($('#panel-joints').textContent.includes('Basalt'));assert.equal($('#panel-joints h2').textContent,'Silikon & Fugenmaterialien');assert.ok($('#panel-joints').textContent.includes('16 · Silbergrau'));assert.ok($('#panel-joints').textContent.includes('Silcofug E'));
   $('#handover').click();await wait(()=>$('#copy-link'));assert.ok($('#app').textContent.includes('Bereit für'));
   $('#handover-card').click();await wait(()=>$('#print-handover-card'));assert.ok($('#modal .takeaway-qr svg'));assert.ok(!$('#modal').textContent.includes('PRIVATE ADDRESS'));assert.ok($('#download-handover-qr'));$('#modal .close').click();
-  win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));
+  win.location.hash='p/'+token;await wait(()=>$('#export'));
   assert.ok(!$('#app').textContent.includes('PRIVATE CUSTOMER'));assert.equal($('#handover'),null);
   assert.equal($('#panel-journal'),null);assert.equal($('[data-panel=journal]'),null);
-  const row=(await db.query('select id,version from pp_private.projects')).rows[0];
-  const minted=await handle(new Request(origin+'/api/owner_key',{method:'POST',headers:{origin,cookie,'Content-Type':'application/json'},body:JSON.stringify({id:row.id,version:row.version})}),env);const key=(await minted.json()).owner_key;
-  $('#owner-edit').click();$('#add-entry').click();input('#key',key);input('#owner-company-0','Huber Sanitär');input('#owner-name-0-0','Grohe Armatur');submit('#owner');await wait(()=>!$('#modal').open);
-  assert.ok($('#app').textContent.includes('Grohe Armatur'));assert.ok($('#app').textContent.includes('Von Ihnen ergänzt'));
-  assert.equal((await db.query('select content from pp_private.projects')).rows[0].content.tile.name,'Mystone');
-  win.location.hash='login';await wait(()=>$('#login'));win.location.hash='p/'+token;await wait(()=>$('#owner-edit'));assert.ok($('#app').textContent.includes('Grohe Armatur'));
-  $('#help').click();assert.ok($('#modal').textContent.includes('E-Mail-Programm'));assert.ok(!$('#modal').textContent.includes('erfolgreich versendet'));
+  assert.equal($('#owner-edit'),null);assert.equal($('#owner-section'),null);assert.equal($('#help'),null);
+  win.location.hash='login';await wait(()=>$('#login'));win.location.hash='p/'+token;await wait(()=>$('#export'));
+  assert.ok($('#app').textContent.includes('Mystone'));assert.equal($('#owner-edit'),null);
  }finally{await win.happyDOM.abort();await db.close();win.close();}
 });

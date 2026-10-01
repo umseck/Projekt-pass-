@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createHandler,hash,randomToken} from '../server/api.mjs';
-import {validate,company,content,additions} from '../server/validation.mjs';
+import {createHandler} from '../server/api.mjs';
+import {validate,company,content} from '../server/validation.mjs';
 import {labelPhoto} from '../public/ui.mjs';
 const origin='https://projektpass.example',id='11111111-1111-4111-8111-111111111111';
 const env={APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'sb_secret_TEST_ONLY',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_TEST_ONLY'};
@@ -31,11 +31,31 @@ test('expired sessions and nonmembers are denied',async()=>{
  handle=createHandler(async url=>url.includes('/token')?json({access_token:'jwt',user:{id}}):json({message:'PP_FORBIDDEN'},400));
  const r=await handle(request('login',{email:'a@b.test',password:'pw'}),env);assert.equal(r.status,403);assert.equal(r.headers.get('Set-Cookie'),null);
 });
-test('public cannot mint keys; owner key hashed before storage',async()=>{
- const calls=[];const handle=createHandler(async(url,options)=>{calls.push(JSON.parse(options.body));return json({owner_additions:[]});});
- assert.equal((await handle(request('owner_key',{id,version:1}),env)).status,401);
- const key=randomToken();assert.equal(key.length,64);const r=await handle(request('owner_save',{token:'a'.repeat(64),key,version:1,additions:[]}),env);
- assert.equal(r.status,200);assert.equal(calls[0].args.key_hash,await hash(key));assert.equal(calls[0].args.key,undefined);
+test('removed customer-edit, AI and journal operations never reach Supabase',async()=>{
+ const calls=[];const handle=createHandler(async(url,options)=>{calls.push(options);return json({});});
+ for(const op of ['owner_key','owner_save','ai_status','ai_process','flow_get','flow_post','flow_participant','flow_dispatch']){
+  assert.equal((await handle(request(op,{id,version:1}),env)).status,404);
+ }
+ assert.equal(calls.length,0);
+});
+test('new businesses and pass batches receive server-generated unique pass keys',async()=>{
+ const calls=[];const handle=createHandler(async(url,options)=>{
+  if(url.endsWith('/user'))return json({id});
+  calls.push({url,body:JSON.parse(options.body)});return json({});
+ });
+ for(const [op,body,count] of [['operator_create',{id,profile:{name:'Testbetrieb'},tokens:['forged']},20],['passes_add',{id,quantity:3,tokens:['forged']},3]]){
+  assert.equal((await handle(request(op,body,{cookie:'__Host-pp_session=valid'}),env)).status,200);
+  const call=calls.at(-1);assert.ok(call.url.endsWith('/pp_control'));assert.equal(call.body.actor,id);
+  assert.equal(call.body.args.tokens.length,count);assert.equal(new Set(call.body.args.tokens).size,count);
+  assert.ok(call.body.args.tokens.every(token=>/^[a-f0-9]{64}$/.test(token)));
+ }
+});
+test('legacy owner data never leaves the MVP server in project, preview or scan responses',async()=>{
+ const handle=createHandler(async url=>url.endsWith('/user')?json({id}):json({title:'Bad',owner_additions:[{note:'LEGACY-PRIVATE'}],owner_version:3,owner_key_hash:'SECRET'}));
+ for(const op of ['project','preview','scan']){
+  const r=await handle(request(op,op==='scan'?{token:'a'.repeat(64)}:{id},{cookie:'__Host-pp_session=valid'}),env);
+  assert.equal(r.status,200);assert.deepEqual(await r.json(),{title:'Bad'});
+ }
 });
 test('validation drops forged fields and rejects unsafe links/photos',()=>{
  assert.deepEqual(company({name:'Test',preferred_manufacturers:[' EPI ','Murface','EPI']}).preferred_manufacturers,['EPI','Murface']);
@@ -46,7 +66,6 @@ test('validation drops forged fields and rejects unsafe links/photos',()=>{
  assert.throws(()=>company({name:'Test',logo:'data:image/svg+xml,evil'}));
  assert.equal(company({name:'Test',logo:'data:image/png;base64,iVBORw0KGgo='}).logo.startsWith('data:image/png'),true);
  assert.equal(labelPhoto('data:image/png;base64,iVBORw0KGgo=').startsWith('data:image/png'),true);
- assert.equal(additions([{id,type:'Sanitär',source_type:'contractor',company:{},products:[]}])[0].source_type,'owner');
  assert.throws(()=>validate('save',{id,version:1,title:' ',content:{},internal:{}}));assert.throws(()=>validate('save',{id,version:0,title:'Bad'}));
 });
 test('upstream errors hide database details',async()=>{

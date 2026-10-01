@@ -37,16 +37,16 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 - Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
 - Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
-- Betriebsangaben unveränderbar für Kunden; Kundenpass ausschließlich als freigegebener Lesezugang,
-  nur als SHA-256 gespeichert, im Betrieb ersetzbar. Kein Kontozwang zum Lesen oder Ergänzen.
-- Schlüsselrotation, Linksperre, Löschung, Versionsprüfung gegen Überschreiben durch parallele Geräte.
+- Betriebsangaben unveränderbar für Kunden; Kundenpass ausschließlich als freigegebener Lesezugang.
+  Kein Kundenkonto nötig und keine Ergänzungsfunktionen für Kunden.
+- Linksperre, Projektlöschung, Versionsprüfung gegen Überschreiben durch parallele Geräte.
 - Fotos lokal im Browser komprimiert und ohne EXIF neu gerendert; anschließend im geschützten
   Projektinhalt der Datenbank gespeichert. Für den kleinen Pilot maximal 8 Fotos insgesamt
   für Abdichtung und Übergabe; beide Uploads und die API prüfen die gemeinsame Grenze.
   Kein öffentlicher Bucket, kein externer Bilddienst. Supabase Storage ist noch nicht nötig.
 - Kundenexport als JSON mit Fotos und als PDF über den Druckdialog; keine Bindung der Daten an ein einzelnes Handy.
-- Serviceanfrage öffnet das E-Mail-Programm mit Projektkontext. Der Kunde sendet selbst und kann
-  dort Fotos anhängen. Es gibt keine fingierte Versandbestätigung oder unbeaufsichtigte E-Mail-Automation.
+- Die hinterlegten Kontaktdaten des Betriebs bleiben im Kundenpass sichtbar.
+  Der Projektpass versendet keine automatischen Baustellenmitteilungen.
 
 ## Architektur und Zugriffsgrenzen
 
@@ -63,14 +63,17 @@ Rollenangaben werden ignoriert. Versionsprüfung und Statusänderung laufen in d
 
 Der Server-Servicekey ist entsprechend privilegiert: ausschließlich als Cloudflare-Secret ablegen,
 separates Supabase-Projekt verwenden und nie in Logs, Git, Browser-Konfiguration oder Chat kopieren.
-Der öffentlich nutzbare Ergänzungsschlüssel ist ein Besitznachweis, keine Identitätsprüfung:
-wer ihn kennt, kann Kundenergänzungen ändern. Er gehört nicht auf die frei lesbare NFC-Karte.
 
 Im echten Pilot wird ein gelöschter Pass **stillgelegt**, nicht neu belegt. Sonst würde die
 alte Karte eines Kunden später auf die Daten eines anderen Kunden zeigen. Die lokale Demo
 kann weiterhin einen Pass zu Testzwecken freigeben.
 
-## Einrichtung, sobald die neuen Konten verbunden sind
+## Einrichtung und Prüfnachweis
+
+Für den bestehenden Pilot keine neue Datenbank anlegen und keine Einrichtungs-SQL erneut ausführen.
+Der geprüfte Bestand und noch offene Cloudflare-Konfiguration stehen in
+[INFRASTRUCTURE_STATUS.md](INFRASTRUCTURE_STATUS.md). Die nachfolgenden Einrichtungshinweise
+sind keine Anweisung, bestehende Projekte oder Zugänge neu aufzusetzen.
 
 ### Betreiberverwaltung und zusätzliche Pässe
 
@@ -151,8 +154,9 @@ DOM-Tests prüfen die Oberfläche. Sie ersetzen keine Supabase-Cloud-, Cloudflar
 
 Abhängigkeiten sind nur für Tests, fest versioniert und mit Lockfile. Runtime nutzt Web APIs.
 Infrastruktur: Cloudflare Pages unter `https://projekt-pass.pages.dev`, separates
-Supabase-Projekt in Frankfurt. Live-Verbindung geprüft; Tests mit echten Zugangsdaten
-und zwei Geräten erfolgen bei der Einrichtung des ersten Betreiber-/Betriebszugangs.
+Supabase-Projekt in Frankfurt. Aktuelle Live-Prüfungen und Grenzen sind in
+[INFRASTRUCTURE_STATUS.md](INFRASTRUCTURE_STATUS.md) dokumentiert. Lokale grüne Tests sind
+keine Freigabe für einen echten Kundenbetrieb und ersetzen keinen Zwei-Geräte-Test.
 
 ## Noch offene produktive Prüfungen
 
