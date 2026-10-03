@@ -1,18 +1,18 @@
-import {createFavoritesEditor} from './favorites-editor.mjs';
-import {createAutosave} from './autosave.mjs';
-import {handoverReview,missingColors} from './handover-review.mjs';
-import {missingStandardProducts} from './standard-build.mjs';
-import {editorSection,bindEditorSections} from './editor-layout.mjs';
-import {defaultFinish,finishSelection} from './system-finish.mjs';
-import {waterproofingFields,waterproofingPhotoFields,waterproofingHTML} from './waterproofing.mjs';
-import {hasWaterproofingDetails,projectPhotoLimit} from './waterproofing-data.mjs';
-import {colorField,refreshColorOptions,bindColorOptions} from './color-palettes.mjs';
-import {saveProductDialog} from './product-library.mjs?v=20260930-materials2';
-import {createPreparationEditor,preparationHTML} from './preparation.mjs';
-import {esc,num,date,safeLink,hasProduct,labelPhoto,field,area,fields,compress,download} from './ui.mjs';
-import {operatorPage,accessPage} from './operator.mjs';
-import {names,productKeys,trades,tradeFor} from './trades.mjs';
-import {catalogPage,openCatalogPicker,mergeDocuments,loadCatalog,setCompanyCatalog,productDocuments} from './catalog.mjs?v=20260930-materials2';
+import {createFavoritesEditor} from './features/favorites-editor.mjs';
+import {createAutosave} from './core/autosave.mjs';
+import {handoverReview,missingColors} from './features/handover-review.mjs';
+import {missingStandardProducts} from './features/standard-build.mjs';
+import {editorSection,bindEditorSections} from './features/editor-layout.mjs';
+import {defaultFinish,finishSelection} from './features/system-finish.mjs';
+import {waterproofingFields,waterproofingPhotoFields,waterproofingHTML} from './features/waterproofing.mjs';
+import {hasWaterproofingDetails,projectPhotoLimit} from './shared/waterproofing-data.mjs';
+import {colorField,refreshColorOptions,bindColorOptions} from './features/color-palettes.mjs';
+import {saveProductDialog} from './features/product-library.mjs?v=20260930-materials2';
+import {createPreparationEditor,preparationHTML} from './features/preparation.mjs';
+import {esc,num,date,safeLink,hasProduct,labelPhoto,field,area,fields,compress,download} from './core/ui.mjs';
+import {operatorPage,accessPage} from './features/operator.mjs';
+import {names,productKeys,trades,tradeFor} from './shared/trades.mjs';
+import {catalogPage,openCatalogPicker,mergeDocuments,loadCatalog,setCompanyCatalog,productDocuments} from './features/catalog.mjs?v=20260930-materials2';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 let dashboardLoadedAt=0;
 let dashboard=null,dirty=false,routeVersion=0,editorSession=null;
@@ -299,14 +299,14 @@ async function customer(id,preview=false){
  modal('Ihr Projektpass bleibt bei Ihnen',`<p>Speichern Sie die Informationen zu Ihrem Bad zum Aufheben oder Weitergeben.</p><button class="btn olive wide spaced" id="print-pass">Drucken / als PDF speichern</button><button class="btn light wide spaced" id="download-pass">Daten mit Fotos speichern</button><p class="hint">Im Druckdialog können Sie „Als PDF speichern“ wählen.</p>`);
  $('#print-pass').onclick=()=>{$('#modal').close();window.print();};$('#download-pass').onclick=()=>download('Projektpass-'+num(p.pass_number)+'.json',p);
  };
- if(c.areas?.length){const {mountBathCustomer}=await import('./bath-customer.mjs');if(location.hash===expected)mountBathCustomer(p,{modal});}
+ if(c.areas?.length){const {mountBathCustomer}=await import('./features/bath-customer.mjs');if(location.hash===expected)mountBathCustomer(p,{modal});}
  if(preview){
   $$('[data-review-edit]').forEach(a=>a.onclick=()=>{reviewEditTarget=a.dataset.reviewEdit;});
 
  }
  if(preview)$('#handover').onclick=()=>run($('#handover'),async()=>{const current=await api('project',{id:p.id});if(current.disabled)throw Error('Bitte zuerst den Kundenlink im Projekt wieder freigeben.');const ready=await api('handover',{id:p.id,version:p.version});go('ready/'+ready.id);},$('.form-message'));
 }
-function handoverReady(p){shell(`<section class="handover-ready"><div class="handover-seal" aria-hidden="true">✓</div><span class="eyebrow">Übergabe abgeschlossen</span><h1>Bereit für<br>Ihren Kunden.</h1><p class="intro">Ihr Kunde bekommt die hinterlegten Materialien, Pflegehinweise und Unterlagen gesammelt – mit Ihrem Betrieb als Ansprechpartner.</p><div class="handover-project"><div class="pass-number">${num(p.pass_number)}</div><div><h3>${esc(p.title)}</h3><p class="muted">Ein Scan. Alles zum Bad.</p></div></div><a class="btn olive wide" href="#p/${p.token}">Kundenansicht öffnen</a><button class="btn light wide spaced" id="copy-link">Kundenlink kopieren</button><button class="btn light wide spaced" id="handover-card">Übergabekarte mit QR-Code</button><p class="hint">Den NFC-/QR-Pass am vereinbarten Ort übergeben. Der Kunde kann direkt scannen – ohne App und ohne Anmeldung.</p><p class="hint">Öffnen Sie den Link zur ersten Kontrolle auf einem zweiten Smartphone.</p><a class="btn text spaced" href="#home">Zurück zu meinen Projekten →</a></section>`);$('#handover-card').onclick=()=>run($('#handover-card'),async()=>{const {openHandoverCard}=await import('./handover-card.mjs');openHandoverCard(p,p.company||dashboard?.company||p.company_snapshot||{},{modal});});$('#copy-link').onclick=()=>run($('#copy-link'),async()=>{await navigator.clipboard.writeText(location.origin+'/#p/'+p.token);notify('Kundenlink kopiert.');});}
+function handoverReady(p){shell(`<section class="handover-ready"><div class="handover-seal" aria-hidden="true">✓</div><span class="eyebrow">Übergabe abgeschlossen</span><h1>Bereit für<br>Ihren Kunden.</h1><p class="intro">Ihr Kunde bekommt die hinterlegten Materialien, Pflegehinweise und Unterlagen gesammelt – mit Ihrem Betrieb als Ansprechpartner.</p><div class="handover-project"><div class="pass-number">${num(p.pass_number)}</div><div><h3>${esc(p.title)}</h3><p class="muted">Ein Scan. Alles zum Bad.</p></div></div><a class="btn olive wide" href="#p/${p.token}">Kundenansicht öffnen</a><button class="btn light wide spaced" id="copy-link">Kundenlink kopieren</button><button class="btn light wide spaced" id="handover-card">Übergabekarte mit QR-Code</button><p class="hint">Den NFC-/QR-Pass am vereinbarten Ort übergeben. Der Kunde kann direkt scannen – ohne App und ohne Anmeldung.</p><p class="hint">Öffnen Sie den Link zur ersten Kontrolle auf einem zweiten Smartphone.</p><a class="btn text spaced" href="#home">Zurück zu meinen Projekten →</a></section>`);$('#handover-card').onclick=()=>run($('#handover-card'),async()=>{const {openHandoverCard}=await import('./features/handover-card.mjs');openHandoverCard(p,p.company||dashboard?.company||p.company_snapshot||{},{modal});});$('#copy-link').onclick=()=>run($('#copy-link'),async()=>{await navigator.clipboard.writeText(location.origin+'/#p/'+p.token);notify('Kundenlink kopiert.');});}
 async function settings(){
  const c=structuredClone(dashboard.company),first=c.onboarding_complete===false;let logo=c.logo||'';
  const runId=routeVersion,catalog=await loadCatalog().catch(()=>({manufacturers:[],products:[]}));if(runId!==routeVersion)return;
@@ -345,7 +345,7 @@ async function render(){
   if(route==='catalog'){await catalogPage({shell,isCurrent:()=>runId===routeVersion});return;}
   if(dashboard.role==='operator'&&!dashboard.company){if(route==='home'){await operatorPage('admin',null,operatorContext());return;}go('admin');return;}
   if(dashboard.company?.onboarding_complete===false&&route!=='settings'){go('settings');return;}
-  if(route==='bath'){const {bathEditor}=await import('./bath-editor.mjs?v=20260930-materials2');editorSession=await bathEditor(arg,editorContext);return;}
+  if(route==='bath'){const {bathEditor}=await import('./features/bath-editor.mjs?v=20260930-materials2');editorSession=await bathEditor(arg,editorContext);return;}
   if(route==='home')home();else if(route==='passes')passes();else if(route==='activate')activate(arg);else if(route==='edit')await edit(arg);else if(route==='preview')await customer(arg,true);else if(route==='settings')await settings();else if(route==='ready'){const p=await api('project',{id:arg});if(p.status!=='handed_over')throw Error('Bitte das Projekt zuerst übergeben.');handoverReady(p);}else throw Error('Diese Seite wurde nicht gefunden.');
   window.scrollTo(0,0);
   if(route==='edit'&&$('#edit')){const link=document.createElement('a');link.className='btn light spaced';link.href='#bath/'+arg;link.textContent='Flächenbezogenen Bad-Ablauf öffnen →';$('#edit').before(link);}

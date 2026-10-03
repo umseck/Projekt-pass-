@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createAutosave} from '../public/autosave.mjs';
+import {createAutosave} from '../public/js/core/autosave.mjs';
 const deferred=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};};
 test('autosave serializes slow writes and only confirms the newest value',async()=>{
  let value='old',version=1,active=0;const writes=[],states=[],gate=deferred();

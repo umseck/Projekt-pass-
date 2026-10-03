@@ -1,4 +1,4 @@
-import {esc,field,fields,safeLink} from './ui.mjs';
+import {esc,field,fields,safeLink} from '../core/ui.mjs';
 import {mergeDocuments,setCompanyCatalog} from './catalog.mjs?v=20260930-materials2';
 const key=p=>[p.manufacturer,p.name,p.article_number].map(x=>(x||'').trim().toLocaleLowerCase('de')).join('|');
 export function upsertProduct(favorites,kind,item){

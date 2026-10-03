@@ -1,7 +1,7 @@
-import {productKeys} from '../public/trades.mjs';
-import {preparationAreas,substrateTypes,preparationTypes,preparationActors} from '../public/preparation-data.mjs';
-import {waterClasses,waterproofingTypes,projectPhotoLimit} from '../public/waterproofing-data.mjs';
-import {bathKinds,areaConfirmed,careValid} from '../public/bath-model.mjs';
+import {productKeys} from '../public/js/shared/trades.mjs';
+import {preparationAreas,substrateTypes,preparationTypes,preparationActors} from '../public/js/shared/preparation-data.mjs';
+import {waterClasses,waterproofingTypes,projectPhotoLimit} from '../public/js/shared/waterproofing-data.mjs';
+import {bathKinds,areaConfirmed,careValid} from '../public/js/shared/bath-model.mjs';
 export class HttpError extends Error {
   constructor(status,message){super(message);this.status=status;}
 }

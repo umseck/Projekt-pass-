@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Window} from 'happy-dom';
-import {createPreparationEditor,preparationHTML} from '../public/preparation.mjs';
+import {createPreparationEditor,preparationHTML} from '../public/js/features/preparation.mjs';
 import {content} from '../server/validation.mjs';
 
 test('preparation keeps walls, floor and each executor distinct through editing and reopening',async()=>{

@@ -1,4 +1,4 @@
-import {esc,date,field,fields,compress,labelPhoto} from './ui.mjs';
+import {esc,date,field,fields,compress,labelPhoto} from '../core/ui.mjs';
 const $=(s,r=document)=>r.querySelector(s);
 const message='<div class="form-message" role="status"></div>';
 const logoPreview=logo=>labelPhoto(logo)?`<img class="photo-preview" src="${logo}" alt="Firmenlogo">`:'';

@@ -4,9 +4,9 @@
 
 Der frühere breite Recherchekatalog wurde am 26. September 2026 auf Nutzerwunsch geleert. Am 27. September wurden gezielt Oberflächensysteme und Farbtöne neu freigegeben: EPI Quartz R, Lamurista HardRock/HardRock PRO, bei Murface ausschließlich Industrial/Mono sowie ArtStucco für das Bad. Als erstes Silikon wurde anschließend PCI Silcofug E ergänzt. Weitere Produkte folgen anhand der tatsächlich verwendeten Materialien.
 
-`public/catalog.json` enthält sieben auswählbare Oberflächensysteme und PCI Silcofug E. `public/system-finish.mjs` ergänzt drei zugeordnete Versiegelungen. Betriebseigene Produkte und Unterlagen bleiben privat; identische Herstellernamen werden in der Auswahl zusammengeführt, ohne private Produkte anderen Betrieben zugänglich zu machen. `preferred_manufacturers` ist eine optionale Betriebspräferenz. Sie filtert den Einstieg im Produktwähler, ersetzt aber keine Materialauswahl am Projekt. Andere Hersteller bleiben erreichbar.
+`public/catalog.json` enthält sieben auswählbare Oberflächensysteme und PCI Silcofug E. `public/js/features/system-finish.mjs` ergänzt drei zugeordnete Versiegelungen. Betriebseigene Produkte und Unterlagen bleiben privat; identische Herstellernamen werden in der Auswahl zusammengeführt, ohne private Produkte anderen Betrieben zugänglich zu machen. `preferred_manufacturers` ist eine optionale Betriebspräferenz. Sie filtert den Einstieg im Produktwähler, ersetzt aber keine Materialauswahl am Projekt. Andere Hersteller bleiben erreichbar.
 
-Farben stehen separat in `public/color-palettes.mjs`. Es wird keine Farbe automatisch gewählt. Freie Farbangaben, z. B. NCS/RAL oder Sonderfarben, bleiben möglich. Farbtöne, Chargen und Projektfotos werden nicht als Produktstammdaten gespeichert. Bestehende Projektangaben bleiben unverändert.
+Farben stehen separat in `public/js/features/color-palettes.mjs`. Es wird keine Farbe automatisch gewählt. Freie Farbangaben, z. B. NCS/RAL oder Sonderfarben, bleiben möglich. Farbtöne, Chargen und Projektfotos werden nicht als Produktstammdaten gespeichert. Bestehende Projektangaben bleiben unverändert.
 
 ## Herstellerquellen (geprüft am 27. September 2026)
 

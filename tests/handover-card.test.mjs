@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import jsQR from 'jsqr';
-import {handoverCode,handoverCard} from '../public/handover-card.mjs';
+import {handoverCode,handoverCard} from '../public/js/features/handover-card.mjs';
 test('printed SVG decodes to the exact customer URL and card excludes internal data',()=>{
  const project={token:'ab'.repeat(32),title:'Bad <Müller>',pass_number:1,internal:{address:'SECRET ADDRESS'},owner_key:'SECRET KEY'};
  const {svg,url}=handoverCode(project,'https://projekt-pass.pages.dev');

@@ -4,6 +4,10 @@ Separater Pilot mit Betreiberverwaltung und getrennten Betriebszugängen.
 Neue Betriebe starten mit 20 Pässen; weitere Pässe lassen sich jederzeit hinzufügen.
 Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
 
+Die Browsermodule liegen in `public/js/`, Stylesheets in `public/styles/`.
+Einstieg, Zuständigkeiten, lokale Tests und Veröffentlichung sind in
+[docs/CODE_STRUCTURE.md](docs/CODE_STRUCTURE.md) beschrieben.
+
 ## Was implementiert ist
 
 - Geschützter Zugang über Supabase Auth; Einrichtung über einmalige persönliche Links.

@@ -1,5 +1,5 @@
-import {esc,labelPhoto} from './ui.mjs';
-import {waterClasses,waterproofingTypes,projectPhotoLimit} from './waterproofing-data.mjs';
+import {esc,labelPhoto} from '../core/ui.mjs';
+import {waterClasses,waterproofingTypes,projectPhotoLimit} from '../shared/waterproofing-data.mjs';
 
 const select=(id,label,value,options)=>`<div class="field"><label for="${id}">${label}</label><select id="${id}" name="${id}"><option value="" ${value?'':'selected'}>Keine Angabe</option>${Object.entries(options).map(([key,name])=>`<option value="${key}" ${value===key?'selected':''}>${esc(name)}</option>`).join('')}</select></div>`;
 export function waterproofingFields(details={}){

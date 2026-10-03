@@ -1,8 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {matchingProducts,mergeDocuments,loadCatalog,setCompanyCatalog} from '../public/catalog.mjs';
-import {paletteFor} from '../public/color-palettes.mjs';
+import {matchingProducts,mergeDocuments,loadCatalog,setCompanyCatalog} from '../public/js/features/catalog.mjs';
+import {paletteFor} from '../public/js/features/color-palettes.mjs';
 const c=JSON.parse(await readFile(new URL('../public/catalog.json',import.meta.url),'utf8'));
 test('curated pilot systems have matching palettes; Murface stays limited to Mono and Industrial',()=>{
  assert.equal(c.version,1);
@@ -53,7 +53,7 @@ test('HardRock documents match the variant and survive private catalog overrides
   setCompanyCatalog({favorites:{surface:[{manufacturer:'Lamurista',name:'HardRock PRO',documents:[]}]}});
   const privateCatalog=await loadCatalog(),p=privateCatalog.products.find(p=>p.id==='own-surface-0');
   assert.deepEqual(p.documents,pro.documents);
-  const {productDocuments}=await import('../public/catalog.mjs');
+  const {productDocuments}=await import('../public/js/features/catalog.mjs');
   const docs=await productDocuments('surface',{manufacturer:'Lamurista',name:'HardRock PRO'});
   assert.ok(docs.some(d=>d.type==='Pflegeanleitung'));
   assert.ok(docs.some(d=>d.type==='Technisches Merkblatt'));

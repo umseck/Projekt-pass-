@@ -1,4 +1,4 @@
-import {esc} from './ui.mjs';
+import {esc} from '../core/ui.mjs';
 const steps=['project','materials','files','handover'];
 const labels=['Projekt & Fläche','Materialien','Fotos & Unterlagen','Übergabe & Pflege'];
 const guidance=['Projekt benennen und bearbeitete Fläche auswählen.','Vorausgefüllte Produkte prüfen und den Farbton ergänzen.','Fotos ergänzen. Diesen Schritt können Sie auch überspringen.','Nutzungszeitpunkt und Pflege prüfen. Danach die Übergabe ansehen.'];

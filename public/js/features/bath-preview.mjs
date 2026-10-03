@@ -1,7 +1,7 @@
 import {bathEditor} from './bath-editor.mjs';
-import {newArea,materialBasis,areaBasis,areaIssues} from './bath-model.mjs';
+import {newArea,materialBasis,areaBasis,areaIssues} from '../shared/bath-model.mjs';
 import {mountBathCustomer} from './bath-customer.mjs';
-import {esc} from './ui.mjs';
+import {esc} from '../core/ui.mjs';
 const company={name:'Musterbetrieb · Testdaten',email:'service@example.test',trade:'seamless',standards:{seamless:{surface:{manufacturer:'EPI',name:'Quartz R'},finish:{manufacturer:'EPI',name:'Corestone Sealer'},waterproofing:{manufacturer:'PCI',name:'Seccoral 1K'},silicone:{manufacturer:'PCI',name:'Silcofug E'}},tile:{tile:{manufacturer:'Musterhersteller',name:'Musterfliese'},adhesive:{manufacturer:'Musterhersteller',name:'Musterkleber'},grout:{manufacturer:'Musterhersteller',name:'Musterfuge'},waterproofing:{manufacturer:'PCI',name:'Seccoral 1K'}}}};
 let current,session,dashboard={company:structuredClone(company),company_version:1};
 const shell=html=>{document.querySelector('#app').innerHTML=`<main class="wrap narrow">${html}</main>`;};
