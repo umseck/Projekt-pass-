@@ -64,3 +64,19 @@ Der umfangreichere Anwendungskoordinator wurde bewusst nicht funktional
 umgeschrieben; die bestehende ältere Projektansicht bleibt erhalten.
 
 Steckerl, FundKey und Bauakte wurden nicht bearbeitet.
+
+## Nachprüfung des Zugangs am 3. Oktober 2026
+
+Nach dem Auftrag zur selbstständigen Fortsetzung wurde der Cloudflare-Zugang
+erneut geprüft. Keine passende administrative Cloudflare-Integration verfügbar.
+Der Cloud-Browser öffnet die Anmeldeseite, zeigt aber „There was a problem with
+verification. Please reload and try again.“ und eine deaktivierte Anmeldung.
+Ein einzelner Reload beseitigte den Fehler nicht. Keine Zugangsdaten eingegeben,
+keine Schutzmaßnahmen umgangen und keine Cloudflare-Einstellungen geändert.
+
+Der Versuch, die lokale Dateivorschau im Cloud-Browser zu öffnen, wurde mit
+`ERR_BLOCKED_BY_CLIENT` abgelehnt. Das ist eine Browser-/Netzwerkbeschränkung,
+kein nachgewiesener Fehler der Anwendung. Der temporäre Testserver wurde beendet.
+Eine manuelle Anmeldung/Verifizierung im bereitgestellten Cloud-Browser ist
+für die administrative Fortsetzung erforderlich. Die produktive Anwendung
+und der geprüfte Laufzeitcode bleiben unverändert.
