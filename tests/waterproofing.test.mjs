@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Window} from 'happy-dom';
 import {content,standard,company} from '../server/validation.mjs';
-import {waterproofingFields,waterproofingPhotoFields,waterproofingHTML} from '../public/waterproofing.mjs';
+import {waterproofingFields,waterproofingPhotoFields,waterproofingHTML} from '../public/js/features/waterproofing.mjs';
 
 const photo='data:image/jpeg;base64,/9j/AA==';
 test('waterproofing stays optional, preserves project documentation and rejects unsafe or oversized input',()=>{

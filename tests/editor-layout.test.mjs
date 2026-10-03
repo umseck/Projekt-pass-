@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Window} from 'happy-dom';
-import {editorSection,bindEditorSections} from '../public/editor-layout.mjs';
+import {editorSection,bindEditorSections} from '../public/js/features/editor-layout.mjs';
 
 test('compact sections keep entered data and reveal invalid fields without opening unrelated sections',async()=>{
  const win=new Window();

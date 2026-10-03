@@ -1,4 +1,4 @@
-import {esc,safeLink} from './ui.mjs';
+import {esc,safeLink} from '../core/ui.mjs';
 import {systemFinishes} from './system-finish.mjs';
 export const categories={tile:'Fliese',adhesive:'Fliesenkleber',grout:'Fugenmörtel',surface:'Oberflächensystem',waterproofing:'Abdichtung',finish:'Versiegelung',silicone:'Anschlussfugen',preparation:'Untergrundvorbereitung',care:'Reinigung & Pflege',accessory:'Zubehör & Gestaltung'};
 let cached,companyProducts=[],preferredManufacturers=[];

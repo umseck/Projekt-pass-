@@ -1,5 +1,5 @@
-import {esc,safeLink,labelPhoto} from './ui.mjs';
-import {answerRows,productLabel,bathKinds,bathNames,areaConfirmed,careValid,areaBasis} from './bath-model.mjs';
+import {esc,safeLink,labelPhoto} from '../core/ui.mjs';
+import {answerRows,productLabel,bathKinds,bathNames,areaConfirmed,careValid,areaBasis} from '../shared/bath-model.mjs';
 import {preparationHTML} from './preparation.mjs';
 const photoHTML=photos=>(photos||[]).filter(labelPhoto).map(src=>`<img src="${src}" alt="Freigegebenes Foto" style="max-width:100%;max-height:360px">`).join('');
 const docHTML=d=>`<li>${esc(d.name||d.type||'Unterlage')} · ${esc(d.source||'Quelle nicht dokumentiert')}${d.document_date?' · Stand '+esc(d.document_date):' · Dokumentstand unbekannt'} ${d.data?`<a download="Unterlage.pdf" href="${esc(d.data)}">PDF-Datei speichern</a>`:safeLink(d.url)?`<a href="${esc(safeLink(d.url))}" target="_blank" rel="noopener noreferrer">Nur verlinkt – nicht offline enthalten ↗</a>`:'Datei fehlt'}</li>`;

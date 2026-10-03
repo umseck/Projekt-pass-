@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {defaultFinish,finishSelection} from '../public/system-finish.mjs';
+import {defaultFinish,finishSelection} from '../public/js/features/system-finish.mjs';
 import {content,standard} from '../server/validation.mjs';
 const epi={manufacturer:'EPI',name:'Quartz R'},mono={manufacturer:'Murface',name:'MF Mono'};
 test('coatings are assigned only to documented systems, including known spelling variants',()=>{

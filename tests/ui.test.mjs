@@ -22,7 +22,7 @@ test('real UI → API → SQL: login, favorites, save, handover and read-only cu
  globalThis.fetch=async(path,options)=>{if(path==='/catalog.json')return Response.json(catalog);const r=await handle(new Request(origin+path,{...options,headers:{...options.headers,origin,cookie}}),env);if(r.headers.has('Set-Cookie'))cookie=r.headers.get('Set-Cookie').split(';')[0];return r;};
  const $=s=>win.document.querySelector(s),input=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new win.Event('input',{bubbles:true}));},submit=s=>$(s).dispatchEvent(new win.Event('submit',{bubbles:true,cancelable:true}));
  try{
-  await import('../public/app.mjs?integration');await wait(()=>$('#login'));
+  await import('../public/js/app.mjs?integration');await wait(()=>$('#login'));
   input('#email','installer@example.test');input('#password','pass');submit('#login');await wait(()=>$('#search'));
   win.location.hash='activate/'+pid;await wait(()=>$('#activate'));// Exercise the retained legacy editor with a fresh project fixture; new UI activations now open the compact editor.
    const activated=await (await globalThis.fetch('/api/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pass_id:pid,title:'Bad Maier'})})).json();win.location.hash='edit/'+activated.id;await wait(()=>$('#edit'));

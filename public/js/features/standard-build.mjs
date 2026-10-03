@@ -1,4 +1,4 @@
-import {hasProduct} from './ui.mjs';
+import {hasProduct} from '../core/ui.mjs';
 import {surfaceIdentity} from './system-finish.mjs';
 // Only fill missing product slots. A standard never overwrites this project's details.
 export function missingStandardProducts(current,standard,trade){

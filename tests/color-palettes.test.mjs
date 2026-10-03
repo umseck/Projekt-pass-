@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {paletteFor} from '../public/color-palettes.mjs';
+import {paletteFor} from '../public/js/features/color-palettes.mjs';
 
 test('surface palettes recognize common names without leaking to other makers, systems or materials',()=>{
  for(const product of ['Quartz R','Quarz R','EPI Quartz-R','Corestone Nature']){
@@ -36,7 +36,7 @@ test('Silcofug E colours are product-specific and include official colour number
 });
 
 test('native colour selector supports standard and custom colours across product changes',async()=>{
- const {Window}=await import('happy-dom');const {colorField,bindColorOptions,refreshColorOptions}=await import('../public/color-palettes.mjs');
+ const {Window}=await import('happy-dom');const {colorField,bindColorOptions,refreshColorOptions}=await import('../public/js/features/color-palettes.mjs');
  const w=new Window(),d=w.document;
  d.body.innerHTML='<section><input id="silicone-manufacturer" value="PCI"><input id="silicone-name" value="Silcofug E">'+colorField('silicone',{manufacturer:'PCI',name:'Silcofug E',color:'Mein Sonderton'})+'</section>';
  const card=d.querySelector('section'),input=d.querySelector('#silicone-color'),select=d.querySelector('[data-color-select]');bindColorOptions(card,'silicone');

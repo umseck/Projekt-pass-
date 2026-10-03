@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {upsertProduct} from '../public/product-library.mjs';
-import {loadCatalog,setCompanyCatalog} from '../public/catalog.mjs';
+import {upsertProduct} from '../public/js/features/product-library.mjs';
+import {loadCatalog,setCompanyCatalog} from '../public/js/features/catalog.mjs';
 import {company} from '../server/validation.mjs';
 test('real project products are reusable, deduplicated and private to the current company',async()=>{
  const item={manufacturer:'Eigenhersteller',name:'System',article_number:'A1',color:'Beige',batch:'Charge1',label_photo:'photo',documents:[{name:'Datenblatt',type:'Produktunterlage',url:'https://example.test/a.pdf'}]};

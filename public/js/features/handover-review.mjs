@@ -1,6 +1,6 @@
-import {esc,date,num,labelPhoto} from './ui.mjs';
+import {esc,date,num,labelPhoto} from '../core/ui.mjs';
 import {preparationHTML} from './preparation.mjs';
-import {names} from './trades.mjs';
+import {names} from '../shared/trades.mjs';
 export function missingMaterials(content,trade){return trade.products.filter(k=>!String(content?.[k]?.name||'').trim());}
 export function missingColors(content,trade){return trade.products.filter(k=>!['waterproofing','finish'].includes(k)&&String(content?.[k]?.name||'').trim()&&!String(content?.[k]?.color||'').trim());}
 export function handoverReview(project,trade){

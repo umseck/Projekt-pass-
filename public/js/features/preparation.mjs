@@ -1,5 +1,5 @@
-import {esc,field,area} from './ui.mjs';
-import {preparationAreas,substrateTypes,substrateTypesFor,preparationTypes,preparationActors,hasPreparationItem} from './preparation-data.mjs';
+import {esc,field,area} from '../core/ui.mjs';
+import {preparationAreas,substrateTypes,substrateTypesFor,preparationTypes,preparationActors,hasPreparationItem} from '../shared/preparation-data.mjs';
 
 const emptyItem=()=>({kind:'',by:'',custom:'',company:'',note:''});
 const areaKeys=choice=>choice==='Wände & Boden'?['walls','floor']:choice==='Wände'?['walls']:choice==='Boden'?['floor']:choice?['other']:[];

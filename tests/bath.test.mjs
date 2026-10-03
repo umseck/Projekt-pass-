@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {Window} from 'happy-dom';
 import {PGlite} from '@electric-sql/pglite';
 import {readFile} from 'node:fs/promises';
-import {newArea,materialBasis,areaBasis,areaConfirmed,careValid,replaceProduct,answerRows,areaIssues} from '../public/bath-model.mjs';
+import {newArea,materialBasis,areaBasis,areaConfirmed,careValid,replaceProduct,answerRows,areaIssues} from '../public/js/shared/bath-model.mjs';
 import {content,standard} from '../server/validation.mjs';
-import {customerCopy,offlineHTML} from '../public/bath-customer.mjs';
+import {customerCopy,offlineHTML} from '../public/js/features/bath-customer.mjs';
 import {createHandler} from '../server/api.mjs';
 const confirmed=()=>{const a=newArea('seamless',{surface:{manufacturer:'EPI',name:'Quartz R'},finish:{manufacturer:'EPI',name:'Corestone Sealer'}},'Duschwand');a.products.surface.color='Canvas';a.care={text:'TESTHINWEIS – keine reale Pflegeempfehlung.',source:'Testquelle',document_date:'2026-09-28',url:'',basis:materialBasis(a),confirmed:true};a.confirmation=areaBasis(a);return a;};
 test('two surfaces, missing care, changed system, server normalization and clean standards',()=>{
@@ -53,7 +53,7 @@ test('new editor → real API/SQL → handover; tenant isolation, immutable snap
  globalThis.window=win;globalThis.document=win.document;globalThis.location=win.location;globalThis.confirm=()=>true;globalThis.FileReader=win.FileReader;
  let session;const $=s=>win.document.querySelector(s);const wait=async fn=>{for(let i=0;i<120;i++){if(fn())return;await new Promise(r=>setTimeout(r,10));}throw Error('UI timeout: '+$('#app').textContent);};
  try{
-  const {bathEditor}=await import('../public/bath-editor.mjs');let destination;
+  const {bathEditor}=await import('../public/js/features/bath-editor.mjs');let destination;
   const started=performance.now();
   session=await bathEditor(p.id,{api,shell:html=>$('#app').innerHTML=html,modal:()=>{},dashboard:{company:profile,company_version:1},go:value=>destination=value});
   await wait(()=>$('#bath-dashboard'));assert.equal($('#bath-dashboard').querySelectorAll('[data-open-area]').length,3);assert.match($('#bath-dashboard').textContent,/Duschwand/);assert.match($('#bath-dashboard').textContent,/Badezimmerboden/);

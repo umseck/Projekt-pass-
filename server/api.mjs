@@ -1,5 +1,5 @@
 import {HttpError,validate,text,email,fail} from './validation.mjs';
-import {areaIssues} from '../public/bath-model.mjs';
+import {areaIssues} from '../public/js/shared/bath-model.mjs';
 
 const COOKIE='__Host-pp_session';
 const publicOps=new Set(['scan','access_info','access_activate']);

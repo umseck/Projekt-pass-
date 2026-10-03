@@ -1,10 +1,10 @@
-import {esc,field,area,compress} from './ui.mjs';
-import {createAutosave} from './autosave.mjs';
+import {esc,field,area,compress} from '../core/ui.mjs';
+import {createAutosave} from '../core/autosave.mjs';
 import {createPreparationEditor} from './preparation.mjs';
 import {openCatalogPicker,productDocuments} from './catalog.mjs?v=20260930-materials2';
 import {paletteFor} from './color-palettes.mjs';
 import {defaultFinish} from './system-finish.mjs';
-import {bathKinds,bathNames,newArea,legacyArea,replaceProduct,productLabel,materialBasis,careValid,areaBasis,areaConfirmed,areaIssues,primaryFor} from './bath-model.mjs';
+import {bathKinds,bathNames,newArea,legacyArea,replaceProduct,productLabel,materialBasis,careValid,areaBasis,areaConfirmed,areaIssues,primaryFor} from '../shared/bath-model.mjs';
 const areaChoice=a=>({walls:'Wände',floor:'Boden',both:'Wände & Boden',other:'Andere Fläche'})[a.position];
 const kindLabel=k=>bathNames[k]||k;
 const dashboardIcon=name=>({

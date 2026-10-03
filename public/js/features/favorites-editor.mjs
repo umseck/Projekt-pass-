@@ -1,5 +1,5 @@
-import {esc,field,safeLink} from './ui.mjs';
-import {names,tradeFor} from './trades.mjs';
+import {esc,field,safeLink} from '../core/ui.mjs';
+import {names,tradeFor} from '../shared/trades.mjs';
 const identity=p=>[p.manufacturer,p.name,p.article_number].map(v=>(v||'').trim().toLocaleLowerCase('de')).join('|');
 export function createFavoritesEditor(root,initial,{modal,openCatalogPicker,onChange=()=>{}}){
  const favorites=structuredClone(initial||{});let trade='',editing=null,removed=null;

@@ -1,5 +1,5 @@
-import qrcode from './vendor/qrcode.mjs';
-import {esc,num,labelPhoto} from './ui.mjs';
+import qrcode from '../vendor/qrcode.mjs';
+import {esc,num,labelPhoto} from '../core/ui.mjs';
 export function handoverCode(project,origin){
  const url=new URL('/#p/'+project.token,origin).href;
  if(!/^[a-f0-9]{64}$/.test(project.token)||!/^https?:/.test(url))throw Error('Kein gültiger Kundenlink.');

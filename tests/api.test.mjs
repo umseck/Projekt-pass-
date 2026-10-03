@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHandler} from '../server/api.mjs';
 import {validate,company,content} from '../server/validation.mjs';
-import {labelPhoto} from '../public/ui.mjs';
+import {labelPhoto} from '../public/js/core/ui.mjs';
 const origin='https://projektpass.example',id='11111111-1111-4111-8111-111111111111';
 const env={APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'sb_secret_TEST_ONLY',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_TEST_ONLY'};
 const request=(op,body={},extra={})=>new Request(origin+'/api/'+op,{method:'POST',headers:{origin,'Content-Type':'application/json',...extra},body:JSON.stringify(body)});

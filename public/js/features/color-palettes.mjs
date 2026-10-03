@@ -1,4 +1,4 @@
-import {esc,field} from './ui.mjs';
+import {esc,field} from '../core/ui.mjs';
 
 // Manufacturer colour references. Custom project colours remain freely editable.
 // Quartz R uses the Corestone collection at the project owner's request (2026-09-27).

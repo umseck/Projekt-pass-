@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Window} from 'happy-dom';
-import {createFavoritesEditor} from '../public/favorites-editor.mjs';
+import {createFavoritesEditor} from '../public/js/features/favorites-editor.mjs';
 test('private products preserve metadata, protect drafts and support add/edit/remove/undo',()=>{
  const w=new Window();w.document.body.innerHTML='<details><div id="root"></div></details><dialog id="modal"></dialog>';globalThis.document=w.document;
  const root=w.document.querySelector('#root'),$=s=>root.querySelector(s),click=s=>$(s).click();let picker;

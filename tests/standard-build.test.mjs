@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {missingStandardProducts} from '../public/standard-build.mjs';
-import {trades} from '../public/trades.mjs';
+import {missingStandardProducts} from '../public/js/features/standard-build.mjs';
+import {trades} from '../public/js/shared/trades.mjs';
 const standard={surface:{manufacturer:'EPI',name:'Quartz R',color:'Never copy',batch:'Never copy'},finish:{manufacturer:'EPI',name:'Corestone Sealer'},silicone:{manufacturer:'PCI',name:'Silcofug E'}};
 test('standard fills empty slots, strips project details and preserves different systems and overrides',()=>{
  const added=Object.fromEntries(missingStandardProducts({},standard,trades.seamless));
