@@ -1,0 +1,62 @@
+name: Projectpass Bad quality review
+on:
+  push:
+    branches: ['qa/bad-review-2026-10-04']
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Unit, API and SQL regression
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test-results.txt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Isolated browser dependencies
+        run: |
+          python -m pip install playwright==1.57.0 Pillow==11.3.0 PyMuPDF==1.26.7
+          python -m playwright install --with-deps chromium
+          python -c "from PIL import Image; Image.open('tests/fixtures/test-photo.jpg').load()"
+          python -c "from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print('CHROMIUM_BIN='+p.chromium.executable_path); p.stop()" >> "$GITHUB_ENV"
+      - name: Real browser, actual downloads, offline copies
+        run: |
+          set -o pipefail
+          python scripts/qa/browser.py 2>&1 | tee browser-results.txt
+      - name: Dependency audit evidence
+        if: always()
+        run: npm audit --json > audit-results.json || true
+      - name: Archive review source and synthetic evidence
+        if: always()
+        run: |
+          mkdir -p qa/evidence
+          cp test-results.txt qa/evidence/ || true
+          cp browser-results.txt qa/evidence/ || true
+          cp audit-results.json qa/evidence/ || true
+          git rev-parse HEAD > qa/evidence/commit.txt
+          tar --exclude='./.git' --exclude='./node_modules' --exclude='./qa' --exclude='./generated' --exclude='./.env*' -czf /tmp/quality-source.tar.gz .
+          cp /tmp/quality-source.tar.gz qa/evidence/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: projectpass-quality-evidence
+          retention-days: 7
+          path: |
+            qa/evidence/
+            qa/browser/
+            qa/generated/*.zip
+            qa/generated/*.json
