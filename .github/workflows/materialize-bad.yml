@@ -1,0 +1,96 @@
+name: Materialize verified bathroom implementation
+on:
+  push:
+    branches: [feature/projektpass-bad-v2]
+    paths: [.github/workflows/materialize-bad.yml]
+permissions:
+  contents: write
+concurrency:
+  group: materialize-bad-source
+  cancel-in-progress: false
+jobs:
+  materialize:
+    if: github.ref == 'refs/heads/feature/projektpass-bad-v2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/projektpass-bad-v2
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Verify and apply audited UTF-8 source bundle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64,lzma,json,hashlib,subprocess
+          root=Path.cwd();parts=sorted((root/'.bad-transfer').glob('part-*.txt'))
+          assert len(parts)==13,'Missing source transfer part'
+          raw=lzma.decompress(base64.b64decode(''.join(p.read_text().strip() for p in parts),validate=True))
+          assert hashlib.sha256(raw).hexdigest()=='0b4b319bedce0d1260261f636571f030c3c8e6caebf85fc2f09b2680e8ae3c8e','Source checksum mismatch'
+          data=json.loads(raw);assert data['schema']=='projektpass-bad-source/1'
+          for name,digest in data['original_hashes'].items():
+              p=root/name;assert p.resolve().is_relative_to(root)
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==digest,'Base source changed: '+name
+          patch=root/'.bad-transfer/changes.patch';patch.write_text(data['patch'])
+          subprocess.run(['git','apply','--check',str(patch)],check=True)
+          subprocess.run(['git','apply',str(patch)],check=True)
+          allowed=('public/bad/','server/bad/','scripts/bad/')
+          exact={'database/bad_v2.sql','docs/PROJEKTPASS_BAD_IMPLEMENTATION.md','public/bad-preview.html','public/bad-site.html','qa/bad/.gitignore','tests/bad-v2.test.mjs'}
+          for name,content in data['files'].items():
+              assert name.startswith(allowed) or name in exact,'Unexpected target: '+name
+              p=root/name;assert p.resolve().is_relative_to(root);assert not p.exists(),'New source already exists: '+name
+              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(content)
+          css=(root/'public/bad/bad.css').read_text()
+          (root/'public/bad/theme.mjs').write_text('export const offlineStyle = '+json.dumps(css,ensure_ascii=False)+';\n')
+          # Wait for the newly selected scenario, rather than matching stale UI.
+          p=root/'scripts/bad/browser-check.py';text=p.read_text()
+          text=text.replace("page.locator('[data-demo=\"'+kind+'\"]').click();page.wait_for_selector", "page.locator('[data-demo=\"'+kind+'\"]').click();page.wait_for_timeout(500);page.wait_for_selector")
+          text=text.replace("if kind=='mixed':assert 'Vorher: Foto fehlt.' in page.locator('.bad-customer').inner_text()", "if kind=='mixed':\n    page.locator('.bad-customer details').evaluate_all('(xs)=>xs.forEach(x=>x.open=true)')\n    assert 'Vorher: Foto fehlt.' in page.locator('.bad-customer').inner_text()")
+          p.write_text(text)
+          print('Verified source payload:',len(raw),'bytes; new modules:',len(data['files']))
+          PY
+      - name: Install pinned test tools and generate synthetic photographs
+        run: |
+          npm ci --ignore-scripts
+          python -m pip install 'Pillow==11.3.0' 'playwright==1.55.0'
+          python scripts/bad/generate-test-assets.py
+      - name: Full regression suite on materialized sources
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test-results.txt
+      - name: Commit ordinary source files on isolated feature branch
+        run: |
+          rm -rf .bad-transfer
+          rm .github/workflows/materialize-bad.yml
+          git config user.name 'Projektpass Development'
+          git config user.email 'development@projektpass.invalid'
+          git add public server database docs scripts tests qa/bad/.gitignore .bad-transfer .github/workflows/materialize-bad.yml
+          git commit -m 'feat(bad): implement surface-specific bathroom workflow, immutable releases and offline dossier'
+          git push origin HEAD:feature/projektpass-bad-v2
+          git rev-parse HEAD > implementation-commit.txt
+      - name: Install browser
+        run: python -m playwright install --with-deps chromium
+      - name: Actual browser interactions and downloaded offline files
+        run: |
+          set -o pipefail
+          python scripts/bad/browser-check.py 2>&1 | tee browser-results.txt
+      - name: Retain source and actual QA evidence
+        if: always()
+        run: |
+          tar --exclude=./.git --exclude=./node_modules --exclude=./review-copy.tar.gz --exclude=./source-and-evidence.tar.gz --exclude=./.bad-transfer -czf /tmp/source-and-evidence.tar.gz .
+          mv /tmp/source-and-evidence.tar.gz source-and-evidence.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: projektpass-bad-implementation-evidence
+          path: |
+            source-and-evidence.tar.gz
+            implementation-commit.txt
+            test-results.txt
+            browser-results.txt
+            qa/bad/browser/report.json
+          retention-days: 7
