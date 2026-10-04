@@ -6,7 +6,7 @@ import {existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
 import {PGlite} from '@electric-sql/pglite';
-import {createHandler} from '../../server/api.mjs';
+import {createProductionHandler as createHandler} from '../../server/entry.mjs';
 import {fixture,company,actor,foreign} from './fixtures.mjs';
 import {standard} from '../../server/validation.mjs';
 const root=path.resolve(import.meta.dirname,'../..'),tmp=path.join(root,'qa/generated');await mkdir(tmp,{recursive:true});
@@ -32,7 +32,6 @@ const handle=createHandler(upstream),mime={'.html':'text/html','.mjs':'text/java
 const server=https.createServer({key:await readFile(key),cert:await readFile(cert)},async(req,res)=>{
  try{
  const url=new URL(req.url,origin);if(url.pathname.startsWith('/api/')){const body=[];for await(const c of req)body.push(c);const r=await handle(new Request(url,{method:req.method,headers:req.headers,body:['GET','HEAD'].includes(req.method)?undefined:Buffer.concat(body)}),{APP_ORIGIN:origin,SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_SECRET_KEY:'LOCAL-TEST-ONLY',SUPABASE_PUBLISHABLE_KEY:'LOCAL-TEST-ONLY'});res.writeHead(r.status,Object.fromEntries(r.headers));res.end(Buffer.from(await r.arrayBuffer()));return;}
- // Only synthetic fixture configuration, never real DB rows or account data.
  if(url.pathname==='/__qa/config'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({passes,actor,foreign,company,standards:Object.fromEntries(['seamless','tile','mixed'].map(k=>{const c=fixture(k);return [k,{trade:c.trade,value:standard({...c.areas[0].products,area_templates:c.areas},c.trade)}];}))}));return;}
  const name=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname).replace(/^\//,'');const file=path.resolve(root,'public',name);if(!file.startsWith(path.join(root,'public')+path.sep)){res.writeHead(403);res.end();return;}
  const data=await readFile(file);res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');res.end(data);
