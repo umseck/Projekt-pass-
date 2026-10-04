@@ -1,0 +1,1519 @@
+{
+  "schema": "projektpass-bad-catalog/1",
+  "checked_at": "2026-10-04",
+  "notice": "Herstellerseiten sind eine Suchhilfe, keine geprüfte Produktkombination. Keine fertigen Pflegeempfehlungen. Keine Herstellerdateien archiviert. Dokumentversionsdatum und Prüfdatum sind getrennt.",
+  "products": [
+    {
+      "id": "pci-nanolight",
+      "manufacturer": "PCI",
+      "name": "Nanolight",
+      "family": "Nanolight",
+      "variant": "Nanolight",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-nanolight",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-nanolight",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-flexm-rtel-s1",
+      "manufacturer": "PCI",
+      "name": "Flexmörtel S1",
+      "family": "Flexmörtel S1",
+      "variant": "Flexmörtel S1",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-flexmoertel-s1",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-flexmoertel-s1",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-flexm-rtel-s2",
+      "manufacturer": "PCI",
+      "name": "Flexmörtel S2",
+      "family": "Flexmörtel S2",
+      "variant": "Flexmörtel S2",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-flexmoertel-s2",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-flexmoertel-s2",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-nanofug-premium",
+      "manufacturer": "PCI",
+      "name": "Nanofug Premium",
+      "family": "Nanofug Premium",
+      "variant": "Nanofug Premium",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "grout"
+      ],
+      "colors": [
+        "16 · Silbergrau",
+        "19 · Basalt",
+        "21 · Hellgrau",
+        "22 · Sandgrau",
+        "31 · Zementgrau",
+        "47 · Anthrazit",
+        "02 · Bahamabeige",
+        "03 · Caramel",
+        "05 · Mittelbraun",
+        "11 · Jasmin",
+        "12 · Anemone",
+        "18 · Manhattan",
+        "20 · Weiß",
+        "23 · Lichtgrau",
+        "27 · Jurabeige",
+        "40 · Schwarz",
+        "41 · Dunkelbraun",
+        "43 · Pergamon",
+        "44 · Topas",
+        "54 · Ahorn",
+        "55 · Nussbraun",
+        "56 · Terrabraun",
+        "57 · Rehbraun",
+        "58 · Mahagoni",
+        "59 · Mokka",
+        "60 · Schwarzbraun",
+        "61 · Schiefergrau"
+      ],
+      "color_coverage": "official_page_list_2026-10-04",
+      "article_variants": [],
+      "use_search": [
+        "grout"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-nanofug-premium",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-nanofug-premium",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-durapox-premium",
+      "manufacturer": "PCI",
+      "name": "Durapox Premium",
+      "family": "Durapox Premium",
+      "variant": "Durapox Premium",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "grout"
+      ],
+      "colors": [
+        "01 · Brillantweiß",
+        "02 · Bahamabeige",
+        "16 · Silbergrau",
+        "19 · Basalt",
+        "22 · Sandgrau",
+        "23 · Lichtgrau",
+        "31 · Zementgrau",
+        "47 · Anthrazit",
+        "03 · Caramel",
+        "05 · Mittelbraun",
+        "11 · Jasmin",
+        "21 · Hellgrau",
+        "40 · Schwarz",
+        "41 · Dunkelbraun",
+        "43 · Pergamon",
+        "55 · Nussbraun",
+        "57 · Rehbraun"
+      ],
+      "color_coverage": "official_page_list_2026-10-04",
+      "article_variants": [],
+      "use_search": [
+        "grout"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-durapox-premium",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-durapox-premium",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-silcofug-e",
+      "manufacturer": "PCI",
+      "name": "Silcofug E",
+      "family": "Silcofug E",
+      "variant": "Silcofug E",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [
+        "Transparent",
+        "01 · Brillantweiß",
+        "02 · Bahamabeige",
+        "03 · Caramel",
+        "05 · Mittelbraun",
+        "11 · Jasmin",
+        "12 · Anemone",
+        "16 · Silbergrau",
+        "18 · Manhattan",
+        "19 · Basalt",
+        "21 · Hellgrau",
+        "22 · Sandgrau",
+        "23 · Lichtgrau",
+        "31 · Zementgrau",
+        "40 · Schwarz",
+        "41 · Dunkelbraun",
+        "43 · Pergamon",
+        "44 · Topas",
+        "47 · Anthrazit",
+        "53 · Ocker",
+        "54 · Ahorn",
+        "55 · Nussbraun",
+        "56 · Terrabraun",
+        "57 · Rehbraun",
+        "58 · Mahagoni",
+        "59 · Mokka",
+        "60 · Schwarzbraun",
+        "61 · Schiefergrau"
+      ],
+      "color_coverage": "official_page_list_2026-10-04",
+      "article_variants": [],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-e",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-silcofug-multicolor",
+      "manufacturer": "PCI",
+      "name": "Silcofug Multicolor",
+      "family": "Silcofug Multicolor",
+      "variant": "Silcofug Multicolor",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-multicolor",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-silcofug-multicolor",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-silcoferm-s",
+      "manufacturer": "PCI",
+      "name": "Silcoferm S",
+      "family": "Silcoferm S",
+      "variant": "Silcoferm S",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-silcoferm-s",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-silcoferm-s",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-seccoral-1k",
+      "manufacturer": "PCI",
+      "name": "Seccoral 1K",
+      "family": "Seccoral 1K",
+      "variant": "Seccoral 1K",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "waterproofing"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "waterproofing"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-seccoral-1k",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-seccoral-1k",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-seccoral-2k-rapid",
+      "manufacturer": "PCI",
+      "name": "Seccoral 2K Rapid",
+      "family": "Seccoral 2K Rapid",
+      "variant": "Seccoral 2K Rapid",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "waterproofing"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "waterproofing"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-seccoral-2k-rapid",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-seccoral-2k-rapid",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "pci-pecitape-120",
+      "manufacturer": "PCI",
+      "name": "Pecitape 120",
+      "family": "Pecitape 120",
+      "variant": "Pecitape 120",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "tape"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "tape"
+      ],
+      "product_url": "https://www.pci-augsburg.eu/de/produkte/pci-pecitape-120",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.pci-augsburg.eu/de/produkte/pci-pecitape-120",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "sopro-sopro-s-no-1-super-light",
+      "manufacturer": "Sopro",
+      "name": "Sopro’s No.1 super light",
+      "family": "No.1",
+      "variant": "No.1 400",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.sopro.com/de-de/produktdetails/fliesen-und-natursteinkleber-spezialkleber-1/400-sopros-no1-super-light",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.sopro.com/de-de/produktdetails/fliesen-und-natursteinkleber-spezialkleber-1/400-sopros-no1-super-light",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Die aktuelle Herstellerseite führt No.1 400 als „super light“. Nicht stillschweigend mit einem historischen No.1-Flexkleber-Gebinde gleichsetzen; Gebinde und Dokumentstand am Auftrag abgleichen."
+    },
+    {
+      "id": "sopro-sopro-s-no-1-silver",
+      "manufacturer": "Sopro",
+      "name": "Sopro’s No.1 Silver",
+      "family": "No.1",
+      "variant": "No.1 403",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.sopro.com/de-de/produktdetails/fliesen-und-natursteinkleber-spezialkleber/403-sopros-no1-silver",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.sopro.com/de-de/produktdetails/fliesen-und-natursteinkleber-spezialkleber/403-sopros-no1-silver",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "sopro-df-10-designfuge-flex",
+      "manufacturer": "Sopro",
+      "name": "DF 10 DesignFuge Flex",
+      "family": "DF 10 DesignFuge Flex",
+      "variant": "DF 10",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "grout"
+      ],
+      "colors": [
+        "Weiß 10"
+      ],
+      "color_coverage": "partial",
+      "article_variants": [],
+      "use_search": [
+        "grout"
+      ],
+      "product_url": "https://www.sopro.com/de-de/produktdetails/fliesentechnik/fugenmassen/df-10-df-10-designfuge-flex",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.sopro.com/de-de/produktdetails/fliesentechnik/fugenmassen/df-10-df-10-designfuge-flex",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "sopro-sanit-rsilikon",
+      "manufacturer": "Sopro",
+      "name": "SanitärSilikon",
+      "family": "SanitärSilikon",
+      "variant": "SSI",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [
+        "transparent 00",
+        "weiß 10",
+        "hellgrau 16",
+        "silbergrau 17",
+        "manhattan 77",
+        "grau 15",
+        "sandgrau 18",
+        "steingrau 22",
+        "betongrau 14",
+        "basalt 64",
+        "anthrazit 66",
+        "schwarz 90",
+        "tiefschwarz 96",
+        "pergamon 27",
+        "jasmin 28",
+        "hellbeige 29",
+        "beige 32",
+        "bahamabeige 34",
+        "jurabeige 33",
+        "caramel 38",
+        "sahara 40",
+        "braun 52",
+        "kastanie 50",
+        "mahagoni 55",
+        "balibraun 59",
+        "ebenholz 62",
+        "tiefblau 98",
+        "signalrot 91",
+        "weinrot 92",
+        "aqua 86"
+      ],
+      "color_coverage": "official_page_list_2026-10-04",
+      "article_variants": [
+        {
+          "article_number": "6HV5600043",
+          "color_code": "00",
+          "color": "transparent",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5601043",
+          "color_code": "10",
+          "color": "weiß",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5601643",
+          "color_code": "16",
+          "color": "hellgrau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5601743",
+          "color_code": "17",
+          "color": "silbergrau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5607743",
+          "color_code": "77",
+          "color": "manhattan",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5601543",
+          "color_code": "15",
+          "color": "grau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5601843",
+          "color_code": "18",
+          "color": "sandgrau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5602243",
+          "color_code": "22",
+          "color": "steingrau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5601443",
+          "color_code": "14",
+          "color": "betongrau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5606443",
+          "color_code": "64",
+          "color": "basalt",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5606643",
+          "color_code": "66",
+          "color": "anthrazit",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5609043",
+          "color_code": "90",
+          "color": "schwarz",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5609643",
+          "color_code": "96",
+          "color": "tiefschwarz",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5602743",
+          "color_code": "27",
+          "color": "pergamon",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5602843",
+          "color_code": "28",
+          "color": "jasmin",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5602943",
+          "color_code": "29",
+          "color": "hellbeige",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5603243",
+          "color_code": "32",
+          "color": "beige",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5603443",
+          "color_code": "34",
+          "color": "bahamabeige",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5603343",
+          "color_code": "33",
+          "color": "jurabeige",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5603843",
+          "color_code": "38",
+          "color": "caramel",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5604043",
+          "color_code": "40",
+          "color": "sahara",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5605243",
+          "color_code": "52",
+          "color": "braun",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5605043",
+          "color_code": "50",
+          "color": "kastanie",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5605543",
+          "color_code": "55",
+          "color": "mahagoni",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5605943",
+          "color_code": "59",
+          "color": "balibraun",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5606243",
+          "color_code": "62",
+          "color": "ebenholz",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5609843",
+          "color_code": "98",
+          "color": "tiefblau",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5609143",
+          "color_code": "91",
+          "color": "signalrot",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5609243",
+          "color_code": "92",
+          "color": "weinrot",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        },
+        {
+          "article_number": "6HV5608643",
+          "color_code": "86",
+          "color": "aqua",
+          "packaging": "Kartusche 310 ml",
+          "checked_at": "2026-10-04",
+          "source_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon"
+        }
+      ],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.sopro.com/de-de/produktdetails/fugenmoertel-fugendichtstoffe/ssi-sanitaersilikon",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "sopro-dichtschl-mme-flex-1-k",
+      "manufacturer": "Sopro",
+      "name": "DichtSchlämme Flex 1-K",
+      "family": "DichtSchlämme Flex 1-K",
+      "variant": "DSF 523",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "waterproofing"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [
+        {
+          "article_number": "7752320",
+          "packaging": "Sack 20 kg"
+        },
+        {
+          "article_number": "7752310",
+          "packaging": "Sack 10 kg"
+        }
+      ],
+      "use_search": [
+        "waterproofing"
+      ],
+      "product_url": "https://www.sopro.com/de-de/produktdetails/fliesentechnik/abdichtungen-fliesentechnik/523-dichtschlaemme-flex-1-k",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.sopro.com/de-de/produktdetails/fliesentechnik/abdichtungen-fliesentechnik/523-dichtschlaemme-flex-1-k",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "ardex-x-77",
+      "manufacturer": "ARDEX",
+      "name": "X 77",
+      "family": "X 77",
+      "variant": "X 77",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.ardex.de/produkte/fliesenkleber/produktdetails/ardex-x-77/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.ardex.de/produkte/fliesenkleber/produktdetails/ardex-x-77/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "ardex-x-78",
+      "manufacturer": "ARDEX",
+      "name": "X 78",
+      "family": "X 78",
+      "variant": "X 78",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.ardex.de/produkte/fliesenkleber/ardex-x-78/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.ardex.de/produkte/fliesenkleber/ardex-x-78/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "ardex-s-28",
+      "manufacturer": "ARDEX",
+      "name": "S 28",
+      "family": "S 28",
+      "variant": "S 28",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "adhesive"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "adhesive"
+      ],
+      "product_url": "https://www.ardex.de/produkte/fliesenkleber/produktdetails/ardex-s-28/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.ardex.de/produkte/fliesenkleber/produktdetails/ardex-s-28/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "ardex-g-10",
+      "manufacturer": "ARDEX",
+      "name": "G 10",
+      "family": "G 10",
+      "variant": "G 10",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "grout"
+      ],
+      "colors": [
+        "Anthrazit",
+        "Bahamabeige",
+        "Balibraun",
+        "Basalt",
+        "Dunkelbraun",
+        "Grau",
+        "Graubraun",
+        "Hellgrau",
+        "Jasmin",
+        "Jurabeige",
+        "Pergamon",
+        "Sandbeige",
+        "Sandgrau",
+        "Silbergrau",
+        "Siena",
+        "Steingrau",
+        "Weiß",
+        "Zementgrau"
+      ],
+      "color_coverage": "official_page_list_2026-10-04",
+      "article_variants": [],
+      "use_search": [
+        "grout"
+      ],
+      "product_url": "https://www.ardex.de/produkte/fugenmoertel/produktdetails/ardex-g-10/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.ardex.de/produkte/fugenmoertel/produktdetails/ardex-g-10/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "ardex-s-7-plus-w",
+      "manufacturer": "ARDEX",
+      "name": "S 7 PLUS W",
+      "family": "S 7 PLUS W",
+      "variant": "S 7 PLUS W",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "waterproofing"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "waterproofing"
+      ],
+      "product_url": "https://www.ardex.de/produkte/abdichtungen/ardex-s7-plus-w/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.ardex.de/produkte/abdichtungen/ardex-s7-plus-w/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "otto-ottoseal-s-100",
+      "manufacturer": "OTTO",
+      "name": "OTTOSEAL S 100",
+      "family": "OTTOSEAL",
+      "variant": "S 100",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.otto-chemie.de/bau/ottoseal-s-100",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-100",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "otto-ottoseal-s-70",
+      "manufacturer": "OTTO",
+      "name": "OTTOSEAL S 70",
+      "family": "OTTOSEAL",
+      "variant": "S 70",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.otto-chemie.de/bau/ottoseal-s-70",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-70",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "otto-ottoseal-s-117",
+      "manufacturer": "OTTO",
+      "name": "OTTOSEAL S 117",
+      "family": "OTTOSEAL",
+      "variant": "S 117",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "silicone"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "silicone"
+      ],
+      "product_url": "https://www.otto-chemie.de/bau/ottoseal-s-117",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://www.otto-chemie.de/bau/ottoseal-s-117",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "lamurista-hardrock-pro",
+      "manufacturer": "Lamurista",
+      "name": "HardRock PRO",
+      "family": "HardRock",
+      "variant": "PRO",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "surface"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "surface"
+      ],
+      "product_url": "https://lamurista.de/hardrock/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://lamurista.de/hardrock/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "lamurista-hardrock-ultra-2k",
+      "manufacturer": "Lamurista",
+      "name": "HardRock ULTRA 2K",
+      "family": "HardRock",
+      "variant": "ULTRA 2K",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "surface"
+      ],
+      "colors": [],
+      "color_coverage": "not_verified",
+      "article_variants": [],
+      "use_search": [
+        "surface"
+      ],
+      "product_url": "https://lamurista.de/hardrock/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://lamurista.de/hardrock/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "epi-quartz-r",
+      "manufacturer": "EPI",
+      "name": "Quartz R",
+      "family": "Quartz R",
+      "variant": "Quartz R",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "surface"
+      ],
+      "colors": [
+        "Robust Green",
+        "Rockwell Brown",
+        "Rocky Road",
+        "Rock Beach",
+        "Rusty Romance",
+        "Rustic Cereal",
+        "Russel Grey",
+        "Rush Green",
+        "Rugged Dune",
+        "Ruby Rose",
+        "Rubble Cotton",
+        "Rosemary Green",
+        "Radiant white",
+        "Rainy Grey",
+        "Raven Mist",
+        "Reef Grey",
+        "Resin Sand"
+      ],
+      "color_coverage": "partial",
+      "article_variants": [],
+      "use_search": [
+        "surface"
+      ],
+      "product_url": "https://epifloors.com/en/our-floors/quartz-r/",
+      "language": "en",
+      "market": "international",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://epifloors.com/en/our-floors/quartz-r/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "en",
+          "market": "international",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    },
+    {
+      "id": "epi-corestone-nature",
+      "manufacturer": "EPI",
+      "name": "Corestone Nature",
+      "family": "Corestone Nature",
+      "variant": "Corestone Nature",
+      "variant_status": "known",
+      "article_number": "",
+      "roles": [
+        "surface"
+      ],
+      "colors": [
+        "Soft Shade",
+        "Summer Beach",
+        "Warm",
+        "Concrete",
+        "Doodle",
+        "Mixed Sand",
+        "Cafe au Lait",
+        "Grey Taupe"
+      ],
+      "color_coverage": "partial",
+      "article_variants": [],
+      "use_search": [
+        "surface"
+      ],
+      "product_url": "https://epifloors.com/de/unsere-boden/corestone-nature/",
+      "language": "de",
+      "market": "DE",
+      "checked_at": "2026-10-04",
+      "source_status": "linked",
+      "document_status": "missing",
+      "document_date": "",
+      "documents": [
+        {
+          "type": "product",
+          "url": "https://epifloors.com/de/unsere-boden/corestone-nature/",
+          "source_status": "linked",
+          "document_date": "",
+          "checked_at": "2026-10-04",
+          "language": "de",
+          "market": "DE",
+          "archived_file": null
+        }
+      ],
+      "note": "Produktname auf offizieller Herstellerseite geprüft. Keine Systemfreigabe; konkrete Gebinde-, Farb- und Artikelvariante am Auftrag bestätigen. Weitere Unterlagen noch nicht geprüft oder archiviert."
+    }
+  ],
+  "pending_verification": [
+    {
+      "manufacturer": "Lamurista",
+      "requested_name": "GoodLack wb",
+      "status": "unverified",
+      "reason": "Exakte aktuelle Herstellerunterlage und Variante noch nicht verifiziert."
+    },
+    {
+      "manufacturer": "Lamurista",
+      "requested_name": "GoodLack lmh",
+      "status": "unverified",
+      "reason": "Exakte aktuelle Herstellerunterlage und Variante noch nicht verifiziert."
+    },
+    {
+      "manufacturer": "Murface",
+      "requested_name": "Industrial",
+      "status": "unverified",
+      "reason": "Hersteller erkannt; aktuelle genaue Produktfassung noch nicht verifiziert."
+    },
+    {
+      "manufacturer": "Murface",
+      "requested_name": "Mono",
+      "status": "unverified",
+      "reason": "Hersteller erkannt; aktuelle genaue Produktfassung noch nicht verifiziert."
+    },
+    {
+      "manufacturer": "Art Stucco",
+      "requested_name": "Bad-System",
+      "status": "unverified",
+      "reason": "Systembezeichnung allein benennt keine genaue Schlussoberfläche und Versiegelung."
+    },
+    {
+      "manufacturer": "EPI",
+      "requested_name": "Weitere Systembestandteile / Corestone Sealer",
+      "status": "unverified",
+      "reason": "Keine automatische Gleichsetzung mit Quartz R; genaue Bestandteile noch klären."
+    },
+    {
+      "manufacturer": "PCI / Sopro / ARDEX",
+      "requested_name": "Weitere Dichtbänder, Ecken und Manschetten",
+      "status": "unverified",
+      "reason": "Die konkrete Hersteller- und Artikelvariante wird erst nach Einzelprüfung in den wählbaren Katalog aufgenommen."
+    }
+  ]
+}

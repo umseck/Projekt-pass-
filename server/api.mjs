@@ -1,10 +1,12 @@
+import {badOps,badPublicOps,validateBad} from './bad/validation.mjs';
+import {runBad} from './bad/service.mjs';
 import {HttpError,validate,text,email,fail} from './validation.mjs';
 import {areaIssues} from '../public/bath-model.mjs';
 
 const COOKIE='__Host-pp_session';
-const publicOps=new Set(['scan','access_info','access_activate']);
+const publicOps=new Set(['scan','access_info','access_activate',...badPublicOps]);
 const controlOps=new Set(['bootstrap','passes_add','operator_list','operator_company','operator_create','operator_save','operator_invite','access_info','access_begin','access_redeem']);
-const operations=new Set(['company_save','activate','project','preview','save','handover','visibility','delete',...controlOps,...publicOps]);
+const operations=new Set(['company_save','activate','project','preview','save','handover','visibility','delete',...controlOps,...publicOps,...badOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export const securityHeaders={
@@ -82,13 +84,17 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      result={ok:true};
    }else{
      if(!operations.has(op)||['access_begin','access_redeem'].includes(op))throw new HttpError(404,'Nicht gefunden.');
-     const args=validate(op,b);let actor=null;
+     const args=badOps.has(op)?validateBad(op,b):validate(op,b);let actor=null;
      if(!publicOps.has(op)){
        const access=session(request);if(!access)throw new HttpError(401,'Bitte melden Sie sich beim Betrieb an.');
        const r=await upstream(base+'/auth/v1/user',{headers:{...authHeaders,Authorization:'Bearer '+access}});
        if(!r.ok){extra['Set-Cookie']=cookie('',0);throw new HttpError(401,'Ihre Sitzung ist abgelaufen. Bitte erneut anmelden.');}
        actor=(await r.json()).id;
        if(!actor)throw new HttpError(401,'Bitte erneut anmelden.');
+     }
+     if(badOps.has(op)){
+       result=await runBad(op,args,actor,{rpc,randomToken,hash,origin:env.APP_ORIGIN});
+       return new Response(JSON.stringify(result),{headers:{...securityHeaders,...extra}});
      }
      if(op==='operator_create')args.tokens=Array.from({length:20},()=>randomToken());
      if(op==='passes_add')args.tokens=Array.from({length:args.quantity},()=>randomToken());
@@ -105,14 +111,14 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      result=await rpc(op,actor,args);
      // Legacy journal, participant and customer-extension fields remain in the database
      // for compatibility, but are never exposed by the MVP server.
-     if(['scan','preview','project'].includes(op)){delete result.owner_additions;delete result.owner_version;delete result.owner_key_hash;}
+     if(['scan','preview','project'].includes(op)){delete result.owner_additions;delete result.owner_version;delete result.owner_key_hash;delete result.journal;}
 
      if(accessToken)result={...result,access_link:env.APP_ORIGIN+'/#access/'+accessToken};
    }
    return new Response(JSON.stringify(result),{headers:{...securityHeaders,...extra}});
 
    async function rpc(operation,actor,args){
-     const r=await upstream(base+'/rest/v1/rpc/'+(controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
+     const r=await upstream(base+'/rest/v1/rpc/'+(badOps.has(operation)?'pp_bad':controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
        'Content-Type':'application/json'},body:JSON.stringify({op:operation,actor,args})});
      const data=await r.json();
      if(!r.ok){
@@ -121,6 +127,7 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        if(code.includes('PP_RATE_LIMIT'))throw new HttpError(429,'Zu viele Versuche. Bitte in 15 Minuten erneut versuchen.');
        if(code.includes('PP_ACCOUNT_IN_USE'))throw new HttpError(409,'Dieser Zugang gehört bereits zu einem anderen Betrieb. Bitte eine andere E-Mail-Adresse verwenden.');
        if(code.includes('PP_ALREADY_ACTIVE'))throw new HttpError(409,'Für diesen Betrieb ist bereits ein Zugang eingerichtet.');
+       if(code.includes('PP_BAD_IMMUTABLE'))throw new HttpError(409,'Ein veröffentlichter Stand kann nicht verändert oder gelöscht werden.');
        if(code.includes('PP_HANDOVER_LOCKED'))throw new HttpError(409,'Die Übergabe ist abgeschlossen. Der Kundenpass bleibt unverändert.');
        if(code.includes('PP_LIMIT'))throw new HttpError(400,'Das Limit für diesen Projektbereich ist erreicht.');
        if(code.includes('PP_CONFLICT'))throw new HttpError(409,'Es gibt einen neueren Stand. Ihre Eingaben sind noch hier. Kopieren Sie Änderungen und laden Sie das Projekt neu.');
