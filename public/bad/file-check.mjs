@@ -10,7 +10,9 @@ export function jpegInfo(data) {
   if(marker===218){if(!frame)throw Error('JPEG-Abmessungen fehlen.');return {...frame,bytes:b};}
   if(marker===217)break;const n=(b[p]<<8)|b[p+1];if(n<2||p+n>b.length)throw Error('Beschädigtes JPEG-Segment.');
   // Canvas recompression strips EXIF/GPS, IPTC and comments. Direct API uploads must also be clean.
-  if((marker>=225&&marker<=237)||marker===239||marker===254)throw Error('Bild enthält zusätzliche Metadaten. Bitte über den Foto-Upload neu komprimieren.');
+  if((marker>=225&&marker<=237&&marker!==226)||marker===239||marker===254)throw Error('Bild enthält zusätzliche Metadaten. Bitte über den Foto-Upload neu komprimieren.');
+  // Chromium's canvas JPEG encoder includes an ICC colour profile (APP2), not GPS/EXIF.
+  if(marker===226){const tag=new TextDecoder('ascii').decode(b.subarray(p+2,p+14));if(n<16||tag!=='ICC_PROFILE\0'||b[p+14]<1||b[p+15]<b[p+14])throw Error('Unbekannte JPEG-Zusatzdaten.');if(b[p+14]===1&&(n<144||new TextDecoder('ascii').decode(b.subarray(p+52,p+56))!=='acsp'))throw Error('Ungültiges JPEG-Farbprofil.');}
   if([192,193,194].includes(marker)){if(n<8)throw Error('Beschädigte Bildabmessungen.');frame={width:(b[p+5]<<8)|b[p+6],height:(b[p+3]<<8)|b[p+4],components:b[p+7]};if(!frame.width||!frame.height||frame.width>4096||frame.height>4096||![1,3].includes(frame.components))throw Error('JPEG-Abmessungen oder Farbraum nicht unterstützt.');}
   p+=n;
  }

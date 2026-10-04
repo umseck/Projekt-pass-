@@ -1,0 +1,1 @@
+[{"path":"public/bad/export.mjs","before":"2c1b26f8e239dfe8d88d7a347ca070ce4b5400c5fc15377a54807b374ab1085c","after":"6c9567c2cb09e66abbc2dae2c80028b86363cd042b20a9db0e48e46c2209fa82","edits":[[2160,2222,"name.split('/').some(part=>!part||part==='.'||part==='..')||/^[A-Za-z]:/.test(name)||name.includes('\\\\')||/[\\x00-\\x1f]/.test(name)"]]}]
