@@ -6,3 +6,9 @@ supabase/.temp/
 .env*
 !.env.example
 .private-test/
+
+qa/quality/
+__pycache__/
+test-results.txt
+browser-results.txt
+implementation-commit.txt

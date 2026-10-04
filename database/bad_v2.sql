@@ -77,7 +77,7 @@ begin
    if not exists(select 1 from jsonb_array_elements(d.data->'areas') a where a->>'id'=args->'contribution'->>'area_id') or
     not exists(select 1 from jsonb_array_elements(d.data->'sections') section where section->>'id'=args->'contribution'->>'section_id'
      and section->'area_ids' ? (args->'contribution'->>'area_id')) then raise exception 'PP_FORBIDDEN';end if;
-   if jsonb_array_length(coalesce(d.data->'photos','[]'))>12 or (select count(*) from pp_private.bad_contributions where link_id=l.id and created_at>now()-interval '1 day')>=100 then raise exception 'PP_LIMIT';end if;
+   if jsonb_array_length(coalesce(d.data->'photos','[]'))>=64 or (select count(*) from pp_private.bad_contributions where link_id=l.id and created_at>now()-interval '1 day')>=100 then raise exception 'PP_LIMIT';end if;
    insert into pp_private.bad_contributions(id,project_id,link_id,data)
      values((args->'contribution'->>'id')::uuid,l.project_id,l.id,args->'contribution') on conflict(id) do nothing;
    return jsonb_build_object('received',true,'notice','Beitrag bereitgestellt, nicht veröffentlicht.');
