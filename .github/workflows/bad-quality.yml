@@ -1,0 +1,114 @@
+name: Bathroom quality and offline acceptance
+on:
+  push:
+    branches: [qa/bad-v2-validation-20261004]
+    paths-ignore: ['docs/**']
+permissions:
+  contents: write
+concurrency:
+  group: bathroom-quality-20261004
+  cancel-in-progress: false
+jobs:
+  quality:
+    if: github.ref == 'refs/heads/qa/bad-v2-validation-20261004'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: qa/bad-v2-validation-20261004
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Verify and apply reviewed source corrections
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path.cwd();bundle=root/'.qa/patches.json'
+          allowed={'.gitignore','database/bad_v2.sql','public/bad/customer.mjs','public/bad/editor.mjs','public/bad/export.mjs','public/bad/model.mjs','public/datenschutz.html','server/bad/service.mjs','server/bad/validation.mjs'}
+          if bundle.exists():
+              pending=[]
+              for change in json.loads(bundle.read_text()):
+                  assert change['path'] in allowed
+                  path=root/change['path'];raw=path.read_bytes()
+                  assert hashlib.sha256(raw).hexdigest()==change['before'],'Source changed: '+change['path']
+                  text=raw.decode('utf-8')
+                  for begin,end,replacement in reversed(change['edits']):
+                      assert 0<=begin<=end<=len(text)
+                      text=text[:begin]+replacement+text[end:]
+                  result=text.encode('utf-8')
+                  assert hashlib.sha256(result).hexdigest()==change['after'],'Correction checksum mismatch: '+change['path']
+                  pending.append((path,result))
+              for path,result in pending:path.write_bytes(result)
+              bundle.unlink();bundle.parent.rmdir()
+              print('Applied',len(pending),'checksum-verified source corrections.')
+          else:print('Corrections already materialized; testing committed source.')
+          PY
+      - name: Install pinned QA dependencies and prepare base-14 advance metrics
+        run: |
+          npm ci --ignore-scripts
+          python -m pip install 'PyMuPDF==1.26.7' 'Pillow==11.3.0' 'playwright==1.57.0'
+          python - <<'PY'
+          from pathlib import Path
+          import fitz,json,hashlib,base64
+          p=Path('public/bad/font-metrics.mjs')
+          metrics={key:[round(font.glyph_advance(ord(bytes([i]).decode('cp1252',errors='replace')))*1000) for i in range(256)] for key,font in [('F1',fitz.Font('helv')),('F2',fitz.Font('hebo')),('F3',fitz.Font('tiro'))]}
+          p.write_text('// Standard PDF base-14 font advance widths; no font program is embedded.\nexport const pdfWidths = '+json.dumps(metrics,separators=(',',':'))+';\n')
+          assert hashlib.sha256(p.read_bytes()).hexdigest()=='e3806ed4112baadadead4671c1cbf5ccd9de7f4afca29ea2c7034ad35dba152b'
+          out=Path('qa/quality');out.mkdir(parents=True,exist_ok=True)
+          assets=json.loads(Path('public/bad/test-assets.json').read_text())
+          (out/'photo.jpg').write_bytes(base64.b64decode(assets['photos'][0].split(',')[1]))
+          PY
+      - name: All domain, API, SQL and legacy regressions
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee qa-test-results.txt
+      - name: Commit verified ordinary source files on QA branch only
+        run: |
+          git config user.name 'Projektpass Quality Review'
+          git config user.email 'quality@projektpass.invalid'
+          git add .gitignore database/bad_v2.sql public/bad public/datenschutz.html server/bad tests/bad-quality.test.mjs tests/bad-load.test.mjs scripts/quality
+          git add -u .qa || true
+          if ! git diff --cached --quiet; then
+            git commit -m 'fix(bad): bind source revisions, preserve repair gaps, harden files and verify offline exports'
+            git push origin HEAD:qa/bad-v2-validation-20261004
+          fi
+          git rev-parse HEAD > qa-commit.txt
+      - name: Install isolated browser
+        run: python -m playwright install --with-deps chromium
+      - name: Actual browser forms, uploads, API releases and received downloads
+        run: |
+          set -o pipefail
+          python scripts/quality/browser.py 2>&1 | tee qa-browser-results.txt
+      - name: Independent PDF reopening, layout and content inspection
+        run: python scripts/quality/review-files.py
+      - name: Dependency advisory snapshot
+        if: always()
+        run: |
+          set +e
+          npm audit --json > qa-dependency-audit.json
+          echo $? > qa-dependency-audit-exit.txt
+      - name: Package source and safe synthetic evidence
+        if: always()
+        run: |
+          rm -f qa/quality/key.pem qa/quality/cert.pem
+          tar --exclude='./.git' --exclude='./node_modules' --exclude='./.qa' --exclude='./source-and-qa.tar.gz' -czf /tmp/source-and-qa.tar.gz .
+          mv /tmp/source-and-qa.tar.gz source-and-qa.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: projektpass-quality-acceptance
+          path: |
+            source-and-qa.tar.gz
+            qa-commit.txt
+            qa-test-results.txt
+            qa-browser-results.txt
+            qa-dependency-audit.json
+            qa-dependency-audit-exit.txt
+            qa/quality/browser-report.json
+            qa/quality/file-review.json
+            qa/quality/large-report.json
+          retention-days: 7
