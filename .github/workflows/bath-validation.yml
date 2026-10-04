@@ -1,0 +1,34 @@
+name: Bath validation
+on:
+  push:
+    branches: [feature/projektpass-bad-v2]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Regression suite
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test-results.txt
+      - name: Package reproducible review copy
+        if: always()
+        run: tar --exclude=.git --exclude=generated --exclude=review-copy.tar.gz -czf /tmp/review-copy.tar.gz . && mv /tmp/review-copy.tar.gz review-copy.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: projektpass-review-copy
+          path: review-copy.tar.gz
+          retention-days: 1
