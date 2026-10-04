@@ -1,4 +1,4 @@
-"""Real browser + local HTTPS + production API + isolated PostgreSQL.
+"""Real Chromium + local HTTPS + production API + isolated PostgreSQL.
 Synthetic accounts only. Run npm test first. No real messages are sent.
 """
 from pathlib import Path
@@ -23,7 +23,7 @@ def open_parents(locator):
   p.locator(':scope > summary').click()
 def saved(page):page.wait_for_function("document.querySelector('#bath-save')?.textContent==='Gespeichert'",timeout=20000)
 def nooverflow(page,width,where):
- value=page.evaluate('document.documentElement.scrollWidth');assert value<=width,f'Overflow {where}: {value}>{width}'
+ value=page.evaluate('document.documentElement.scrollWidth');offenders=page.evaluate('Array.from(document.body.querySelectorAll("*")).filter(e=>e.getBoundingClientRect().right>innerWidth+1).slice(0,12).map(e=>e.tagName+"."+e.className)') if value>width else [];assert value<=width,f'Overflow {where}: {value}>{width}; {offenders}'
 def close_dialog(page):
  page.keyboard.press('Escape');page.wait_for_function("!document.querySelector('#modal').open")
 try:
@@ -35,7 +35,7 @@ try:
   for n,kind in enumerate(['seamless','tile','mixed']):
    start=time.monotonic();print('Start',kind,flush=True);boot=request(page,'bootstrap')['data'];prof=boot['company'];st=config['standards'][kind];prof.update({'trade':st['trade'],'standards':{st['trade']:st['value']},'logo':logo_data});r=request(page,'company_save',{'profile':prof,'version':boot['company_version']});assert r['status']==200,r
    page.goto(origin+'/?qa='+str(n)+'#activate/'+config['passes'][n]['id']);page.wait_for_selector('#title');page.locator('#title').fill('TEST '+kind+' · ÄÖÜ äöü ß');page.locator('#activate button[type="submit"]').click();page.wait_for_selector('#bath-dashboard');project_id=page.url.split('#bath/')[1]
-   page.locator('[data-open-area="0"]').click();page.wait_for_selector('#bath-area');count=page.locator('#bath-area option').count();saved(page)
+   page.locator('.area-dashboard-card[data-open-area="0"]').click();page.wait_for_selector('#bath-area');count=page.locator('#bath-area option').count();saved(page)
    early=request(page,'preview',{'id':project_id});assert early['status']==200;assert 'TEST-surface' not in json.dumps(early['data']);assert 'TEST-tile' not in json.dumps(early['data'])
    for i in range(count):
     page.locator('#bath-area').select_option(str(i));page.wait_for_selector('#bath-care-text',state='attached')
