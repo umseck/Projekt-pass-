@@ -57,7 +57,7 @@ export function content(value){
   if(usage&&!Number.isFinite(Date.parse(usage)))fail('Bitte ein gültiges Nutzungsdatum wählen.');
   const photos=list(v.photos,projectPhotoLimit,photo),details=v.waterproofing_details===undefined?undefined:waterproofingDetails(v.waterproofing_details);
   if(photos.length+(details?.photos.length||0)>projectPhotoLimit)fail('Bitte höchstens 8 Fotos insgesamt für Abdichtung und Übergabe wählen.');
-  return {trade:trade(v.trade),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,{...product(v[k]),...(k==='waterproofing'?{color:''}:{})}])),
+  return {trade:trade(v.trade),...(v.project===undefined?{}:{project:projectDetails(v.project)}),...fields(v,['application_area','substrate']),...(v.preparation===undefined?{}:{preparation:preparation(v.preparation)}),...Object.fromEntries(productKeys.map(k=>[k,{...product(v[k]),...(k==='waterproofing'?{color:''}:{})}])),
     ...(details===undefined?{}:{waterproofing_details:details}),
     ...(v.finish_selection===undefined?{}:{finish_selection:['manual','system',''].includes(v.finish_selection)?v.finish_selection:fail('Bitte die Versiegelung erneut auswählen.')}),
     ...(v.areas===undefined?{}:{areas:bathAreas(v.areas)}),
@@ -77,6 +77,10 @@ export function bathAreas(value){
   obj(v);const id=uuid(v.id);if(seen.has(id))fail('Flächen müssen unterschiedliche Kennungen haben.');seen.add(id);
   const kind=trade(v.trade);if(!['walls','floor','both','other'].includes(v.position))fail('Bitte die Lage der Fläche wählen.');
   const a={id,name:text(v.name,100),position:v.position,trade:kind,products:Object.fromEntries(bathKinds[kind].map(k=>[k,{...product(v.products?.[k]),documents:list(v.products?.[k]?.documents,6,bathDocument)}])),
+   ...(v.scope_company===undefined?{}:{scope_company:text(v.scope_company,300)}),
+   ...(v.scope===undefined?{}:{scope:['own','existing','other'].includes(v.scope)?v.scope:fail('Bitte den Leistungsumfang der Fläche wählen.')}),
+   ...(v.roles_status===undefined?{}:{roles_status:Object.fromEntries(bathKinds[kind].map(k=>[k,['known','unknown','not_applicable','',undefined].includes(v.roles_status?.[k])?(v.roles_status?.[k]||''):fail('Bitte den Dokumentationsstatus prüfen.')]))}),
+   ...(v.status_notes===undefined?{}:{status_notes:Object.fromEntries(bathKinds[kind].map(k=>[k,text(v.status_notes?.[k],500)]))}),
    preparation:preparation(v.preparation),note:text(v.note,2000),spares:text(v.spares,1000),photos:list(v.photos,8,photo),
    care:{text:text(v.care?.text,2000),source:text(v.care?.source,300),url:url(v.care?.url),document_date:text(v.care?.document_date,80),basis:text(v.care?.basis,20000),confirmed:v.care?.confirmed===true},confirmation:text(v.confirmation,2000000)};
   totalPhotos+=a.photos.length;if(totalPhotos>8)fail('Bitte höchstens 8 flächenbezogene Fotos wählen.');
@@ -84,6 +88,28 @@ export function bathAreas(value){
   if(!areaConfirmed(a))a.confirmation='';
   return a;
  });
+}
+export function projectDetails(value){
+ const v=obj(value);const completed_on=text(v.completed_on,10);
+ if(completed_on&&!validDate(completed_on))fail('Bitte ein gültiges Fertigstellungsdatum wählen.');
+ return {object_label:text(v.object_label,200),completed_on,scope:text(v.scope,2000),gaps_acknowledged:v.gaps_acknowledged===true};
+}
+export function validDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}
+export function customerEvent(value){
+ const v=obj(value),kind=text(v.kind,20),effect=text(v.effect||'evidence',20),occurred_on=text(v.occurred_on,10);
+ if(!['maintenance','repair','change','photo','document'].includes(kind))fail('Bitte eine Art der Ergänzung wählen.');
+ if(!['evidence','replaced','unknown'].includes(effect))fail('Bitte die Auswirkung der Ergänzung wählen.');
+ if(!validDate(occurred_on)||occurred_on>new Date().toISOString().slice(0,10))fail('Bitte ein gültiges Datum bis heute wählen.');
+ const description=text(v.description,2000);if(!description)fail('Bitte die Ergänzung kurz beschreiben.');
+ const material_role=text(v.material_role,30);
+ if(material_role&&!['tile','adhesive','grout','silicone','waterproofing','surface','finish'].includes(material_role))fail('Bitte das betroffene Material wählen.');
+ if(effect==='replaced'&&!material_role)fail('Bitte angeben, welches Material ersetzt wurde.');
+ if(effect==='replaced'&&!['repair','change'].includes(kind))fail('Ein Materialwechsel gehört zu Reparatur oder Änderung.');
+ const photos=list(v.photos,8,photo),documents=list(v.documents,4,bathDocument);
+ if(kind==='photo'&&!photos.length)fail('Bitte mindestens ein Foto ergänzen.');
+ if(kind==='document'&&!documents.length)fail('Bitte mindestens eine Unterlage ergänzen.');
+ if(documents.some(d=>!d.name||(!d.data&&!d.url)))fail('Bitte Unterlagen mit Namen und Datei oder Link hinterlegen.');
+ return {id:v.id?uuid(v.id):crypto.randomUUID(),kind,area_id:uuid(v.area_id),occurred_on,description,company:text(v.company,300),materials:text(v.materials,1500),material_role,effect,photos,documents};
 }
 export function waterproofingDetails(value){
  const v=obj(value),waterClass=text(v.water_class,10),type=text(v.type,20);
@@ -108,6 +134,12 @@ export function preparation(value){
 }
 export function validate(op,b={}){
   b=obj(b);
+  if(op==='customer_access_info')return {token:token(b.token)};
+  if(op==='customer_access_activate')return {token:token(b.token),password:newPassword(b.password)};
+  if(op==='customer_bootstrap')return {};
+  if(['customer_invite','customer_transfer'].includes(op))return {id:uuid(b.id),email:email(b.email)};
+  if(op==='customer_project')return {id:uuid(b.id)};
+  if(op==='customer_add')return {id:uuid(b.id),event:customerEvent(b.event)};
   if(op==='access_info')return {token:token(b.token)};
   if(op==='access_activate')return {token:token(b.token),email:b.email?email(b.email):'',password:newPassword(b.password)};
   if(op==='operator_list')return {};

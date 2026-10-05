@@ -1,26 +1,94 @@
-# Verbindlicher MVP: Aktivieren → Dokumentieren → Übergabe
+# Projektpass Bad: erstellen, übergeben, weiterführen
 
-Der Projektpass-MVP hat genau einen Arbeitsablauf:
+Der MVP dokumentiert ein Badezimmer mit Fliesen, fugenlosen Oberflächen oder
+unterschiedlichen Aufbauten je Fläche. Er ist keine Hausverwaltung, kein Chat
+und keine tägliche Aufgaben- oder Bautagebuchsoftware.
 
-1. Der Fachbetrieb aktiviert einen freien Projektpass und erfasst Kunde/Projekt.
-2. Materialien und Systeme werden im bestehenden Material-Dashboard dokumentiert. Standardmaterialien, Katalog, Favoriten und Autosave bleiben erhalten.
-3. Fotos sowie technische und projektbezogene Unterlagen werden ergänzt.
-4. Die Abschlussprüfung zeigt Pflichtangaben, Fehlendes und Optionals verständlich an.
-5. Der geprüfte Projektstand wird übergeben. Daraus entsteht der Kundenpass.
-6. Der Kunde öffnet den freigegebenen Stand über den dauerhaften QR-/NFC-Link ohne App und ohne Kundenkonto.
+## Fachbetrieb: vier Schritte
 
-Der Kunde hat im MVP ausschließlich Lesezugriff. Es gibt keine KI, kein Bautagebuch, keine Mitteilungen, keinen Chat, keine internen Notizen, keine Beteiligten- oder weiteren-Handwerker-Zugänge und keine Eigentümer-Ergänzungen.
+1. **Bad & Leistung:** Projektname, Objekt/Bad, Fertigstellungsdatum und
+   dokumentierten Leistungsumfang erfassen. Interne Kundenangaben bleiben intern.
+2. **Aufbau:** Flächen öffnen, Produkte aus dem Katalog, frei oder aus dem
+   Betriebsstandard übernehmen. Farben und Abweichungen je Fläche ergänzen.
+   Eigene Leistung, Fremdleistung und Bestand werden getrennt gekennzeichnet.
+3. **Fotos & Pflege:** ausgewählte Fotos, Produktunterlagen, belegte Pflege,
+   Besonderheiten und Restmaterial/Lagerort den passenden Flächen zuordnen.
+4. **Prüfen & übergeben:** notwendige Angaben und bekannte Lücken prüfen,
+   tatsächlichen dokumentierten Flächenstand bestätigen, gerenderte
+   Kundenansicht ansehen und den datierten Stand ausdrücklich freigeben.
 
-## Bewusst beibehalten
+Ein Betriebsstandard wird als Projektkopie übernommen. Projektspezifische
+Farben, Chargen, Fotos und Bestätigungen werden nicht in künftige Projekte
+kopiert. Der erste Pass funktioniert auch ohne vorbereiteten Standard.
 
-Login und Betriebsprofil, Projektaktivierung, Materialkarten und Katalog, gespeicherte Standards, Fotos, Dokumente, Pflegehinweise, Autosave, Vollständigkeitsprüfung, Übergabe-Snapshot, Kundenansicht und QR/NFC bleiben aktive Kernfunktionen.
+Der neue Ablauf prüft serverseitig notwendige Projektdaten und die bewusste
+Bestätigung bekannter Material-/Pflegelücken. Fehlende Angaben und „nicht
+zutreffend“ sind unterschiedliche Zustände. Es gibt keinen Qualitätsprozentsatz.
+Ein Foto oder eine digitale Freigabe bescheinigt keine fachgerechte Ausführung,
+Mängelfreiheit oder rechtsgeschäftliche Bauabnahme.
 
-## Datenbank-Altbestand
+## Kunde: sofort lesen, bei Bedarf ergänzen
 
-Die früheren Tabellen und SQL-Zweige für `participants`, `messages`, `journal`, `mail_outbox`, `ai_access`, `ai_state` sowie `owner_key_hash`/`owner_additions` bleiben vorerst aus Kompatibilitätsgründen bestehen. Sie werden vom aktuellen Server nicht mehr als Operation akzeptiert, nicht aus der aktiven UI angesprochen und nicht in den Kundenprojektionen ausgegeben. Eine endgültige Migration oder Löschung erfolgt erst nach separater Bestands- und Abhängigkeitsprüfung.
+Die ursprüngliche Übergabe lässt sich über QR/NFC ohne Anmeldung lesen. Der
+Link ist ein Leseschlüssel: Wer ihn besitzt, kann die freigegebenen technischen
+Angaben sehen. Interne Kundendaten und private Kundenergänzungen erscheinen
+nicht im öffentlichen Scan.
 
-`database/workflow.sql` enthält außerdem den weiterhin benötigten Übergabe-Snapshot und dessen Trigger. Diese Datei daher nicht pauschal löschen oder durch eine leere Migration ersetzen. Der aktuelle Infrastruktur-Prüfstand ist in [INFRASTRUCTURE_STATUS.md](INFRASTRUCTURE_STATUS.md) dokumentiert.
+Der Fachbetrieb kann anschließend einen persönlichen Kundenzugang erstellen.
+Der Kunde führt das Bad nach Annahme mit Wartung, Reparatur, Änderung, Foto
+oder Unterlage weiter. Jede Ergänzung hat einen Bereich, ein Ausführungsdatum,
+Erfassungszeit und erfassendes Kundenkonto. Der dort genannte ausführende Betrieb
+ist eine Kundenangabe und bestätigt den Eintrag nicht automatisch.
 
-## Betriebshinweis
+Die Originalübergabe bleibt unverändert. Neue Einträge werden separat angehängt,
+nicht in ursprüngliche Produktfelder geschrieben. Der Kunde muss nichts
+hinzufügen. Die ursprüngliche Übergabe liefert allein bereits ihren Nutzen.
 
-Vor einem echten Testbetrieb müssen Supabase-RPC/Schema-Stand, RLS, Authentifizierung und die Cloudflare-Testumgebung separat geprüft werden. Der Branch ist als geschützte Teständerung gedacht; die Produktionswebsite wird nicht ungeprüft veröffentlicht.
+Nach einer gemeldeten Änderung der Hauptoberfläche, Versiegelung oder bei
+unbekanntem Änderungsumfang zeigt die Kundenansicht die ursprüngliche Pflege
+als historischen Stand. Eine reine Silikonreparatur macht den ursprünglichen
+Oberflächenhinweis nicht automatisch zu einer neuen Pflegefreigabe.
+
+## Unabhängige Kundenkopie
+
+PDF, ZIP und HTML sind echte Downloads. Das ZIP enthält lesbare PDF/HTML,
+strukturierte Daten, archivierte Fotos/PDFs und ein Manifest mit Dateiprüfsummen.
+Originalübergabe und Kundenergänzungen stehen getrennt darin. Nur verlinkte oder
+fehlende Unterlagen werden ausdrücklich genannt und nicht automatisch nachgeladen.
+Die gespeicherte Kopie funktioniert ohne Projektpass-Server; sie ist nicht
+online widerrufbar und ermöglicht keine Offlinebearbeitung.
+
+## Weitergabe und Grenzen
+
+Ein neuer Verwalter nimmt einen persönlichen Übergabelink an. Bis dahin bleibt
+der bisherige Zugang aktiv. Mit Annahme endet sein Onlinezugriff und der
+QR-Leseschlüssel wird rotiert. Damit muss eine vorhandene physische QR-/NFC-Karte
+ersetzt bzw. neu beschrieben werden. Bereits heruntergeladene Kopien bleiben
+beim jeweiligen Empfänger.
+
+Die Einladung ist an die eingetragene E-Mail gebunden, wird aber nicht durch
+eine separate E-Mail-Bestätigung verifiziert. Der vertrauliche Einladungslink
+muss persönlich an den richtigen Empfänger weitergegeben werden. Der MVP
+versendet keine Einladungs-E-Mail.
+
+Noch nicht umgesetzt: Berichtigungen der Originalübergabe als neue Freigabeversion,
+ein gesonderter personenbezogener Löschprozess, Offlinebearbeitung und
+beschränkte Mitarbeiterkonten. Übergebene Projekte sind deshalb gegen die
+gewöhnliche Projektlöschung geschützt. Entwürfe lassen sich weiterhin löschen.
+
+## Umsetzung und Testzugänge
+
+- Anwendung: `/#bath/PROJECT_ID`, QR/NFC: `/#p/READ_TOKEN`.
+- Persönliche Annahme: `/#customer-access/INVITE_TOKEN`; Kundenprojekt:
+  `/#customer/PROJECT_ID`.
+- Vollständig fiktive Testansicht: `/bath-preview.html`, siehe [TRIAL_MVP.md](TRIAL_MVP.md).
+- Implementierung, API-Vertrag und Live-Runbook:
+  [MVP_IMPLEMENTATION.md](MVP_IMPLEMENTATION.md).
+- Konkrete lokale Nachweise und offene Live-Abnahme: [ACCEPTANCE.md](ACCEPTANCE.md).
+
+Die früheren KI-, Mitteilungs-, Teilnehmer-, Journal- und `owner_additions`-
+Tabellen bleiben aus Kompatibilitätsgründen bestehen. Die aktive Weiterführung
+verwendet eigene Tabellen und eine eigene RPC. `database/workflow.sql` enthält
+den weiter benötigten Übergabe-Trigger und darf nicht pauschal entfernt werden.
+Es gibt keinen Produktionsreset und keinen automatischen Import alter
+Kundenangaben.

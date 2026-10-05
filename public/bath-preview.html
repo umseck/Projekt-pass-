@@ -1,1 +1,24 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Projektpass · Bad-Ablauf testen</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/card-theme.css"><link rel="stylesheet" href="/bath.css"></head><body><div class="wrap narrow"><aside class="quiet"><strong>Isolierte Vorschau · nur fiktive Testdaten</strong><p>Keine Verbindung zu Betriebskonten, keine E-Mails. Eingaben bleiben nur in diesem Browser-Tab und werden beim Neuladen zurückgesetzt.</p><button class="btn text" id="demo-seamless">Fugenlos testen</button><button class="btn text" id="demo-tile">Fliesen testen</button><button class="btn text" id="demo-ready">Fertiges Zwei-Flächen-Beispiel</button></aside></div><div id="app"></div><dialog id="modal" class="dialog"></dialog><script type="module" src="/bath-preview.mjs"></script></body></html>
+<!doctype html>
+<html lang="de" data-projectpass-trial="true">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+ <title>Projektpass · Fiktives Testbad</title>
+ <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/card-theme.css"><link rel="stylesheet" href="/bath.css"><link rel="stylesheet" href="/customer-continuation.css">
+</head>
+<body>
+ <div class="wrap narrow">
+  <aside class="quiet section no-print" aria-label="Testansicht steuern">
+   <span class="eyebrow">PROJEKTPASS · MVP ausprobieren</span><h2>Ihr fiktives Testbad</h2>
+   <p>Erstellen, prüfen und übergeben Sie ein Bad. Wechseln Sie anschließend in die Kundenrolle und ergänzen Sie eine Wartung oder Reparatur.</p>
+   <p class="hint">Isolierte Testansicht ohne echtes Konto und ohne Verbindung zu Kundendaten. Die Rollenwahl simuliert die getrennten Ansichten; echte Authentifizierung und Serverrechte werden separat geprüft. Bitte ausschließlich fiktive Angaben und Testdateien verwenden, keine echten Passwörter.</p>
+   <div class="field"><label for="trial-mode">Ansicht</label><select id="trial-mode"><option value="business">1. Fachbetrieb</option><option value="customer">2. Kunde · eigene Ergänzungen</option><option value="public">3. QR-Leseansicht · nur Originalübergabe</option></select></div>
+   <div class="field"><label for="trial-project">Fiktives Testbad</label><select id="trial-project"></select></div>
+   <details><summary>Neues Testbad starten</summary><div class="actions"><button class="btn light" id="demo-seamless">Leeres fugenloses Bad</button><button class="btn light" id="demo-tile">Leeres Fliesenbad</button><button class="btn light" id="demo-ready">Gemischtes Beispiel vorbereiten</button></div><p class="hint">Das gemischte Beispiel ist noch nicht übergeben. Produkte, Farben und Pflegeinhalt sind ausdrücklich fiktive Testdaten.</p></details>
+   <p id="trial-storage" class="hint"></p><button class="btn text" id="trial-reset">Testdaten zurücksetzen</button>
+   <p id="trial-notice" role="status" class="error"></p>
+  </aside>
+ </div>
+ <div id="app"></div><dialog id="modal" class="dialog"></dialog>
+ <script type="module" src="/bath-preview.mjs"></script>
+</body>
+</html>

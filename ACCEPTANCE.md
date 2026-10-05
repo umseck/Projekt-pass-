@@ -1,34 +1,67 @@
-# Pilotabnahme – erst mit den echten Konten abhaken
+# Projektpass Bad: Abnahmestand des MVP
 
-## Ein Bad in 60–90 Sekunden
-- [ ] Auf Smartphone A als Betrieb anmelden, Pass 07, Titel „Bad Maier“.
-- [ ] Fliese/Fuge/Silikon aus den echten Favoriten wählen; keine Fotos/Unterlagen.
-- [ ] Speichern, Kundenvorschau, übergeben. Dauer messen; Ziel maximal 90 Sekunden.
-- [ ] Auf Smartphone B ohne Login denselben NFC-Link öffnen. Name, Betrieb, Material, Pflege, Hilfe verständlich.
-- [ ] Keine leeren Bild-, Unterlagen- oder Ersatzmaterialbereiche.
+Stand: 5. Oktober 2026. „Lokal geprüft“ bezeichnet automatisierte UI-/API-/SQL-
+Tests und keine echte Kundenfreigabe. Die vollständige lokale Suite ist mit
+**74 bestandenen Tests, 0 Fehlern** abgeschlossen. Produktionsmigration, vollständiger
+Live-Ablauf und physische Smartphones sind hier nicht als bestanden markiert.
 
-## Vollständiges Beispiel
-- [ ] Fotos, Etikett, Lagerort, Nutzungstermin, Pflege, Unterlagenlink ergänzen.
-- [ ] Auf 390 px und auf iPhone/Android prüfen: keine horizontale Scrollleiste, bedienbare Inputs/Touchflächen.
-- [ ] Foto-Galerie, HEIC/JPEG-Verhalten und Komprimierung prüfen; keine EXIF-Standortdaten im Ergebnis.
-- [ ] Seite neu laden, anderes Gerät öffnen: identischer gespeicherter Stand.
-- [ ] Export herunterladen und offline prüfen: Fotos vorhanden, interne Kundendaten fehlen.
+## Lokal ausgeführt
 
-## Berechtigungen und Fehlerfälle
-- [ ] Unangemeldeter Nutzer kann weder Dashboard noch Projektentwurf lesen.
-- [ ] Zweiter Testbetrieb kann Projekte des ersten weder sehen noch ändern (auch direkte API-Aufrufe).
-- [ ] Kundenansicht/Export enthält keine interne Adresse, Kundennamenfelder, Sitzung oder Ergänzungsschlüssel.
-- [ ] Kunde ergänzt Sanitär mit separatem Schlüssel, bearbeitet/löscht nur eigene Angaben.
-- [ ] Mit bloßem Scan-Token keine Änderungen möglich; alter Ergänzungsschlüssel nach Rotation unwirksam.
-- [ ] Kundenlink sperren: Smartphone B kann auch nach Neuladen nichts mehr abrufen.
-- [ ] Zwei Bearbeiter: alter Stand wird abgelehnt, Eingaben bleiben sichtbar.
-- [ ] Netz trennen beim Speichern: keine Erfolgsmeldung, kein falscher Übergabestatus, Wiederholung möglich.
-- [ ] Projekt löschen: Kundenlink ungültig, physischer Pass bleibt stillgelegt.
-- [ ] Cross-Origin-Aufruf abgewiesen; keine Browser-Schlüssel, kein öffentlicher Tabellenzugriff.
-- [ ] Serviceanfrage: E-Mail-Entwurf mit Kontext, Foto dort anhängen, tatsächlichen Empfang selbst prüfen.
+Der neue gezielte Testblock umfasst 25 bestandene Tests ohne Fehler:
+`customer-backend.test.mjs`, `customer-ui.test.mjs`, `bath-export.test.mjs` und
+`trial-harness.test.mjs`. Die gesamte Suite wird über `npm test` ausgeführt.
 
-## Betrieb
-- [ ] Domain und 20 physische NFC/QR-Links stabil und korrekt zugeordnet.
-- [ ] Datenschutzhinweise, Impressum, Provider-Vereinbarungen und Zuständigkeiten geklärt.
-- [ ] Zugänge/Quellcode im Konto des Nutzers, Wiederherstellung getestet, Verlust einer Karte bedacht.
-- [ ] Ansprechpartner für Pilotfeedback; erst drei Bäder, danach gemeinsam nachschärfen.
+| Kriterium | Nachweis / Status |
+| --- | --- |
+| Vier Schritte, gerenderte Kundenansicht, explizite Freigabe | Lokaler DOM-Durchlauf im Trial bestanden. |
+| Gemischtes Bad mit getrennten Flächen/Farben | Trial- und Modelltests bestanden. |
+| Standards als Projektkopie ohne projektspezifische Daten | Modell-/Standardtests vorhanden; keine automatische Veränderung anderer Projekte. |
+| Notwendige neue Metadaten, bewusste Lücken, gültige Daten | Neue API-/Validierungstests bestanden. |
+| Kundenergänzung ändert Original nicht | API/SQL/Trial bestanden. |
+| QR allein kann keine Ergänzung schreiben | Getrennte Projektion und Kundenrechte lokal bestanden. |
+| Andere Kunden/Betriebe können fremde Projekte nicht verändern | Private Tabellenrechte, RPC- und Mandantentests bestanden. |
+| Autor/Erfassungszeit sind serverseitig | API/SQL-Test bestanden; genannter Ausführender bleibt eigene Angabe. |
+| Einladung adressgebunden, ablaufend und einmalig | API/SQL-Tests bestanden; unabhängige E-Mail-Verifikation nicht implementiert. |
+| Verwalterwechsel entzieht alten Zugang und rotiert QR | SQL-Test einschließlich konkurrierender Annahme bestanden. |
+| Übergebenes Projekt gewöhnlich nicht löschbar | API-/SQL-Schutz lokal bestanden. |
+| Änderung der Oberfläche macht Pflege historisch | Kunden-UI-/Modelltests bestanden; Silikonwechsel getrennt behandelt. |
+| PDF/ZIP/HTML, Anhänge und Dateiprüfsummen | Exporttests einschließlich Wiederöffnen der PDF und ZIP-Prüfung bestanden. |
+| Öffentlicher Export enthält keine privaten Kundenergänzungen/Geheimnisse | Export-Whitelist-Test bestanden. |
+| Fiktive Daten bleiben nach Neuladen erhalten | Trial bestanden; ausschließlich derselbe Browser-Tab. |
+
+## Noch live bzw. manuell nachzuweisen
+
+- [ ] Vollständige Live-Migrationshistorie/Baseline und Zielprojekt geprüft;
+      neue Migration additiv angewandt, kein Reset.
+- [ ] Cloudflare-Konfiguration/Preview-Zugriff, Origin, benötigte Bindings und
+      ausschließlich serverseitige Secrets des konkreten Deployments geprüft.
+- [ ] Unangemeldet: Dashboard/Entwurf verweigert; öffentlicher QR zeigt nur
+      freigegebene technische Originalangaben.
+- [ ] Zwei unabhängige Betriebs-/Kundenkonten: direkte fremde API-Aufrufe verweigert.
+- [ ] Betriebslogin → Speichern → zweites Gerät → Freigabe → Scan durchlaufen.
+- [ ] Kunde nimmt persönliche Einladung an und kann eine Wartung/Änderung mit
+      Foto/PDF hinzufügen; Originalübergabe bleibt identisch.
+- [ ] Verwalterwechsel: bisheriger Zugriff erst bei Annahme entzogen;
+      alter QR verweigert, neuer QR lesbar; physische Karte ersetzt/neu beschrieben.
+- [ ] iPhone und Android: 390-px-Ansicht, Touchflächen, Upload/Komprimierung,
+      HEIC-Verhalten, PDF-Auswahl und Downloads real geprüft.
+- [ ] Netzverlust/Versionskonflikt: keine falsche Erfolgsmeldung, Eingaben bleiben
+      zur Wiederholung verfügbar, keine doppelte Ergänzung.
+- [ ] ZIP/PDF/HTML tatsächlich heruntergeladen, ohne Netz geöffnet und
+      archivierte Dateien vorhanden; externe Links als nicht archiviert sichtbar.
+- [ ] API-Ratelimits, Auth-Einstellungen und Backup/Restore geprüft.
+- [ ] Rechtstexte, Providervereinbarungen, Verantwortlichkeiten und ein
+      gesonderter personenbezogener Löschprozess vor echtem Kundenbetrieb geklärt.
+- [ ] Konkreter Deployment-Commit, erfolgreicher Check und ausgelieferte Dateien
+      abgeglichen; keine Produktionsfreigabe aus bloßem Merge abgeleitet.
+
+## Fiktive Vorschau prüfen
+
+`/bath-preview.html`: gemischtes Beispiel vorbereiten → Schritt 4 → Flächen
+bestätigen → Kundenansicht lesen → ausdrücklich freigeben → als Kunde ergänzen
+→ exportieren → neu laden. Die QR-Leseansicht enthält weiterhin nur das Original.
+Sie simuliert Rollen ohne echte Anmeldung und ist kein Zwei-Geräte-Nachweis.
+
+Nicht Bestandteil dieser Abnahme: KI, Chat, Baustellenmitteilungen,
+Aufgabenverwaltung, Originalberichtigungen, Offlinebearbeitung oder eine
+Bescheinigung fachgerechter/mängelfreier Ausführung.
