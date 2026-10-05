@@ -1,10 +1,11 @@
 import {HttpError,validate,text,email,fail} from './validation.mjs';
-import {areaIssues} from '../public/bath-model.mjs';
+import {areaIssues,projectIssues,documentationGaps} from '../public/bath-model.mjs';
 
 const COOKIE='__Host-pp_session';
-const publicOps=new Set(['scan','access_info','access_activate']);
+const publicOps=new Set(['scan','access_info','access_activate','customer_access_info','customer_access_activate']);
+const customerOps=new Set(['customer_invite','customer_access_info','customer_access_begin','customer_access_redeem','customer_bootstrap','customer_project','customer_add','customer_transfer']);
 const controlOps=new Set(['bootstrap','passes_add','operator_list','operator_company','operator_create','operator_save','operator_invite','access_info','access_begin','access_redeem']);
-const operations=new Set(['company_save','activate','project','preview','save','handover','visibility','delete',...controlOps,...publicOps]);
+const operations=new Set(['company_save','activate','project','preview','save','handover','visibility','delete',...controlOps,...publicOps,...customerOps]);
 export function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function hash(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export const securityHeaders={
@@ -44,16 +45,17 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      const data=await r.json();
      if(!r.ok||!data.access_token)throw new HttpError(401,'Anmeldung nicht möglich. Bitte E-Mail und Passwort prüfen.');
      // Check the database-backed business membership or operator role before issuing a session.
-     const check=await rpc('bootstrap',data.user.id,{});
+     const check=await bootstrap(data.user.id);
      extra['Set-Cookie']=cookie(data.access_token,Math.min(data.expires_in||3600,3600));
      result=check;
-   }else if(op==='access_info'){
+   }else if(['access_info','customer_access_info'].includes(op)){
      const args=validate(op,b);
-     result=await rpc('access_info',null,{token_hash:await hash(args.token)});
-   }else if(op==='access_activate'){
+     result=await rpc(op,null,{token_hash:await hash(args.token)});
+   }else if(['access_activate','customer_access_activate'].includes(op)){
      const args=validate(op,b),token_hash=await hash(args.token);
      // Validate and rate-limit the invitation before touching Supabase Auth.
-     const invite=await rpc('access_begin',null,{token_hash});
+     const customer=op==='customer_access_activate';
+     const invite=await rpc(customer?'customer_access_begin':'access_begin',null,{token_hash});
      const address=email(invite.email||args.email);
      const created=await upstream(base+'/auth/v1/admin/users',{method:'POST',
        headers:{apikey:env.SUPABASE_SECRET_KEY,'Content-Type':'application/json'},
@@ -72,8 +74,8 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      const auth=await signed.json();
      if(!signed.ok||!auth.access_token||!auth.user?.id||String(auth.user.email||'').toLowerCase()!==address)
        throw new HttpError(401,'Anmeldung nicht möglich. Falls diese E-Mail bereits einen Zugang hat, verwenden Sie dessen Passwort.');
-     await rpc('access_redeem',auth.user.id,{token_hash,email:address});
-     result=await rpc('bootstrap',auth.user.id,{});
+     const redeemed=await rpc(customer?'customer_access_redeem':'access_redeem',auth.user.id,{token_hash,email:address,...(customer?{pass_token:randomToken()}:{})});
+     result=customer?{...await rpc('customer_bootstrap',auth.user.id,{}),project_id:redeemed.project_id}:await bootstrap(auth.user.id);
      extra['Set-Cookie']=cookie(auth.access_token,Math.min(auth.expires_in||3600,3600));
    }else if(op==='logout'){
      const access=session(request);
@@ -81,10 +83,10 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      if(access)try{await upstream(base+'/auth/v1/logout',{method:'POST',headers:{...authHeaders,Authorization:'Bearer '+access}});}catch{}
      result={ok:true};
    }else{
-     if(!operations.has(op)||['access_begin','access_redeem'].includes(op))throw new HttpError(404,'Nicht gefunden.');
+     if(!operations.has(op)||['access_begin','access_redeem','customer_access_begin','customer_access_redeem'].includes(op))throw new HttpError(404,'Nicht gefunden.');
      const args=validate(op,b);let actor=null;
      if(!publicOps.has(op)){
-       const access=session(request);if(!access)throw new HttpError(401,'Bitte melden Sie sich beim Betrieb an.');
+       const access=session(request);if(!access)throw new HttpError(401,'Bitte melden Sie sich an.');
        const r=await upstream(base+'/auth/v1/user',{headers:{...authHeaders,Authorization:'Bearer '+access}});
        if(!r.ok){extra['Set-Cookie']=cookie('',0);throw new HttpError(401,'Ihre Sitzung ist abgelaufen. Bitte erneut anmelden.');}
        actor=(await r.json()).id;
@@ -93,26 +95,33 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
      if(op==='operator_create')args.tokens=Array.from({length:20},()=>randomToken());
      if(op==='passes_add')args.tokens=Array.from({length:args.quantity},()=>randomToken());
      let accessToken;
-     if(op==='operator_invite'){accessToken=randomToken();args.token_hash=await hash(accessToken);}
+     if(['operator_invite','customer_invite','customer_transfer'].includes(op)){accessToken=randomToken();args.token_hash=await hash(accessToken);}
+     if(op==='delete'){const current=await rpc('project',actor,{id:args.id});if(current.status==='handed_over'||current.handover_snapshot)throw new HttpError(409,'Die Originalübergabe bleibt erhalten und kann hier nicht gelöscht werden.');}
      if(op==='handover'){
       const current=await rpc('project',actor,{id:args.id});
+      const required=projectIssues(current);if(required.length)fail(required.map(i=>i.label).join(' · '));
+      if(current.content?.project&&documentationGaps(current.content?.areas||[]).length&&!current.content.project.gaps_acknowledged)fail('Bitte die offenen Angaben für die Übergabe ausdrücklich bestätigen.');
       if(current.content?.areas){
        if(!current.content.areas.length)fail('Bitte mindestens eine Fläche dokumentieren.');
        const missing=current.content.areas.flatMap(a=>areaIssues(a).map(message=>(a.name||'Fläche')+': '+message));
        if(missing.length)fail(missing.join(' · '));
       }
      }
-     result=await rpc(op,actor,args);
+     result=op==='bootstrap'?await bootstrap(actor):await rpc(op,actor,args);
+     if(op==='project'&&result.status==='handed_over'){const customer=await rpc('customer_project',actor,{id:args.id});result.additions=customer.additions;result.permissions=customer.permissions;result.current_owner_email=customer.current_owner_email;}
      // Legacy journal, participant and customer-extension fields remain in the database
      // for compatibility, but are never exposed by the MVP server.
-     if(['scan','preview','project'].includes(op)){delete result.owner_additions;delete result.owner_version;delete result.owner_key_hash;}
+     if(['scan','preview','project','customer_project','customer_add'].includes(op)){for(const field of ['owner_additions','owner_version','owner_key_hash','journal','participants','messages','mail_outbox'])delete result[field];}
 
-     if(accessToken)result={...result,access_link:env.APP_ORIGIN+'/#access/'+accessToken};
+     if(accessToken){const link=env.APP_ORIGIN+(op==='operator_invite'?'/#access/':'/#customer-access/')+accessToken;result={...result,access_link:link,link};}
    }
    return new Response(JSON.stringify(result),{headers:{...securityHeaders,...extra}});
 
+   async function bootstrap(actor){
+     try{return await rpc('bootstrap',actor,{});}catch(error){if(error instanceof HttpError&&error.status===403)return rpc('customer_bootstrap',actor,{});throw error;}
+   }
    async function rpc(operation,actor,args){
-     const r=await upstream(base+'/rest/v1/rpc/'+(controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
+     const r=await upstream(base+'/rest/v1/rpc/'+(customerOps.has(operation)?'pp_customer':controlOps.has(operation)?'pp_control':'pp_api'),{method:'POST',headers:{apikey:env.SUPABASE_SECRET_KEY,
        'Content-Type':'application/json'},body:JSON.stringify({op:operation,actor,args})});
      const data=await r.json();
      if(!r.ok){
@@ -120,6 +129,10 @@ export function createHandler(fetcher=fetch){const upstream=(url,options={})=>fe
        if(code.includes('PP_INVITE_INVALID')||code.includes('PP_SETUP_COMPLETE'))throw new HttpError(410,'Dieser Einrichtungslink ist abgelaufen oder bereits verwendet. Bitte melden Sie sich an oder lassen Sie einen neuen Link erstellen.');
        if(code.includes('PP_RATE_LIMIT'))throw new HttpError(429,'Zu viele Versuche. Bitte in 15 Minuten erneut versuchen.');
        if(code.includes('PP_ACCOUNT_IN_USE'))throw new HttpError(409,'Dieser Zugang gehört bereits zu einem anderen Betrieb. Bitte eine andere E-Mail-Adresse verwenden.');
+       if(code.includes('PP_ALREADY_OWNER'))throw new HttpError(409,'Dieser Projektpass hat bereits einen Kunden. Ein Wechsel wird vom aktuellen Kunden gestartet.');
+       if(code.includes('PP_SAME_OWNER'))throw new HttpError(400,'Bitte die E-Mail-Adresse des neuen Kunden eingeben.');
+       if(code.includes('PP_INVALID_AREA'))throw new HttpError(400,'Bitte einen Bereich aus der Originalübergabe wählen.');
+       if(code.includes('PP_INVALID'))throw new HttpError(400,'Bitte die Angaben zur Ergänzung prüfen.');
        if(code.includes('PP_ALREADY_ACTIVE'))throw new HttpError(409,'Für diesen Betrieb ist bereits ein Zugang eingerichtet.');
        if(code.includes('PP_HANDOVER_LOCKED'))throw new HttpError(409,'Die Übergabe ist abgeschlossen. Der Kundenpass bleibt unverändert.');
        if(code.includes('PP_LIMIT'))throw new HttpError(400,'Das Limit für diesen Projektbereich ist erreicht.');

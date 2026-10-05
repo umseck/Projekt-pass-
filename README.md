@@ -1,5 +1,14 @@
 # PROJEKTPASS – Vorbereitung des echten Pilotbetriebs
 
+## Aktueller MVP-Stand · 5. Oktober 2026
+
+Der Quellcode enthält jetzt **Bad & Leistung → Aufbau → Fotos & Pflege → Prüfen & übergeben** sowie persönliche Kundenweiterführung. Die Originalübergabe bleibt erhalten; Wartungen, Reparaturen, Änderungen, Fotos und Unterlagen werden getrennt ergänzt. QR/NFC liest weiterhin nur freigegebene technische Originalangaben. PDF, ZIP und HTML liefern unabhängige Kundenkopien.
+
+Die vollständige lokale Suite wurde mit **75 bestandenen Tests, 0 Fehlern** ausgeführt; der neue UI-/API-/SQL-Testblock umfasst davon 25 Tests. Die fiktive Testansicht unter `/bath-preview.html` nutzt dieselben UI-Module und hält Testdaten beim Neuladen im selben Tab. Ihre Rollenwahl simuliert Berechtigungen; sie ist kein Live-Auth- oder Zwei-Geräte-Nachweis. Die neue Produktionsmigration und ein Produktionsdeployment sind in diesem Abschnitt noch nicht nachgewiesen.
+
+Details: [MVP_WORKFLOW.md](MVP_WORKFLOW.md), [MVP_IMPLEMENTATION.md](MVP_IMPLEMENTATION.md), [ACCEPTANCE.md](ACCEPTANCE.md), [TRIAL_MVP.md](TRIAL_MVP.md). Die bestehende Infrastrukturhistorie weiter unten bleibt eine historische Prüfgrundlage. Neue Migration ausschließlich nach Abgleich des tatsächlichen Live-Bestands additiv anwenden; kein Reset.
+
+
 Separater Pilot mit Betreiberverwaltung und getrennten Betriebszugängen.
 Neue Betriebe starten mit 20 Pässen; weitere Pässe lassen sich jederzeit hinzufügen.
 Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
@@ -34,17 +43,19 @@ Keine Verbindung zu Steckerl, keine Übernahme seiner Daten oder Zugänge.
   Ruhige Hintergrundfarben, Produkt-/Farbenzusammenfassungen und getrennte optionale Angaben.
   Unterlagen werden als Linkliste ergänzt; keine technische Trennzeichen-Eingabe im Formular.
   Speichern und Übergabe bleiben sichtbar; Betriebsmenü und NFC-Verwaltung sind zugeklappt.
-- Dashboard, erweiterbarer Passbestand, Titel als einziges Projektpflichtfeld, Materialfavoriten.
+- Dashboard, erweiterbarer Passbestand und Materialfavoriten. Im neuen Bad-Ablauf sind Projektname, Objekt/Bad, Fertigstellungsdatum und Leistungsumfang notwendig; bekannte Lücken werden ausdrücklich geprüft.
 - Serverseitige Speicherung, automatische Erstellungszeit, Kundenvorschau und bewusste Übergabe.
 - Öffentlicher Kundenlink erst nach Übergabe. Keine internen Namen/Adressen im Scan oder Export.
-- Betriebsangaben unveränderbar für Kunden; Kundenpass ausschließlich als freigegebener Lesezugang.
-  Kein Kundenkonto nötig und keine Ergänzungsfunktionen für Kunden.
-- Linksperre, Projektlöschung, Versionsprüfung gegen Überschreiben durch parallele Geräte.
+- Betriebsangaben und Originalübergabe bleiben für Kunden unveränderbar. QR/NFC liest ohne Konto;
+  ein persönlicher Kundenzugang erlaubt getrennte Ergänzungen nach der Übergabe.
+- Linksperre, Entwurfslöschung und Versionsprüfung gegen Überschreiben durch parallele Geräte.
+  Übergebene Originalstände sind gegen die gewöhnliche Projektlöschung geschützt.
 - Fotos lokal im Browser komprimiert und ohne EXIF neu gerendert; anschließend im geschützten
   Projektinhalt der Datenbank gespeichert. Für den kleinen Pilot maximal 8 Fotos insgesamt
   für Abdichtung und Übergabe; beide Uploads und die API prüfen die gemeinsame Grenze.
   Kein öffentlicher Bucket, kein externer Bilddienst. Supabase Storage ist noch nicht nötig.
-- Kundenexport als JSON mit Fotos und als PDF über den Druckdialog; keine Bindung der Daten an ein einzelnes Handy.
+- Unabhängige PDF-, ZIP- und HTML-Downloads mit strukturierten Daten, Fotos, archivierten PDFs
+  und Manifest. Nur verlinkte Unterlagen werden als nicht archiviert genannt.
 - Die hinterlegten Kontaktdaten des Betriebs bleiben im Kundenpass sichtbar.
   Der Projektpass versendet keine automatischen Baustellenmitteilungen.
 
@@ -180,4 +191,4 @@ Die Oberfläche führt durch **Aktivieren → Dokumentieren → Übergabe**. Im 
 
 ### MVP-Grenze
 
-Der aktive MVP enthält keine KI, kein Bautagebuch, keine Mitteilungen, keine Beteiligten- oder Eigentümerzugänge. Der Kundenpass ist nach der Freigabe ein reiner Lesezugang. Die früheren Tabellen und SQL-Zweige bleiben aus Kompatibilitätsgründen als ungenutzter Datenbank-Altbestand erhalten; Details stehen in [MVP_WORKFLOW.md](MVP_WORKFLOW.md).
+Der aktive MVP enthält keine KI, keinen Chat und kein tägliches Bautagebuch. Die öffentliche QR-Ansicht liest den Originalstand; der persönliche Kundenzugang führt separate Ergänzungen weiter. Berichtigungsfassungen des Originals, personenbezogener Löschprozess, Offlinebearbeitung und eingeschränkte Mitarbeiterrollen sind noch nicht umgesetzt. Die früheren Workflow-Tabellen bleiben aus Kompatibilitätsgründen als ungenutzter Altbestand erhalten; Details stehen in [MVP_WORKFLOW.md](MVP_WORKFLOW.md).

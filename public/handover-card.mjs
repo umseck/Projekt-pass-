@@ -1,7 +1,7 @@
 import qrcode from './vendor/qrcode.mjs';
 import {esc,num,labelPhoto} from './ui.mjs';
-export function handoverCode(project,origin){
- const url=new URL('/#p/'+project.token,origin).href;
+export function handoverCode(project,origin,path='/'){
+ const url=new URL(path+'#p/'+project.token,origin).href;
  if(!/^[a-f0-9]{64}$/.test(project.token)||!/^https?:/.test(url))throw Error('Kein gültiger Kundenlink.');
  const qr=qrcode(0,'M');qr.addData(url);qr.make();
  const svg=qr.createSvgTag({cellSize:4,margin:16,scalable:true,alt:'QR-Code zum Kundenpass'});
