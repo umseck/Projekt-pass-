@@ -4,7 +4,7 @@
 
 Der Quellcode enthält jetzt **Bad & Leistung → Aufbau → Fotos & Pflege → Prüfen & übergeben** sowie persönliche Kundenweiterführung. Die Originalübergabe bleibt erhalten; Wartungen, Reparaturen, Änderungen, Fotos und Unterlagen werden getrennt ergänzt. QR/NFC liest weiterhin nur freigegebene technische Originalangaben. PDF, ZIP und HTML liefern unabhängige Kundenkopien.
 
-Die vollständige lokale Suite wurde mit **74 bestandenen Tests, 0 Fehlern** ausgeführt; der neue UI-/API-/SQL-Testblock umfasst davon 22 Tests. Die fiktive Testansicht unter `/bath-preview.html` nutzt dieselben UI-Module und hält Testdaten beim Neuladen im selben Tab. Ihre Rollenwahl simuliert Berechtigungen; sie ist kein Live-Auth- oder Zwei-Geräte-Nachweis. Die neue Produktionsmigration und ein Produktionsdeployment sind in diesem Abschnitt noch nicht nachgewiesen.
+Die vollständige lokale Suite wurde mit **75 bestandenen Tests, 0 Fehlern** ausgeführt; der neue UI-/API-/SQL-Testblock umfasst davon 25 Tests. Die fiktive Testansicht unter `/bath-preview.html` nutzt dieselben UI-Module und hält Testdaten beim Neuladen im selben Tab. Ihre Rollenwahl simuliert Berechtigungen; sie ist kein Live-Auth- oder Zwei-Geräte-Nachweis. Die neue Produktionsmigration und ein Produktionsdeployment sind in diesem Abschnitt noch nicht nachgewiesen.
 
 Details: [MVP_WORKFLOW.md](MVP_WORKFLOW.md), [MVP_IMPLEMENTATION.md](MVP_IMPLEMENTATION.md), [ACCEPTANCE.md](ACCEPTANCE.md), [TRIAL_MVP.md](TRIAL_MVP.md). Die bestehende Infrastrukturhistorie weiter unten bleibt eine historische Prüfgrundlage. Neue Migration ausschließlich nach Abgleich des tatsächlichen Live-Bestands additiv anwenden; kein Reset.
 

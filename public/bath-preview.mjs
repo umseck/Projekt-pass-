@@ -49,7 +49,7 @@ export function createTrial(storage,{now=()=>new Date().toISOString(),token=()=>
   if(op==='customer_bootstrap'){permission('customer');return list();}
   if(op==='customer_project'){permission('customer');const p=find(args.id);if(p.status!=='handed_over')failure('Dieses Testbad wurde noch nicht übergeben.',404);return safe(p,true);}
   if(op==='customer_add'){permission('customer');return mutate(()=>{const p=find(args.id),e=args.event||{};if(p.status!=='handed_over')failure('Erst nach der Übergabe können Ergänzungen erfasst werden.',409);if(!p.content.areas.some(a=>a.id===e.area_id))failure('Diese Fläche gehört nicht zu diesem Testbad.',403);if(!['maintenance','repair','change','photo','document'].includes(e.kind)||!/^\d{4}-\d{2}-\d{2}$/.test(e.occurred_on||''))failure('Bitte Art, Fläche und Ausführungsdatum ergänzen.');if(p.additions.some(x=>x.id===e.id))return safe(p,true);p.additions.push({id:e.id||crypto.randomUUID(),author_id:'fiktiver-kunde',author_label:'Fiktiver Testkunde',recorded_at:now(),occurred_on:e.occurred_on,kind:e.kind,area_id:e.area_id,description:e.description||'',company:e.company||'',materials:e.materials||'',material_role:e.material_role||'',effect:e.effect||'evidence',photos:clone(e.photos||[]),documents:clone(e.documents||[])});return safe(p,true);});}
-  if(op==='customer_invite'||op==='customer_transfer'){permission(op==='customer_invite'?'business':'customer');return mutate(()=>{const p=find(args.id);if(p.status!=='handed_over')failure('Bitte zuerst übergeben.');const t=token(),invite={token:t,project_id:p.id,email:args.email||'musterkunde@example.test',transfer:op==='customer_transfer',expires_at:new Date(Date.parse(now())+7*86400000).toISOString()};state.invites=state.invites.filter(i=>i.project_id!==p.id);state.invites.push(invite);const link=(globalThis.location?.origin||'https://trial.invalid')+'/bath-preview.html#customer-access/'+t;return {link,access_link:link,expires_at:invite.expires_at};});}
+  if(op==='customer_invite'||op==='customer_transfer'){permission(op==='customer_invite'?'business':'customer');return mutate(()=>{const p=find(args.id);if(p.status!=='handed_over')failure('Bitte zuerst übergeben.');const t=token(),invite={token:t,project_id:p.id,email:args.email||'musterkunde@example.test',transfer:op==='customer_transfer',expires_at:new Date(Date.parse(now())+7*86400000).toISOString()};state.invites=state.invites.filter(i=>i.project_id!==p.id);state.invites.push(invite);const link=(/^https?:/.test(globalThis.location?.origin||'')?globalThis.location.origin:'https://offline.projektpass.invalid')+'/bath-preview.html#customer-access/'+t;return {link,access_link:link,expires_at:invite.expires_at};});}
   if(op==='customer_access_info'){const i=state.invites.find(i=>i.token===args.token);if(!i)failure('Dieser fiktive Einladungslink ist abgelaufen oder bereits verwendet.',410);return {...clone(i),title:find(i.project_id).title};}
   if(op==='customer_access_activate')return mutate(()=>{const i=state.invites.find(i=>i.token===args.token);if(!i)failure('Dieser fiktive Link wurde bereits verwendet.',410);state.mode='customer';state.ownerEmail=i.email;state.activeId=i.project_id;if(i.transfer)find(i.project_id).token=token();state.invites=state.invites.filter(x=>x.token!==i.token);return {...list(),project_id:i.project_id};});
   if(op==='logout')return mutate(()=>{state.mode='public';return {ok:true};});
@@ -58,16 +58,16 @@ export function createTrial(storage,{now=()=>new Date().toISOString(),token=()=>
  return {api,create,active:()=>clone(active()),snapshot:()=>clone(state),setMode:mode=>mutate(()=>{if(!['business','customer','public'].includes(mode))failure('Unbekannte Testrolle.');state.mode=mode;return state;}),setActive:id=>mutate(()=>{find(id);state.activeId=id;return state;}),reset:()=>{storage.removeItem(TRIAL_STORAGE_KEY);state={format:'fiktives-projektpass-testbad-v3',mode:'business',projects:[],activeId:'',company:clone(business),companyVersion:1,ownerEmail:'musterkunde@example.test',invites:[]};},safe};
 }
 
-export async function bootTrial({storage=window.sessionStorage}={}){
+export async function bootTrial({storage=window.sessionStorage,offline=false}={}){
  const trial=createTrial(storage);if(!trial.snapshot().projects.length)trial.create('seamless');
  let session,routeVersion=0,renderedHash='';
  const $=s=>document.querySelector(s),shell=html=>{$('#app').innerHTML=`<main class="wrap narrow">${html}</main>`;};
  const modal=(title,body)=>{const d=$('#modal');d.innerHTML=`<div class="dialog-head"><h2>${esc(title)}</h2><button class="close" aria-label="Schließen">×</button></div>${body}`;d.querySelector('.close').onclick=()=>d.close();if(!d.open)d.showModal();};
  const notice=message=>{$('#trial-notice').textContent=message;};
- const api=(op,args)=>trial.api(op,args);
+ const api=async(op,args)=>{const result=await trial.api(op,args);if(['customer_invite','customer_transfer','customer_access_activate'].includes(op))updateControls();return result;};
  const go=async route=>{const p=trial.active();if(route.startsWith('ready/')){trial.setMode('customer');location.hash='#customer/'+p.id;}else if(route.startsWith('customer/'))location.hash='#'+route;else if(route==='customer')location.hash='#customer/'+p.id;else if(route.startsWith('p/')){trial.setMode('public');location.hash='#p/'+p.token;}else location.hash='#business';await render();};
- const ctx={api,shell,modal,go,notify:notice,qrPath:'/bath-preview.html'};
- const updateControls=()=>{const s=trial.snapshot();$('#trial-mode').value=s.mode;$('#trial-project').innerHTML=s.projects.map(p=>`<option value="${esc(p.id)}" ${p.id===s.activeId?'selected':''}>${esc(p.title)} · ${p.status==='handed_over'?'übergeben':'Entwurf'}</option>`).join('');$('#trial-storage').textContent='Dieses fiktive Testbad bleibt nach Neuladen in diesem Tab erhalten.';};
+ const ctx={api,shell,modal,go,notify:notice,qrPath:'/bath-preview.html',offline};
+ const updateControls=()=>{const s=trial.snapshot();$('#trial-mode').value=s.mode;$('#trial-project').innerHTML=s.projects.map(p=>`<option value="${esc(p.id)}" ${p.id===s.activeId?'selected':''}>${esc(p.title)} · ${p.status==='handed_over'?'übergeben':'Entwurf'}</option>`).join('');const inviteButton=$('#trial-accept-invite');if(inviteButton)inviteButton.hidden=!s.invites.length;$('#trial-storage').textContent='Dieses fiktive Testbad bleibt nach Neuladen in diesem Tab erhalten.';};
  async function render(){
   const run=++routeVersion;renderedHash=location.hash;session?.dispose();session=null;updateControls();notice('');
   try{
@@ -81,9 +81,9 @@ export async function bootTrial({storage=window.sessionStorage}={}){
    if(p.status!=='handed_over'){
     shell(`<section class="hero"><span class="eyebrow">Fiktive Kundenansicht</span><h1>Noch nicht übergeben.</h1><p>Bitte in der Betriebsansicht Materialien dokumentieren, den Kundenstand prüfen und ausdrücklich übergeben.</p><button class="btn olive" id="trial-return-business">Zur Betriebsansicht</button></section>`);$('#trial-return-business').onclick=()=>switchMode('business');return;
    }
-   if(mode==='customer'){await mountCustomerWorkspace(await api('customer_project',{id:p.id}),ctx);return;}
+   if(mode==='customer'){const customer=await api('customer_project',{id:p.id});if(offline)delete customer.token;await mountCustomerWorkspace(customer,ctx);return;}
    const readonly=hash.startsWith('p/')?await api('scan',{token:hash.split('/')[1]}):trial.safe(p,false);
-   await mountCustomerWorkspace({...readonly,additions:[],permissions:{can_add:false,can_transfer:false}},{...ctx,readOnly:true});
+   await mountCustomerWorkspace({...readonly,permissions:{can_add:false,can_transfer:false}},{...ctx,readOnly:true});
    if(mode==='business'){
     const root=document.createElement('section');root.className='section no-print';$('.customer-dossier')?.append(root);if(!root.isConnected)$('#app main').append(root);
     root.innerHTML='<h2>Originalübergabe erhalten</h2><p>Der bestätigte Stand kann nicht überschrieben werden. Öffnen Sie die Kundenrolle, um spätere Ergänzungen getrennt festzuhalten.</p><button class="btn olive" id="trial-customer-mode">Als fiktiver Kunde weiterführen</button><div id="trial-invite"></div>';
@@ -92,6 +92,7 @@ export async function bootTrial({storage=window.sessionStorage}={}){
   }catch(error){notice(error.message);shell(`<section class="hero"><h1>Testansicht konnte nicht geöffnet werden</h1><p>${esc(error.message)}</p><button class="btn light" id="trial-retry">Erneut versuchen</button></section>`);$('#trial-retry').onclick=render;}
  }
  async function switchMode(mode){try{if(session)await session.flush();trial.setMode(mode);location.hash=mode==='business'?'#business':mode==='customer'?'#customer/'+trial.active().id:'#p/'+trial.active().token;await render();}catch(error){notice(error.message);updateControls();}}
+ $('#trial-accept-invite').onclick=async()=>{const invite=trial.snapshot().invites.at(-1);if(invite){location.hash='#customer-access/'+invite.token;await render();}};
  $('#trial-mode').onchange=e=>switchMode(e.target.value);
  $('#trial-project').onchange=async e=>{try{if(session)await session.flush();trial.setActive(e.target.value);location.hash='#'+trial.snapshot().mode;await render();}catch(error){notice(error.message);}};
  for(const [id,trade,prepared] of [['demo-seamless','seamless',false],['demo-tile','tile',false],['demo-ready','seamless',true]])$( '#'+id).onclick=async()=>{try{if(session)await session.flush();session?.dispose();trial.create(trade,prepared);location.hash='#business';await render();}catch(error){notice(error.message);}};

@@ -2,7 +2,7 @@
 
 Stand: 5. Oktober 2026. „Lokal geprüft“ bezeichnet automatisierte UI-/API-/SQL-
 Tests und keine echte Kundenfreigabe. Die vollständige lokale Suite ist mit
-**74 bestandenen Tests, 0 Fehlern** abgeschlossen. Produktionsmigration, vollständiger
+**75 bestandenen Tests, 0 Fehlern** abgeschlossen. Produktionsmigration, vollständiger
 Live-Ablauf und physische Smartphones sind hier nicht als bestanden markiert.
 
 ## Lokal ausgeführt
@@ -65,3 +65,10 @@ Sie simuliert Rollen ohne echte Anmeldung und ist kein Zwei-Geräte-Nachweis.
 Nicht Bestandteil dieser Abnahme: KI, Chat, Baustellenmitteilungen,
 Aufgabenverwaltung, Originalberichtigungen, Offlinebearbeitung oder eine
 Bescheinigung fachgerechter/mängelfreier Ausführung.
+
+## Einzeldatei und Bereitstellung
+
+- Die tatsächliche Datei `public/Projektpass-MVP-Test.html` wurde in einem zusätzlichen DOM-Test vom ersten Bad bis Übergabe, Kundenergänzung und Export ausgeführt. Eingebetteter Katalog, fehlende externe Assets und verweigerte Live-Verbindungen geprüft.
+- Die gesamte lokale Suite einschließlich dieses Tests: **75 bestanden, 0 Fehler**.
+- Cloudflare-Branch-Vorschau verlangt Cloudflare Access. Keine Online-Oberflächenabnahme aus einem erfolgreichen Login/Deployment abgeleitet. Die direkt öffnbare Datei ersetzt keinen physischen Smartphone- oder Live-Auth-Test.
+- Implementierung als separater Draft-PR #6. Kein Merge nach main, keine produktive Migration, keine echten Konten angelegt.

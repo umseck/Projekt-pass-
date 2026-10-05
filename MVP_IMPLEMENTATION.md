@@ -58,7 +58,7 @@ npm test
 node --test tests/customer-backend.test.mjs tests/customer-ui.test.mjs tests/bath-export.test.mjs tests/trial-harness.test.mjs
 ```
 
-Die vollständige lokale Suite wurde mit **74 bestandenen Tests, 0 Fehlern**
+Die vollständige lokale Suite wurde mit **75 bestandenen Tests, 0 Fehlern**
 ausgeführt. Der gezielte neue Testblock umfasst davon **25 bestandene Tests**. Er prüft unter anderem echte PGlite-PostgreSQL-Transaktionen,
 Mandantentrennung, Originalschutz, adressgebundene Annahme, Ablauf/Einmaligkeit,
 QR-Rotation, parallele Annahme, sichere Projektion, Pflege nach Änderung,
@@ -108,3 +108,7 @@ eine unabhängige E-Mail-Bestätigung verifiziert; den vertraulichen Link persö
 weitergeben. QR-Rotation beim Verwalterwechsel verlangt eine neue bzw. neu
 beschriebene physische Karte. Exportierte Kopien sind nicht rückrufbar.
 Dateiprüfsummen sind keine Signatur, kein Urhebernachweis und keine Qualitätsprüfung.
+
+## Bereitgestelltes Testpaket
+
+Die einzelne Datei `public/Projektpass-MVP-Test.html` kann ohne Einrichtung heruntergeladen und geöffnet werden. Sie enthält die tatsächlichen MVP-Oberflächen und den Katalog, arbeitet ausschließlich mit fiktiven Testdaten und simuliert Rollen. `tests/offline-trial.test.mjs` prüft ihre ausgelieferte Form; der reproduzierbare Build steht in `scripts/build-offline-trial.py`. Der Cloudflare-Preview-Aufruf wurde durch den vorhandenen Cloudflare-Access-Login begrenzt; kein Zugangsschutz wurde verändert. Draft-PR: https://github.com/umseck/Projekt-pass-/pull/6.

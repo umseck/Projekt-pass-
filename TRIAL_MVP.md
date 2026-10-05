@@ -42,3 +42,13 @@ Die lokalen Harness-Tests prüfen Persistenz, Rollenwechsel, Originalschutz,
 getrennte Ergänzungen, fremde Bereichs-IDs und Übernahme/Linkrotation.
 Sie ersetzen nicht die API-/SQL-Tests der echten Kundenzugänge, die Live-Anmeldung
 oder einen Test auf zwei Geräten. Sie behaupten keine produktive Authentifizierung.
+
+## Direkt öffnbare Offline-Testdatei
+
+`public/Projektpass-MVP-Test.html` herunterladen und im aktuellen Desktop-Browser öffnen. Sie enthält dieselben Editor-, Kunden- und Exportmodule sowie den eingebetteten Katalog. Es werden keine Live-API oder externen Bibliotheken geladen. Ein gemischtes Beispiel lässt sich über „Neues Testbad starten“ vorbereiten. Danach Schritt 4 prüfen, die Flächen und bekannten Lücken bestätigen, freigeben, eine Kundenergänzung erfassen und PDF/ZIP speichern.
+
+Die Datei simuliert die Konten und Rollen. Sie legt kein echtes Konto an und ist kein NFC-/Zwei-Geräte-Nachweis. Ihre Daten bleiben nur im lokalen Browser-Tab; bei blockiertem Browserspeicher nur bis zum Schließen/Neuladen. Physische QR-Links werden in der Offline-Datei nicht angeboten. Fiktive Einladungen lassen sich über den Teststeuerungsbutton im selben Tab annehmen.
+
+Reproduzierbar mit `python scripts/build-offline-trial.py` (esbuild 0.25.10 aus dem npm-Registry). Der Test `tests/offline-trial.test.mjs` führt die tatsächlich ausgelieferte Datei aus und prüft den kompletten Übergabe-/Ergänzungs-/Exportablauf ohne externe Assets.
+
+Am 5. Oktober 2026 führte der Aufruf der Cloudflare-Branch-Vorschau zu Cloudflare Access mit E-Mail-Anmeldung. Keine Zugangsdaten eingegeben, kein Schutz geändert. Der ausgelieferte Online-Stand konnte deshalb nicht im Browser abgenommen werden. Die Offline-Testdatei ist unabhängig davon direkt testbar. Quellcode und Migration stehen im Draft-PR https://github.com/umseck/Projekt-pass-/pull/6; main und die Produktionsdatenbank sind unverändert.
